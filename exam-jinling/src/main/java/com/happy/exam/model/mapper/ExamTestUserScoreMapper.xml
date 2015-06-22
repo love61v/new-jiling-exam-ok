@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.happy.exam.model.ExamTestUserScore">
+
+	<resultMap id="RM_ExamTestUserScore" type="com.happy.exam.model.ExamTestUserScore">
+        <result property="id" column="Id"/>
+        <result property="userId" column="UserId"/>
+        <result property="userName" column="UserName"/>
+        <result property="forcastNumber" column="ForcastNumber"/>
+        <result property="totalScore" column="TotalScore"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		Id,UserId,UserName,ForcastNumber,TotalScore
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	    <![CDATA[
+	        INSERT INTO exam_test_user_score ( 
+	        	Id ,
+	        	UserId ,
+	        	UserName ,
+	        	ForcastNumber ,
+	        	TotalScore 
+	        ) VALUES (
+	        	#{id} ,
+	        	#{userId} ,
+	        	#{userName} ,
+	        	#{forcastNumber} ,
+	        	#{totalScore} 
+	        )
+	    ]]>
+	</insert>
+	
+	<!-- 批量保存 -->
+	<insert id="insertBatch">
+	    <![CDATA[
+	        INSERT INTO exam_test_user_score (
+	        		Id ,
+	        		UserId ,
+	        		UserName ,
+	        		ForcastNumber ,
+	        		TotalScore 
+	        ) VALUES 
+	         ]]>
+	        <foreach item="item" collection="list"   separator=",">
+	        	(
+					#{item.id} ,
+					#{item.userId} ,
+					#{item.userName} ,
+					#{item.forcastNumber} ,
+					#{item.totalScore} 
+	        	)
+			</foreach>
+	   
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="userId != null">
+				UserId = #{userId} ,
+			</if>
+			<if test="userName != null and userName != ''">
+				UserName = #{userName} ,
+			</if>
+			<if test="forcastNumber != null and forcastNumber != ''">
+				ForcastNumber = #{forcastNumber} ,
+			</if>
+			<if test="totalScore != null">
+				TotalScore = #{totalScore} 
+			</if>
+		</set>
+	</sql>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE exam_test_user_score
+		<include refid="update_sql" />
+		WHERE
+			Id = #{id} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="delete">
+    	<![CDATA[
+        	DELETE FROM exam_test_user_score 
+        	WHERE
+        		Id = #{id} 
+    	]]>
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="delete_batch">
+        DELETE FROM exam_test_user_score 
+        WHERE Id IN 
+        <foreach item="ids" collection="list" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+    </delete>
+
+	<!-- selsect -->
+	<select id="getById" resultMap="RM_ExamTestUserScore">
+		SELECT
+		<include refid="columns" />
+		FROM exam_test_user_score
+		WHERE
+		Id = #{id}
+	</select>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<sql id="findPage_where">
+		<where>
+				<if test="model.id != null">
+					AND Id = #{model.id}
+				</if>
+				<if test="model.userId != null">
+					AND UserId = #{model.userId}
+				</if>
+				<if test="model.userName != null and model.userName !=''">
+					AND UserName = #{model.userName}
+				</if>
+				<if test="model.forcastNumber != null and model.forcastNumber !=''">
+					AND ForcastNumber = #{model.forcastNumber}
+				</if>
+				<if test="model.totalScore != null">
+					AND TotalScore = #{model.totalScore}
+				</if>
+		</where>
+	</sql>
+
+	<!-- 获取总数 -->
+	<select id="findPage_count" resultType="long">
+		SELECT COUNT(1)
+		FROM exam_test_user_score
+		<include refid="findPage_where" />
+	</select>  
+
+	<select id="findPage" resultMap="RM_ExamTestUserScore">
+		 SELECT
+		<include refid="columns" />
+		FROM exam_test_user_score
+		<include refid="findPage_where" />
+
+		<if test="model.sortColumns != null and model.sortColumns !=''">
+			ORDER BY ${model.sortColumns}
+		</if>
+		
+		<if test="offset != null and pageSize != null">
+			LIMIT  #{offset}, #{pageSize}
+		</if>
+	</select>
+
+</mapper>

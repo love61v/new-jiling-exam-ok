@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.happy.exam.model.ExamPaperLiberary">
+
+	<resultMap id="RM_ExamPaperLiberary" type="com.happy.exam.model.ExamPaperLiberary">
+        <result property="libId" column="LibId"/>
+        <result property="templateId" column="TemplateId"/>
+        <result property="examId" column="ExamId"/>
+        <result property="question" column="Question"/>
+        <result property="answer" column="Answer"/>
+        <result property="score" column="Score"/>
+        <result property="imgSrc" column="ImgSrc"/>
+        <result property="remark" column="Remark"/>
+        <result property="createtUser" column="CreatetUser"/>
+        <result property="createTime" column="CreateTime"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		LibId,TemplateId,ExamId,Question,Answer,Score,ImgSrc,Remark,CreatetUser,CreateTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="libId">
+	    <![CDATA[
+	        INSERT INTO exam_paper_liberary ( 
+	        	LibId ,
+	        	TemplateId ,
+	        	ExamId ,
+	        	Question ,
+	        	Answer ,
+	        	Score ,
+	        	ImgSrc ,
+	        	Remark ,
+	        	CreatetUser ,
+	        	CreateTime 
+	        ) VALUES (
+	        	#{libId} ,
+	        	#{templateId} ,
+	        	#{examId} ,
+	        	#{question} ,
+	        	#{answer} ,
+	        	#{score} ,
+	        	#{imgSrc} ,
+	        	#{remark} ,
+	        	#{createtUser} ,
+	        	#{createTime} 
+	        )
+	    ]]>
+	</insert>
+	
+	<!-- 批量保存 -->
+	<insert id="insertBatch">
+	    <![CDATA[
+	        INSERT INTO exam_paper_liberary (
+	        		LibId ,
+	        		TemplateId ,
+	        		ExamId ,
+	        		Question ,
+	        		Answer ,
+	        		Score ,
+	        		ImgSrc ,
+	        		Remark ,
+	        		CreatetUser ,
+	        		CreateTime 
+	        ) VALUES 
+	         ]]>
+	        <foreach item="item" collection="list"   separator=",">
+	        	(
+					#{item.libId} ,
+					#{item.templateId} ,
+					#{item.examId} ,
+					#{item.question} ,
+					#{item.answer} ,
+					#{item.score} ,
+					#{item.imgSrc} ,
+					#{item.remark} ,
+					#{item.createtUser} ,
+					#{item.createTime} 
+	        	)
+			</foreach>
+	   
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="templateId != null">
+				TemplateId = #{templateId} ,
+			</if>
+			<if test="examId != null">
+				ExamId = #{examId} ,
+			</if>
+			<if test="question != null and question != ''">
+				Question = #{question} ,
+			</if>
+			<if test="answer != null and answer != ''">
+				Answer = #{answer} ,
+			</if>
+			<if test="score != null">
+				Score = #{score} ,
+			</if>
+			<if test="imgSrc != null and imgSrc != ''">
+				ImgSrc = #{imgSrc} ,
+			</if>
+			<if test="remark != null and remark != ''">
+				Remark = #{remark} ,
+			</if>
+			<if test="createtUser != null">
+				CreatetUser = #{createtUser} ,
+			</if>
+			<if test="createTime != null">
+				CreateTime = #{createTime} 
+			</if>
+		</set>
+	</sql>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE exam_paper_liberary
+		<include refid="update_sql" />
+		WHERE
+			LibId = #{libId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="delete">
+    	<![CDATA[
+        	DELETE FROM exam_paper_liberary 
+        	WHERE
+        		LibId = #{libId} 
+    	]]>
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="delete_batch">
+        DELETE FROM exam_paper_liberary 
+        WHERE LibId IN 
+        <foreach item="ids" collection="list" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+    </delete>
+
+	<!-- selsect -->
+	<select id="getById" resultMap="RM_ExamPaperLiberary">
+		SELECT
+		<include refid="columns" />
+		FROM exam_paper_liberary
+		WHERE
+		LibId = #{libId}
+	</select>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<sql id="findPage_where">
+		<where>
+				<if test="model.libId != null">
+					AND LibId = #{model.libId}
+				</if>
+				<if test="model.templateId != null">
+					AND TemplateId = #{model.templateId}
+				</if>
+				<if test="model.examId != null">
+					AND ExamId = #{model.examId}
+				</if>
+				<if test="model.question != null and model.question !=''">
+					AND Question = #{model.question}
+				</if>
+				<if test="model.answer != null and model.answer !=''">
+					AND Answer = #{model.answer}
+				</if>
+				<if test="model.score != null">
+					AND Score = #{model.score}
+				</if>
+				<if test="model.imgSrc != null and model.imgSrc !=''">
+					AND ImgSrc = #{model.imgSrc}
+				</if>
+				<if test="model.remark != null and model.remark !=''">
+					AND Remark = #{model.remark}
+				</if>
+				<if test="model.createtUser != null">
+					AND CreatetUser = #{model.createtUser}
+				</if>
+				<if test="model.createTimeBegin != null">
+					AND CreateTime &gt;= #{model.createTimeBegin}
+				</if>
+				<if test="model.createTimeEnd != null">
+					AND CreateTime &lt;= #{model.createTimeEnd}
+				</if>
+		</where>
+	</sql>
+
+	<!-- 获取总数 -->
+	<select id="findPage_count" resultType="long">
+		SELECT COUNT(1)
+		FROM exam_paper_liberary
+		<include refid="findPage_where" />
+	</select>  
+
+	<select id="findPage" resultMap="RM_ExamPaperLiberary">
+		 SELECT
+		<include refid="columns" />
+		FROM exam_paper_liberary
+		<include refid="findPage_where" />
+
+		<if test="model.sortColumns != null and model.sortColumns !=''">
+			ORDER BY ${model.sortColumns}
+		</if>
+		
+		<if test="offset != null and pageSize != null">
+			LIMIT  #{offset}, #{pageSize}
+		</if>
+	</select>
+
+</mapper>

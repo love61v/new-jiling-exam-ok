@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.happy.exam.model.ExamPaperSetting">
+
+	<resultMap id="RM_ExamPaperSetting" type="com.happy.exam.model.ExamPaperSetting">
+        <result property="paperId" column="paperId"/>
+        <result property="title" column="Title"/>
+        <result property="subTitle" column="SubTitle"/>
+        <result property="duration" column="duration"/>
+        <result property="totalScore" column="TotalScore"/>
+        <result property="remark" column="Remark"/>
+        <result property="createUser" column="CreateUser"/>
+        <result property="createTime" column="CreateTime"/>
+        <result property="updateTime" column="UpdateTime"/>
+        <result property="type" column="Type"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		paperId,Title,SubTitle,duration,TotalScore,Remark,CreateUser,CreateTime,UpdateTime,Type
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="paperId">
+	    <![CDATA[
+	        INSERT INTO exam_paper_setting ( 
+	        	paperId ,
+	        	Title ,
+	        	SubTitle ,
+	        	duration ,
+	        	TotalScore ,
+	        	Remark ,
+	        	CreateUser ,
+	        	CreateTime ,
+	        	UpdateTime ,
+	        	Type 
+	        ) VALUES (
+	        	#{paperId} ,
+	        	#{title} ,
+	        	#{subTitle} ,
+	        	#{duration} ,
+	        	#{totalScore} ,
+	        	#{remark} ,
+	        	#{createUser} ,
+	        	#{createTime} ,
+	        	#{updateTime} ,
+	        	#{type} 
+	        )
+	    ]]>
+	</insert>
+	
+	<!-- 批量保存 -->
+	<insert id="insertBatch">
+	    <![CDATA[
+	        INSERT INTO exam_paper_setting (
+	        		paperId ,
+	        		Title ,
+	        		SubTitle ,
+	        		duration ,
+	        		TotalScore ,
+	        		Remark ,
+	        		CreateUser ,
+	        		CreateTime ,
+	        		UpdateTime ,
+	        		Type 
+	        ) VALUES 
+	         ]]>
+	        <foreach item="item" collection="list"   separator=",">
+	        	(
+					#{item.paperId} ,
+					#{item.title} ,
+					#{item.subTitle} ,
+					#{item.duration} ,
+					#{item.totalScore} ,
+					#{item.remark} ,
+					#{item.createUser} ,
+					#{item.createTime} ,
+					#{item.updateTime} ,
+					#{item.type} 
+	        	)
+			</foreach>
+	   
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="title != null and title != ''">
+				Title = #{title} ,
+			</if>
+			<if test="subTitle != null and subTitle != ''">
+				SubTitle = #{subTitle} ,
+			</if>
+			<if test="duration != null">
+				duration = #{duration} ,
+			</if>
+			<if test="totalScore != null">
+				TotalScore = #{totalScore} ,
+			</if>
+			<if test="remark != null and remark != ''">
+				Remark = #{remark} ,
+			</if>
+			<if test="createUser != null">
+				CreateUser = #{createUser} ,
+			</if>
+			<if test="createTime != null">
+				CreateTime = #{createTime} ,
+			</if>
+			<if test="updateTime != null">
+				UpdateTime = #{updateTime} ,
+			</if>
+			<if test="type != null">
+				Type = #{type} 
+			</if>
+		</set>
+	</sql>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE exam_paper_setting
+		<include refid="update_sql" />
+		WHERE
+			paperId = #{paperId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="delete">
+    	<![CDATA[
+        	DELETE FROM exam_paper_setting 
+        	WHERE
+        		paperId = #{paperId} 
+    	]]>
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="delete_batch">
+        DELETE FROM exam_paper_setting 
+        WHERE paperId IN 
+        <foreach item="ids" collection="list" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+    </delete>
+
+	<!-- selsect -->
+	<select id="getById" resultMap="RM_ExamPaperSetting">
+		SELECT
+		<include refid="columns" />
+		FROM exam_paper_setting
+		WHERE
+		paperId = #{paperId}
+	</select>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<sql id="findPage_where">
+		<where>
+				<if test="model.paperId != null">
+					AND paperId = #{model.paperId}
+				</if>
+				<if test="model.title != null and model.title !=''">
+					AND Title = #{model.title}
+				</if>
+				<if test="model.subTitle != null and model.subTitle !=''">
+					AND SubTitle = #{model.subTitle}
+				</if>
+				<if test="model.duration != null">
+					AND duration = #{model.duration}
+				</if>
+				<if test="model.totalScore != null">
+					AND TotalScore = #{model.totalScore}
+				</if>
+				<if test="model.remark != null and model.remark !=''">
+					AND Remark = #{model.remark}
+				</if>
+				<if test="model.createUser != null">
+					AND CreateUser = #{model.createUser}
+				</if>
+				<if test="model.createTimeBegin != null">
+					AND CreateTime &gt;= #{model.createTimeBegin}
+				</if>
+				<if test="model.createTimeEnd != null">
+					AND CreateTime &lt;= #{model.createTimeEnd}
+				</if>
+				<if test="model.updateTimeBegin != null">
+					AND UpdateTime &gt;= #{model.updateTimeBegin}
+				</if>
+				<if test="model.updateTimeEnd != null">
+					AND UpdateTime &lt;= #{model.updateTimeEnd}
+				</if>
+				<if test="model.type != null">
+					AND Type = #{model.type}
+				</if>
+		</where>
+	</sql>
+
+	<!-- 获取总数 -->
+	<select id="findPage_count" resultType="long">
+		SELECT COUNT(1)
+		FROM exam_paper_setting
+		<include refid="findPage_where" />
+	</select>  
+
+	<select id="findPage" resultMap="RM_ExamPaperSetting">
+		 SELECT
+		<include refid="columns" />
+		FROM exam_paper_setting
+		<include refid="findPage_where" />
+
+		<if test="model.sortColumns != null and model.sortColumns !=''">
+			ORDER BY ${model.sortColumns}
+		</if>
+		
+		<if test="offset != null and pageSize != null">
+			LIMIT  #{offset}, #{pageSize}
+		</if>
+	</select>
+
+</mapper>

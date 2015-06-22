@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.happy.exam.model.SystemResource">
+
+	<resultMap id="RM_SystemResource" type="com.happy.exam.model.SystemResource">
+        <result property="resourceId" column="ResourceId"/>
+        <result property="resourceName" column="ResourceName"/>
+        <result property="engName" column="EngName"/>
+        <result property="parentId" column="ParentId"/>
+        <result property="path" column="Path"/>
+        <result property="sourceIcon" column="SourceIcon"/>
+        <result property="sourceType" column="SourceType"/>
+        <result property="status" column="Status"/>
+        <result property="sort" column="Sort"/>
+        <result property="remark" column="Remark"/>
+        <result property="createUser" column="CreateUser"/>
+        <result property="createTime" column="CreateTime"/>
+        <result property="updateTime" column="UpdateTime"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		ResourceId,ResourceName,EngName,ParentId,Path,SourceIcon,SourceType,Status,Sort,Remark,CreateUser,CreateTime,UpdateTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="resourceId">
+	    <![CDATA[
+	        INSERT INTO system_resource ( 
+	        	ResourceId ,
+	        	ResourceName ,
+	        	EngName ,
+	        	ParentId ,
+	        	Path ,
+	        	SourceIcon ,
+	        	SourceType ,
+	        	Status ,
+	        	Sort ,
+	        	Remark ,
+	        	CreateUser ,
+	        	CreateTime ,
+	        	UpdateTime 
+	        ) VALUES (
+	        	#{resourceId} ,
+	        	#{resourceName} ,
+	        	#{engName} ,
+	        	#{parentId} ,
+	        	#{path} ,
+	        	#{sourceIcon} ,
+	        	#{sourceType} ,
+	        	#{status} ,
+	        	#{sort} ,
+	        	#{remark} ,
+	        	#{createUser} ,
+	        	#{createTime} ,
+	        	#{updateTime} 
+	        )
+	    ]]>
+	</insert>
+	
+	<!-- 批量保存 -->
+	<insert id="insertBatch">
+	    <![CDATA[
+	        INSERT INTO system_resource (
+	        		ResourceId ,
+	        		ResourceName ,
+	        		EngName ,
+	        		ParentId ,
+	        		Path ,
+	        		SourceIcon ,
+	        		SourceType ,
+	        		Status ,
+	        		Sort ,
+	        		Remark ,
+	        		CreateUser ,
+	        		CreateTime ,
+	        		UpdateTime 
+	        ) VALUES 
+	         ]]>
+	        <foreach item="item" collection="list"   separator=",">
+	        	(
+					#{item.resourceId} ,
+					#{item.resourceName} ,
+					#{item.engName} ,
+					#{item.parentId} ,
+					#{item.path} ,
+					#{item.sourceIcon} ,
+					#{item.sourceType} ,
+					#{item.status} ,
+					#{item.sort} ,
+					#{item.remark} ,
+					#{item.createUser} ,
+					#{item.createTime} ,
+					#{item.updateTime} 
+	        	)
+			</foreach>
+	   
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="resourceName != null and resourceName != ''">
+				ResourceName = #{resourceName} ,
+			</if>
+			<if test="engName != null and engName != ''">
+				EngName = #{engName} ,
+			</if>
+			<if test="parentId != null">
+				ParentId = #{parentId} ,
+			</if>
+			<if test="path != null and path != ''">
+				Path = #{path} ,
+			</if>
+			<if test="sourceIcon != null and sourceIcon != ''">
+				SourceIcon = #{sourceIcon} ,
+			</if>
+			<if test="sourceType != null and sourceType != ''">
+				SourceType = #{sourceType} ,
+			</if>
+			<if test="status != null">
+				Status = #{status} ,
+			</if>
+			<if test="sort != null">
+				Sort = #{sort} ,
+			</if>
+			<if test="remark != null and remark != ''">
+				Remark = #{remark} ,
+			</if>
+			<if test="createUser != null">
+				CreateUser = #{createUser} ,
+			</if>
+			<if test="createTime != null">
+				CreateTime = #{createTime} ,
+			</if>
+			<if test="updateTime != null">
+				UpdateTime = #{updateTime} 
+			</if>
+		</set>
+	</sql>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE system_resource
+		<include refid="update_sql" />
+		WHERE
+			ResourceId = #{resourceId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="delete">
+    	<![CDATA[
+        	DELETE FROM system_resource 
+        	WHERE
+        		ResourceId = #{resourceId} 
+    	]]>
+	</delete>
+	
+	<!-- 删除节点与子节点 -->
+	<delete id="deleteUnion">
+       	DELETE FROM system_resource 
+       	<where>
+       		<if test="resourceId != null and resourceId !=''">
+					AND ResourceId = #{resourceId}
+				</if>
+       		<if test="parentId != null and parentId !=''">
+					OR ParentId = #{parentId}
+			</if>
+       	</where> 
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="delete_batch">
+        DELETE FROM system_resource 
+        WHERE ResourceId IN 
+        <foreach item="ids" collection="list" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+    </delete>
+
+	<!-- selsect -->
+	<select id="getById" resultMap="RM_SystemResource">
+		SELECT
+		<include refid="columns" />
+		FROM system_resource
+		WHERE
+		ResourceId = #{resourceId}
+	</select>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<sql id="findPage_where">
+		<where>
+				<if test="model.resourceId != null">
+					AND ResourceId = #{model.resourceId}
+				</if>
+				<if test="model.resourceName != null and model.resourceName !=''">
+					AND ResourceName = #{model.resourceName}
+				</if>
+				<if test="model.engName != null and model.engName !=''">
+					AND EngName = #{model.engName}
+				</if>
+				<if test="model.parentId != null">
+					AND ParentId = #{model.parentId}
+				</if>
+				<if test="model.path != null and model.path !=''">
+					AND Path = #{model.path}
+				</if>
+				<if test="model.sourceIcon != null and model.sourceIcon !=''">
+					AND SourceIcon = #{model.sourceIcon}
+				</if>
+				<if test="model.sourceType != null and model.sourceType !=''">
+					AND SourceType = #{model.sourceType}
+				</if>
+				<if test="model.status != null">
+					AND Status = #{model.status}
+				</if>
+				<if test="model.sort != null">
+					AND Sort = #{model.sort}
+				</if>
+				<if test="model.remark != null and model.remark !=''">
+					AND Remark = #{model.remark}
+				</if>
+				<if test="model.createUser != null">
+					AND CreateUser = #{model.createUser}
+				</if>
+				<if test="model.createTimeBegin != null">
+					AND CreateTime &gt;= #{model.createTimeBegin}
+				</if>
+				<if test="model.createTimeEnd != null">
+					AND CreateTime &lt;= #{model.createTimeEnd}
+				</if>
+				<if test="model.updateTimeBegin != null">
+					AND UpdateTime &gt;= #{model.updateTimeBegin}
+				</if>
+				<if test="model.updateTimeEnd != null">
+					AND UpdateTime &lt;= #{model.updateTimeEnd}
+				</if>
+		</where>
+	</sql>
+
+	<!-- 获取总数 -->
+	<select id="findPage_count" resultType="long">
+		SELECT COUNT(1)
+		FROM system_resource
+		<include refid="findPage_where" />
+	</select>  
+
+	<select id="findPage" resultMap="RM_SystemResource">
+		 SELECT
+		<include refid="columns" />
+		FROM system_resource
+		<include refid="findPage_where" />
+
+		<if test="model.sortColumns != null and model.sortColumns !=''">
+			ORDER BY ${model.sortColumns}
+		</if>
+		
+		<if test="offset != null and pageSize != null">
+			LIMIT  #{offset}, #{pageSize}
+		</if>
+	</select>
+	
+	<!-- 查询模块树treegrid -->
+	<select id="findTreegrid" resultType="com.happy.exam.model.SystemResource">
+		select
+		 resourceId,resourceName,ParentId as _parentId,
+		 path,sourceIcon ,sourceType,status,remark,sort,createTime,updateTime
+		 from system_resource
+		 where status = 1
+		 order by sort
+	</select>
+
+</mapper>

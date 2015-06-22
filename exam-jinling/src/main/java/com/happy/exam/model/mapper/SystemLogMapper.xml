@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.happy.exam.model.SystemLog">
+
+	<resultMap id="RM_SystemLog" type="com.happy.exam.model.SystemLog">
+        <result property="logId" column="LogId"/>
+        <result property="content" column="Content"/>
+        <result property="currentUser" column="CurrentUser"/>
+        <result property="ip" column="Ip"/>
+        <result property="operate" column="Operate"/>
+        <result property="remark" column="Remark"/>
+        <result property="createUser" column="CreateUser"/>
+        <result property="createTime" column="CreateTime"/>
+        <result property="updateTime" column="UpdateTime"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		LogId,Content,CurrentUser,Ip,Operate,Remark,CreateUser,CreateTime,UpdateTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="logId">
+	    <![CDATA[
+	        INSERT INTO system_log ( 
+	        	LogId ,
+	        	Content ,
+	        	CurrentUser ,
+	        	Ip ,
+	        	Operate ,
+	        	Remark ,
+	        	CreateUser ,
+	        	CreateTime ,
+	        	UpdateTime 
+	        ) VALUES (
+	        	#{logId} ,
+	        	#{content} ,
+	        	#{currentUser} ,
+	        	#{ip} ,
+	        	#{operate} ,
+	        	#{remark} ,
+	        	#{createUser} ,
+	        	#{createTime} ,
+	        	#{updateTime} 
+	        )
+	    ]]>
+	</insert>
+	
+	<!-- 批量保存 -->
+	<insert id="insertBatch">
+	    <![CDATA[
+	        INSERT INTO system_log (
+	        		LogId ,
+	        		Content ,
+	        		CurrentUser ,
+	        		Ip ,
+	        		Operate ,
+	        		Remark ,
+	        		CreateUser ,
+	        		CreateTime ,
+	        		UpdateTime 
+	        ) VALUES 
+	         ]]>
+	        <foreach item="item" collection="list"   separator=",">
+	        	(
+					#{item.logId} ,
+					#{item.content} ,
+					#{item.currentUser} ,
+					#{item.ip} ,
+					#{item.operate} ,
+					#{item.remark} ,
+					#{item.createUser} ,
+					#{item.createTime} ,
+					#{item.updateTime} 
+	        	)
+			</foreach>
+	   
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="content != null and content != ''">
+				Content = #{content} ,
+			</if>
+			<if test="currentUser != null and currentUser != ''">
+				CurrentUser = #{currentUser} ,
+			</if>
+			<if test="ip != null and ip != ''">
+				Ip = #{ip} ,
+			</if>
+			<if test="operate != null and operate != ''">
+				Operate = #{operate} ,
+			</if>
+			<if test="remark != null and remark != ''">
+				Remark = #{remark} ,
+			</if>
+			<if test="createUser != null">
+				CreateUser = #{createUser} ,
+			</if>
+			<if test="createTime != null">
+				CreateTime = #{createTime} ,
+			</if>
+			<if test="updateTime != null">
+				UpdateTime = #{updateTime} 
+			</if>
+		</set>
+	</sql>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE system_log
+		<include refid="update_sql" />
+		WHERE
+			LogId = #{logId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="delete">
+    	<![CDATA[
+        	DELETE FROM system_log 
+        	WHERE
+        		LogId = #{logId} 
+    	]]>
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="delete_batch">
+        DELETE FROM system_log 
+        WHERE LogId IN 
+        <foreach item="ids" collection="list" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+    </delete>
+
+	<!-- selsect -->
+	<select id="getById" resultMap="RM_SystemLog">
+		SELECT
+		<include refid="columns" />
+		FROM system_log
+		WHERE
+		LogId = #{logId}
+	</select>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<sql id="findPage_where">
+		<where>
+				<if test="model.logId != null">
+					AND LogId = #{model.logId}
+				</if>
+				<if test="model.content != null and model.content !=''">
+					AND Content = #{model.content}
+				</if>
+				<if test="model.currentUser != null and model.currentUser !=''">
+					AND CurrentUser = #{model.currentUser}
+				</if>
+				<if test="model.ip != null and model.ip !=''">
+					AND Ip = #{model.ip}
+				</if>
+				<if test="model.operate != null and model.operate !=''">
+					AND Operate = #{model.operate}
+				</if>
+				<if test="model.remark != null and model.remark !=''">
+					AND Remark = #{model.remark}
+				</if>
+				<if test="model.createUser != null">
+					AND CreateUser = #{model.createUser}
+				</if>
+				<if test="model.createTimeBegin != null">
+					AND CreateTime &gt;= #{model.createTimeBegin}
+				</if>
+				<if test="model.createTimeEnd != null">
+					AND CreateTime &lt;= #{model.createTimeEnd}
+				</if>
+				<if test="model.updateTimeBegin != null">
+					AND UpdateTime &gt;= #{model.updateTimeBegin}
+				</if>
+				<if test="model.updateTimeEnd != null">
+					AND UpdateTime &lt;= #{model.updateTimeEnd}
+				</if>
+		</where>
+	</sql>
+
+	<!-- 获取总数 -->
+	<select id="findPage_count" resultType="long">
+		SELECT COUNT(1)
+		FROM system_log
+		<include refid="findPage_where" />
+	</select>  
+
+	<select id="findPage" resultMap="RM_SystemLog">
+		 SELECT
+		<include refid="columns" />
+		FROM system_log
+		<include refid="findPage_where" />
+
+		<if test="model.sortColumns != null and model.sortColumns !=''">
+			ORDER BY ${model.sortColumns}
+		</if>
+		
+		<if test="offset != null and pageSize != null">
+			LIMIT  #{offset}, #{pageSize}
+		</if>
+	</select>
+
+</mapper>

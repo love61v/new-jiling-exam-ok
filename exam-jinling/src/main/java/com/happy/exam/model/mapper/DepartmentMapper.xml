@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.happy.exam.model.Department">
+
+	<resultMap id="RM_Department" type="com.happy.exam.model.Department">
+		<result property="deptId" column="DeptId" />
+		<result property="deptName" column="DeptName" />
+		<result property="parentId" column="ParentId" />
+		<result property="areaCode" column="AreaCode" />
+	</resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		DeptId,DeptName,ParentId,AreaCode
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="deptId">
+	    <![CDATA[
+	        INSERT INTO department ( 
+	        	DeptId ,
+	        	DeptName ,
+	        	ParentId ,
+	        	AreaCode 
+	        ) VALUES (
+	        	#{deptId} ,
+	        	#{deptName} ,
+	        	#{parentId} ,
+	        	#{areaCode} 
+	        )
+	    ]]>
+	</insert>
+
+	<!-- 批量保存 -->
+	<insert id="insertBatch">
+	    <![CDATA[
+	        INSERT INTO department (
+	        		DeptId ,
+	        		DeptName ,
+	        		ParentId ,
+	        		AreaCode 
+	        ) VALUES 
+	         ]]>
+		<foreach item="item" collection="list" separator=",">
+			(
+			#{item.deptId} ,
+			#{item.deptName} ,
+			#{item.parentId} ,
+			#{item.areaCode}
+			)
+		</foreach>
+
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="deptName != null and deptName != ''">
+				DeptName = #{deptName} ,
+			</if>
+			<if test="parentId != null">
+				ParentId = #{parentId} ,
+			</if>
+			<if test="areaCode != null and areaCode != ''">
+				AreaCode = #{areaCode}
+			</if>
+		</set>
+	</sql>
+
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE department
+		<include refid="update_sql" />
+		WHERE
+		DeptId = #{deptId}
+	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="delete">
+    	<![CDATA[
+        	DELETE FROM department 
+        	WHERE
+        		DeptId = #{deptId} 
+    	]]>
+	</delete>
+
+	<!-- 批量删除 -->
+	<delete id="delete_batch">
+		DELETE FROM department
+		WHERE DeptId IN
+		<foreach item="ids" collection="list" open="(" separator=","
+			close=")">
+			#{ids}
+		</foreach>
+	</delete>
+
+	<!-- selsect -->
+	<select id="getById" resultMap="RM_Department">
+		SELECT
+		<include refid="columns" />
+		FROM department
+		WHERE
+		DeptId = #{deptId}
+	</select>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<sql id="findPage_where">
+		<where>
+			<if test="model.deptId != null">
+				AND DeptId = #{model.deptId}
+			</if>
+			<if test="model.deptName != null and model.deptName !=''">
+				AND DeptName = #{model.deptName}
+			</if>
+			<if test="model.parentId != null">
+				AND ParentId = #{model.parentId}
+			</if>
+			<if test="model.areaCode != null and model.areaCode !=''">
+				AND AreaCode = #{model.areaCode}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 获取总数 -->
+	<select id="findPage_count" resultType="long">
+		SELECT COUNT(1)
+		FROM department
+		<include refid="findPage_where" />
+	</select>
+
+	<select id="findPage" resultMap="RM_Department">
+		SELECT
+		<include refid="columns" />
+		FROM department
+		<include refid="findPage_where" />
+
+		<if test="model.sortColumns != null and model.sortColumns !=''">
+			ORDER BY ${model.sortColumns}
+		</if>
+
+		<if test="offset != null and pageSize != null">
+			LIMIT #{offset}, #{pageSize}
+		</if>
+	</select>
+</mapper>

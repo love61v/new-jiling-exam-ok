@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.happy.exam.model.ExamUserPaperAnswer">
+
+	<resultMap id="RM_ExamUserPaperAnswer" type="com.happy.exam.model.ExamUserPaperAnswer">
+        <result property="answerId" column="AnswerId"/>
+        <result property="libId" column="LibId"/>
+        <result property="userId" column="UserId"/>
+        <result property="examId" column="ExamId"/>
+        <result property="answer" column="Answer"/>
+        <result property="imgSrc" column="ImgSrc"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		AnswerId,LibId,UserId,ExamId,Answer,ImgSrc
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="answerId">
+	    <![CDATA[
+	        INSERT INTO exam_user_paper_answer ( 
+	        	AnswerId ,
+	        	LibId ,
+	        	UserId ,
+	        	ExamId ,
+	        	Answer ,
+	        	ImgSrc 
+	        ) VALUES (
+	        	#{answerId} ,
+	        	#{libId} ,
+	        	#{userId} ,
+	        	#{examId} ,
+	        	#{answer} ,
+	        	#{imgSrc} 
+	        )
+	    ]]>
+	</insert>
+	
+	<!-- 批量保存 -->
+	<insert id="insertBatch">
+	    <![CDATA[
+	        INSERT INTO exam_user_paper_answer (
+	        		AnswerId ,
+	        		LibId ,
+	        		UserId ,
+	        		ExamId ,
+	        		Answer ,
+	        		ImgSrc 
+	        ) VALUES 
+	         ]]>
+	        <foreach item="item" collection="list"   separator=",">
+	        	(
+					#{item.answerId} ,
+					#{item.libId} ,
+					#{item.userId} ,
+					#{item.examId} ,
+					#{item.answer} ,
+					#{item.imgSrc} 
+	        	)
+			</foreach>
+	   
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="libId != null and libId != ''">
+				LibId = #{libId} ,
+			</if>
+			<if test="userId != null">
+				UserId = #{userId} ,
+			</if>
+			<if test="examId != null">
+				ExamId = #{examId} ,
+			</if>
+			<if test="answer != null and answer != ''">
+				Answer = #{answer} ,
+			</if>
+			<if test="imgSrc != null and imgSrc != ''">
+				ImgSrc = #{imgSrc} 
+			</if>
+		</set>
+	</sql>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE exam_user_paper_answer
+		<include refid="update_sql" />
+		WHERE
+			AnswerId = #{answerId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="delete">
+    	<![CDATA[
+        	DELETE FROM exam_user_paper_answer 
+        	WHERE
+        		AnswerId = #{answerId} 
+    	]]>
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="delete_batch">
+        DELETE FROM exam_user_paper_answer 
+        WHERE AnswerId IN 
+        <foreach item="ids" collection="list" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+    </delete>
+
+	<!-- selsect -->
+	<select id="getById" resultMap="RM_ExamUserPaperAnswer">
+		SELECT
+		<include refid="columns" />
+		FROM exam_user_paper_answer
+		WHERE
+		AnswerId = #{answerId}
+	</select>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<sql id="findPage_where">
+		<where>
+				<if test="model.answerId != null">
+					AND AnswerId = #{model.answerId}
+				</if>
+				<if test="model.libId != null and model.libId !=''">
+					AND LibId = #{model.libId}
+				</if>
+				<if test="model.userId != null">
+					AND UserId = #{model.userId}
+				</if>
+				<if test="model.examId != null">
+					AND ExamId = #{model.examId}
+				</if>
+				<if test="model.answer != null and model.answer !=''">
+					AND Answer = #{model.answer}
+				</if>
+				<if test="model.imgSrc != null and model.imgSrc !=''">
+					AND ImgSrc = #{model.imgSrc}
+				</if>
+		</where>
+	</sql>
+
+	<!-- 获取总数 -->
+	<select id="findPage_count" resultType="long">
+		SELECT COUNT(1)
+		FROM exam_user_paper_answer
+		<include refid="findPage_where" />
+	</select>  
+
+	<select id="findPage" resultMap="RM_ExamUserPaperAnswer">
+		 SELECT
+		<include refid="columns" />
+		FROM exam_user_paper_answer
+		<include refid="findPage_where" />
+
+		<if test="model.sortColumns != null and model.sortColumns !=''">
+			ORDER BY ${model.sortColumns}
+		</if>
+		
+		<if test="offset != null and pageSize != null">
+			LIMIT  #{offset}, #{pageSize}
+		</if>
+	</select>
+
+</mapper>

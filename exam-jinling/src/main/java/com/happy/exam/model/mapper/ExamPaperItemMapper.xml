@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.happy.exam.model.ExamPaperItem">
+
+	<resultMap id="RM_ExamPaperItem" type="com.happy.exam.model.ExamPaperItem">
+        <result property="itemId" column="ItemId"/>
+        <result property="paperId" column="PaperId"/>
+        <result property="typeId" column="TypeId"/>
+        <result property="numbers" column="Numbers"/>
+        <result property="percent" column="Percent"/>
+        <result property="topicType" column="TopicType"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		ItemId,PaperId,TypeId,Numbers,Percent,TopicType
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="itemId">
+	    <![CDATA[
+	        INSERT INTO exam_paper_item ( 
+	        	ItemId ,
+	        	PaperId ,
+	        	TypeId ,
+	        	Numbers ,
+	        	Percent ,
+	        	TopicType 
+	        ) VALUES (
+	        	#{itemId} ,
+	        	#{paperId} ,
+	        	#{typeId} ,
+	        	#{numbers} ,
+	        	#{percent} ,
+	        	#{topicType} 
+	        )
+	    ]]>
+	</insert>
+	
+	<!-- 批量保存 -->
+	<insert id="insertBatch">
+	    <![CDATA[
+	        INSERT INTO exam_paper_item (
+	        		ItemId ,
+	        		PaperId ,
+	        		TypeId ,
+	        		Numbers ,
+	        		Percent ,
+	        		TopicType 
+	        ) VALUES 
+	         ]]>
+	        <foreach item="item" collection="list"   separator=",">
+	        	(
+					#{item.itemId} ,
+					#{item.paperId} ,
+					#{item.typeId} ,
+					#{item.numbers} ,
+					#{item.percent} ,
+					#{item.topicType} 
+	        	)
+			</foreach>
+	   
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="paperId != null">
+				PaperId = #{paperId} ,
+			</if>
+			<if test="typeId != null">
+				TypeId = #{typeId} ,
+			</if>
+			<if test="numbers != null">
+				Numbers = #{numbers} ,
+			</if>
+			<if test="percent != null">
+				Percent = #{percent} ,
+			</if>
+			<if test="topicType != null">
+				TopicType = #{topicType} 
+			</if>
+		</set>
+	</sql>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE exam_paper_item
+		<include refid="update_sql" />
+		WHERE
+			ItemId = #{itemId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="delete">
+    	<![CDATA[
+        	DELETE FROM exam_paper_item 
+        	WHERE
+        		ItemId = #{itemId} 
+    	]]>
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="delete_batch">
+        DELETE FROM exam_paper_item 
+        WHERE ItemId IN 
+        <foreach item="ids" collection="list" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+    </delete>
+
+	<!-- selsect -->
+	<select id="getById" resultMap="RM_ExamPaperItem">
+		SELECT
+		<include refid="columns" />
+		FROM exam_paper_item
+		WHERE
+		ItemId = #{itemId}
+	</select>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<sql id="findPage_where">
+		<where>
+				<if test="model.itemId != null">
+					AND ItemId = #{model.itemId}
+				</if>
+				<if test="model.paperId != null">
+					AND PaperId = #{model.paperId}
+				</if>
+				<if test="model.typeId != null">
+					AND TypeId = #{model.typeId}
+				</if>
+				<if test="model.numbers != null">
+					AND Numbers = #{model.numbers}
+				</if>
+				<if test="model.percent != null">
+					AND Percent = #{model.percent}
+				</if>
+				<if test="model.topicType != null">
+					AND TopicType = #{model.topicType}
+				</if>
+		</where>
+	</sql>
+
+	<!-- 获取总数 -->
+	<select id="findPage_count" resultType="long">
+		SELECT COUNT(1)
+		FROM exam_paper_item
+		<include refid="findPage_where" />
+	</select>  
+
+	<select id="findPage" resultMap="RM_ExamPaperItem">
+		 SELECT
+		<include refid="columns" />
+		FROM exam_paper_item
+		<include refid="findPage_where" />
+
+		<if test="model.sortColumns != null and model.sortColumns !=''">
+			ORDER BY ${model.sortColumns}
+		</if>
+		
+		<if test="offset != null and pageSize != null">
+			LIMIT  #{offset}, #{pageSize}
+		</if>
+	</select>
+
+</mapper>

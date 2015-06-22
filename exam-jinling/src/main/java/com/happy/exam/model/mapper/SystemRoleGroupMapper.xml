@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.happy.exam.model.SystemRoleGroup">
+
+	<resultMap id="RM_SystemRoleGroup" type="com.happy.exam.model.SystemRoleGroup">
+        <result property="id" column="Id"/>
+        <result property="roleId" column="RoleId"/>
+        <result property="groupId" column="GroupId"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		Id,RoleId,GroupId
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	    <![CDATA[
+	        INSERT INTO system_role_group ( 
+	        	Id ,
+	        	RoleId ,
+	        	GroupId 
+	        ) VALUES (
+	        	#{id} ,
+	        	#{roleId} ,
+	        	#{groupId} 
+	        )
+	    ]]>
+	</insert>
+	
+	<!-- 批量保存 -->
+	<insert id="insertBatch">
+	    <![CDATA[
+	        INSERT INTO system_role_group (
+	        		Id ,
+	        		RoleId ,
+	        		GroupId 
+	        ) VALUES 
+	         ]]>
+	        <foreach item="item" collection="list"   separator=",">
+	        	(
+					#{item.id} ,
+					#{item.roleId} ,
+					#{item.groupId} 
+	        	)
+			</foreach>
+	   
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="roleId != null">
+				RoleId = #{roleId} ,
+			</if>
+			<if test="groupId != null">
+				GroupId = #{groupId} 
+			</if>
+		</set>
+	</sql>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE system_role_group
+		<include refid="update_sql" />
+		WHERE
+			Id = #{id} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="delete">
+    	<![CDATA[
+        	DELETE FROM system_role_group 
+        	WHERE
+        		Id = #{id} 
+    	]]>
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="delete_batch">
+        DELETE FROM system_role_group 
+        WHERE Id IN 
+        <foreach item="ids" collection="list" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+    </delete>
+
+	<!-- selsect -->
+	<select id="getById" resultMap="RM_SystemRoleGroup">
+		SELECT
+		<include refid="columns" />
+		FROM system_role_group
+		WHERE
+		Id = #{id}
+	</select>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<sql id="findPage_where">
+		<where>
+				<if test="model.id != null">
+					AND Id = #{model.id}
+				</if>
+				<if test="model.roleId != null">
+					AND RoleId = #{model.roleId}
+				</if>
+				<if test="model.groupId != null">
+					AND GroupId = #{model.groupId}
+				</if>
+		</where>
+	</sql>
+
+	<!-- 获取总数 -->
+	<select id="findPage_count" resultType="long">
+		SELECT COUNT(1)
+		FROM system_role_group
+		<include refid="findPage_where" />
+	</select>  
+
+	<select id="findPage" resultMap="RM_SystemRoleGroup">
+		 SELECT
+		<include refid="columns" />
+		FROM system_role_group
+		<include refid="findPage_where" />
+
+		<if test="model.sortColumns != null and model.sortColumns !=''">
+			ORDER BY ${model.sortColumns}
+		</if>
+		
+		<if test="offset != null and pageSize != null">
+			LIMIT  #{offset}, #{pageSize}
+		</if>
+	</select>
+
+</mapper>

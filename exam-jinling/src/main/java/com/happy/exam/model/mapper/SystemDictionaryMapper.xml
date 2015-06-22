@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.happy.exam.model.SystemDictionary">
+
+	<resultMap id="RM_SystemDictionary" type="com.happy.exam.model.SystemDictionary">
+        <result property="dictId" column="DictId"/>
+        <result property="dictName" column="DictName"/>
+        <result property="dictValue" column="DictValue"/>
+        <result property="parentId" column="ParentId"/>
+        <result property="typeFlag" column="TypeFlag"/>
+        <result property="remark" column="Remark"/>
+        <result property="createUser" column="CreateUser"/>
+        <result property="createTime" column="CreateTime"/>
+        <result property="updateTime" column="UpdateTime"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		DictId,DictName,DictValue,ParentId,TypeFlag,Remark,CreateUser,CreateTime,UpdateTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="dictId">
+	    <![CDATA[
+	        INSERT INTO system_dictionary ( 
+	        	DictId ,
+	        	DictName ,
+	        	DictValue ,
+	        	ParentId ,
+	        	TypeFlag ,
+	        	Remark ,
+	        	CreateUser ,
+	        	CreateTime ,
+	        	UpdateTime 
+	        ) VALUES (
+	        	#{dictId} ,
+	        	#{dictName} ,
+	        	#{dictValue} ,
+	        	#{parentId} ,
+	        	#{typeFlag} ,
+	        	#{remark} ,
+	        	#{createUser} ,
+	        	#{createTime} ,
+	        	#{updateTime} 
+	        )
+	    ]]>
+	</insert>
+	
+	<!-- 批量保存 -->
+	<insert id="insertBatch">
+	    <![CDATA[
+	        INSERT INTO system_dictionary (
+	        		DictId ,
+	        		DictName ,
+	        		DictValue ,
+	        		ParentId ,
+	        		TypeFlag ,
+	        		Remark ,
+	        		CreateUser ,
+	        		CreateTime ,
+	        		UpdateTime 
+	        ) VALUES 
+	         ]]>
+	        <foreach item="item" collection="list"   separator=",">
+	        	(
+					#{item.dictId} ,
+					#{item.dictName} ,
+					#{item.dictValue} ,
+					#{item.parentId} ,
+					#{item.typeFlag} ,
+					#{item.remark} ,
+					#{item.createUser} ,
+					#{item.createTime} ,
+					#{item.updateTime} 
+	        	)
+			</foreach>
+	   
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="dictName != null and dictName != ''">
+				DictName = #{dictName} ,
+			</if>
+			<if test="dictValue != null and dictValue != ''">
+				DictValue = #{dictValue} ,
+			</if>
+			<if test="parentId != null">
+				ParentId = #{parentId} ,
+			</if>
+			<if test="typeFlag != null and typeFlag != ''">
+				TypeFlag = #{typeFlag} ,
+			</if>
+			<if test="remark != null and remark != ''">
+				Remark = #{remark} ,
+			</if>
+			<if test="createUser != null">
+				CreateUser = #{createUser} ,
+			</if>
+			<if test="createTime != null">
+				CreateTime = #{createTime} ,
+			</if>
+			<if test="updateTime != null">
+				UpdateTime = #{updateTime} 
+			</if>
+		</set>
+	</sql>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE system_dictionary
+		<include refid="update_sql" />
+		WHERE
+			DictId = #{dictId} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="delete">
+    	<![CDATA[
+        	DELETE FROM system_dictionary 
+        	WHERE
+        		DictId = #{dictId} 
+    	]]>
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="delete_batch">
+        DELETE FROM system_dictionary 
+        WHERE DictId IN 
+        <foreach item="ids" collection="list" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+    </delete>
+
+	<!-- selsect -->
+	<select id="getById" resultMap="RM_SystemDictionary">
+		SELECT
+		<include refid="columns" />
+		FROM system_dictionary
+		WHERE
+		DictId = #{dictId}
+	</select>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<sql id="findPage_where">
+		<where>
+				<if test="model.dictId != null">
+					AND DictId = #{model.dictId}
+				</if>
+				<if test="model.dictName != null and model.dictName !=''">
+					AND DictName = #{model.dictName}
+				</if>
+				<if test="model.dictValue != null and model.dictValue !=''">
+					AND DictValue = #{model.dictValue}
+				</if>
+				<if test="model.parentId != null">
+					AND ParentId = #{model.parentId}
+				</if>
+				<if test="model.typeFlag != null and model.typeFlag !=''">
+					AND TypeFlag = #{model.typeFlag}
+				</if>
+				<if test="model.remark != null and model.remark !=''">
+					AND Remark = #{model.remark}
+				</if>
+				<if test="model.createUser != null">
+					AND CreateUser = #{model.createUser}
+				</if>
+				<if test="model.createTimeBegin != null">
+					AND CreateTime &gt;= #{model.createTimeBegin}
+				</if>
+				<if test="model.createTimeEnd != null">
+					AND CreateTime &lt;= #{model.createTimeEnd}
+				</if>
+				<if test="model.updateTimeBegin != null">
+					AND UpdateTime &gt;= #{model.updateTimeBegin}
+				</if>
+				<if test="model.updateTimeEnd != null">
+					AND UpdateTime &lt;= #{model.updateTimeEnd}
+				</if>
+		</where>
+	</sql>
+
+	<!-- 获取总数 -->
+	<select id="findPage_count" resultType="long">
+		SELECT COUNT(1)
+		FROM system_dictionary
+		<include refid="findPage_where" />
+	</select>  
+
+	<select id="findPage" resultMap="RM_SystemDictionary">
+		 SELECT
+		<include refid="columns" />
+		FROM system_dictionary
+		<include refid="findPage_where" />
+
+		<if test="model.sortColumns != null and model.sortColumns !=''">
+			ORDER BY ${model.sortColumns}
+		</if>
+		
+		<if test="offset != null and pageSize != null">
+			LIMIT  #{offset}, #{pageSize}
+		</if>
+	</select>
+
+</mapper>
