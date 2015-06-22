@@ -403,12 +403,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			<if test="model.jobTitle != null and model.jobTitle !=''">
 				AND JobTitle = #{model.jobTitle}
 			</if>
-			<if test="model.jobDateBegin != null">
-				AND JobDate &gt;= #{model.jobDateBegin}
+			<if test="model.jobDate != null">
+				AND JobDate = #{model.jobDate}
 			</if>
-			<if test="model.jobDateEnd != null">
-				AND JobDate &lt;= #{model.jobDateEnd}
-			</if>
+			 
 			<if test="model.jobRemark != null and model.jobRemark !=''">
 				AND JobRemark = #{model.jobRemark}
 			</if>
