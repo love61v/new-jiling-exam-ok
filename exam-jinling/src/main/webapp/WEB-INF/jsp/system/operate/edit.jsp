@@ -11,11 +11,11 @@
 </div>
 
 <div class="form-group" style="margin-top: 20px;">
-   <div class="col-sm-2 controls fade" style="color:red;" id="handleNameTip">
+   <div class="col-sm-2 controls fade" style="color:red;" id="operateNameTip">
    	<i class="icon-exclamation-sign"></i>请输入操作名称</div>
-   <label for="handleName" class="control-label">操作名称</label>
+   <label for="operateName" class="control-label">操作名称</label>
    <div class="col-sm-3 controls">
-      <input type="text" class="input-large span3" name="handleName" id="handleName" value="${operate.handleName }"
+      <input type="text" class="input-large span3" name="operateName" id="operateName" value="${operate.operateName }"
 	            placeholder="操作名称" onfocus="RoleHandler.hideTip(this);">
    </div>
 </div>

@@ -8,14 +8,15 @@ $(function(){
 		    nowrap: false, 
 		    striped: true, 
 		    border: false, 
-		    collapsible:false,//是否可折叠的 
+		    collapsible: false,//是否可折叠的 
+		    singleSelect: true,//是否单选 
 		    fit: true,//自动大小 
-		    idField:'id', 
-		    pagination:true,//分页控件 
-		    treeField:'resourceName',
+		    idField: 'resourceId', 
+		    treeField:	'resourceName',
+		    pagination:	true,//分页控件 
 		    onContextMenu: function(e, row) {
 							e.preventDefault();
-							$(this).treegrid('select', row.id);
+							$(this).treegrid('select', row.resourceId);
 							$('#module_menu').menu('show', {
 								left : e.pageX,
 								top : e.pageY
@@ -52,8 +53,9 @@ var ModuleHandler = {
 	 * @param moduleId  模块ID
 	 */
 	beforeEditModule: function (flag){//加载编辑页面
+		debugger;
 		var rowsChecked = $('#module_table').treegrid('getSelected');//选中的行
-		var moduleId = rowsChecked.id;debugger;
+		var moduleId = rowsChecked.resourceId;
 		var pname = rowsChecked.resourceName;
 		var pid = rowsChecked.moduleId;
 		var url =  ctx + "/module/beforeEditModule.html?_time=" + new Date().getTime();
@@ -61,7 +63,7 @@ var ModuleHandler = {
 		if(flag == 2){//修改
 			var tree = $('#module_table').treegrid('getParent',moduleId);
 			pname = tree.resourceName;
-			pid = tree.id;
+			pid = tree.resourceId;
 			url +="&moduleId=" + moduleId;
 			url +="&pid=" + pid;
 		}else{
@@ -111,7 +113,7 @@ var ModuleHandler = {
     	var parentId = null;
     	 
     	if(rowsChecked){
-    		id = rowsChecked.id;
+    		id = rowsChecked.resourceId;
     		//当前选中的节点存在子节点则说明本身是父节点，则删除其下的所有子节点与自身
     		var childs = $('#module_table').treegrid('getChildren',id);
     		parentId = (childs.length > 0 ? id : null);

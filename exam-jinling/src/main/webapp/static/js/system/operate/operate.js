@@ -46,7 +46,7 @@ $(function(){
 var OperateHandler = {
 	search: function (){//查询用户
 		 var params = {_time: new Date().getTime() };
-		 params.handleName = $.trim($("#handleName").val());
+		 params.operateName = $.trim($("#operateName").val());
 		  
 		 $('#operate_table').datagrid('load',params); 
 	},
@@ -77,7 +77,7 @@ var OperateHandler = {
     },
 	
 	editOperate: function(){//提交编辑用户
-		if(!this.checkOperate("handleName")){
+		if(!this.checkOperate("operateName")){
 			return false;
 		}
 		
