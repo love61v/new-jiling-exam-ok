@@ -29,7 +29,7 @@ public class ExamOperationQuestion extends BaseModel{
      * @备注:分值(存在0.5的值)     
      * @字段:Score DECIMAL(10)  
      */	
-	private Long score;
+	private String score;
 
 	/**
      * @备注:图片路径     
@@ -131,14 +131,14 @@ public class ExamOperationQuestion extends BaseModel{
 	/**
 	 * @param score 分值(存在0.5的值)
 	 */
-	public void setScore(Long score) {
+	public void setScore(String score) {
 		this.score = score;
 	}
 	
 	/**
 	 * @return 分值(存在0.5的值)
 	 */
-	public Long getScore() {
+	public String getScore() {
 		return this.score;
 	}
 	

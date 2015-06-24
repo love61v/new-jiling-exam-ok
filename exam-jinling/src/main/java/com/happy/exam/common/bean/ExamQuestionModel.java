@@ -16,7 +16,8 @@ public class ExamQuestionModel implements Serializable {
 
 	private java.lang.String answer;
 
-	private Long score;
+ 
+	private String score;
 
 	private java.lang.Long typeId;
 	
@@ -56,11 +57,12 @@ public class ExamQuestionModel implements Serializable {
 		this.answer = answer;
 	}
 
-	public Long getScore() {
+ 
+	public String getScore() {
 		return score;
 	}
 
-	public void setScore(Long score) {
+	public void setScore(String score) {
 		this.score = score;
 	}
 

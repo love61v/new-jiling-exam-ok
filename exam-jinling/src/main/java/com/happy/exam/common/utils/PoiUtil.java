@@ -9,13 +9,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import com.alibaba.fastjson.JSON;
 import com.happy.exam.common.bean.ExamQuestionModel;
 import com.happy.exam.common.enums.ExamTypeEnum;
 
@@ -27,9 +25,7 @@ import com.happy.exam.common.enums.ExamTypeEnum;
  * @date : 2015年5月17日 下午5:37:55
  */
 public class PoiUtil {
-
-	// static/upload/singlechoice.xls
-
+ 
 	/**
 	 * 加载excel文件
 	 * 
@@ -58,7 +54,8 @@ public class PoiUtil {
 	 * @return
 	 */
 	public static List<ExamQuestionModel> parseList(String filepath,
-			ExamQuestionModel model) {
+ 
+			ExamQuestionModel model, String type) {
 		List<ExamQuestionModel> dataSet = new ArrayList<ExamQuestionModel>();
 
 		HSSFWorkbook workbook = readFile(filepath);
@@ -74,32 +71,20 @@ public class PoiUtil {
 			if (null == row) {
 				continue;
 			}
+ 
+			String value = "";
+			HSSFCell cell = row.getCell(0); // 第1个单元格为问题
+			value = cell.getStringCellValue();
+			model = parseData(value, model);
 
-			int cells = row.getPhysicalNumberOfCells();// 列
-			for (int c = 0; c < cells; c++) {
-				HSSFCell cell = row.getCell(c); // 单元格
-				String value = "";
-
-				switch (cell.getCellType()) {
-				case HSSFCell.CELL_TYPE_FORMULA: // 公式
-					value = cell.getCellFormula();
-					break;
-				case HSSFCell.CELL_TYPE_NUMERIC: // 数字
-					value = cell.getNumericCellValue() + "";
-					break;
-
-				case HSSFCell.CELL_TYPE_STRING: // 字符
-					value = cell.getStringCellValue();
-					ExamQuestionModel data = parseData(value, model);
-
-					dataSet.add(data);
-					break;
-
-				default:
-					break;
-				}
-
+			if (type.equals(ExamTypeEnum.SHORTS.getKey())
+					|| type.equals(ExamTypeEnum.OPERATE.getKey())) {// 简答题或者操作题目
+				HSSFCell cell2 = row.getCell(1); // 第2个单元格为答案
+				model.setAnswer(cell2.getStringCellValue());
 			}
+
+			dataSet.add(model);
+
 		}
 		return dataSet;
 
@@ -107,11 +92,15 @@ public class PoiUtil {
 
 	/**
 	 * 解析单元格行数据到实体中
-	 * @param value     内容
-	 * @param tempModel 实体(已包含有当前登陆用户,typeid,操作时间的设值)
+	 * 
+	 * @param value
+	 *            内容
+	 * @param tempModel
+	 *            实体(已包含有当前登陆用户,typeid,操作时间的设值)
 	 * @return
 	 */
-	private static ExamQuestionModel parseData(String value,ExamQuestionModel tempModel) {
+	private static ExamQuestionModel parseData(String value,
+			ExamQuestionModel tempModel) {
 		ExamQuestionModel model = new ExamQuestionModel();
 		String type = tempModel.getType(); // 题型
 
@@ -120,24 +109,55 @@ public class PoiUtil {
 			model.setQuestion(getSingleMultiQuestion(value, type)); // 设置问题
 		}
 
-		if (type.equals(ExamTypeEnum.MULTI.getKey())) {//多选题
+ 
+		if (type.equals(ExamTypeEnum.MULTI.getKey())) {// 多选题
 			model.setAnswer(getSingleMultiAnswer(value));
-			model.setQuestion(getSingleMultiQuestion(value, type)); 
+			model.setQuestion(getSingleMultiQuestion(value, type));
 		}
 
-		if (type.equals(ExamTypeEnum.FILL.getKey())) {//填空题
-
+		if (type.equals(ExamTypeEnum.FILL.getKey())) {// 填空题
+			String answer = getFillAnswer(value);
+			model.setAnswer(answer);
+			model.setQuestion(getFillQuestion(value, answer));
 		}
 
-		if (type.equals(ExamTypeEnum.SHORTS.getKey())) {//简答题
-
+		if (type.equals(ExamTypeEnum.SHORTS.getKey())) {// 简答题,处理问题与分值
+			model.setScore(getShortsScore(value)); // 分值
+			model.setQuestion(value); // 问题
 		}
 
-		if (type.equals(ExamTypeEnum.OPERATE.getKey())) {//操作题
-
+		if (type.equals(ExamTypeEnum.OPERATE.getKey())) {// 操作题
+			model.setScore(getShortsScore(value)); // 分值
+			model.setQuestion(value); // 问题
 		}
 
 		return model;
+	}
+
+	/**
+	 * 获取简答题的分值
+	 *
+	 * @author : <a href="mailto:h358911056@qq.com">hubo</a> 2015年6月24日
+	 *         下午10:55:08
+	 * @param value
+	 * @return
+	 */
+	private static String getShortsScore(String value) {
+		value = adjust(value);
+		Pattern p = Pattern.compile(StrUtil.REG_ALL);
+		Matcher matcher = p.matcher(value);
+		if (matcher.find()) {
+			String temp = StrUtil.replaceBracketNull(matcher.group(0));
+			if (temp.matches(StrUtil.REG_NUMBER)) {
+				value = temp;
+			} else if (temp.indexOf("分") > 0) {
+				value = temp.substring(0, temp.indexOf("分"));
+			} else {
+				value = "0";
+			}
+		}
+
+		return value;
 	}
 
 	/**
@@ -149,10 +169,23 @@ public class PoiUtil {
 	 * @return
 	 */
 	private static String getSingleMultiQuestion(String content, String point) {
-		content = StrUtil.replaceBracket(content).replaceAll(StrUtil.REG_S, "");
+ 
+		content = adjust(content);
 		content = content.replaceAll(StrUtil.REG_AZ, "(  " + point + "  )");
 
 		return content;
+	}
+
+	/**
+	 * 将内容中的全角括号替换，且去除所有空格
+	 *
+	 * @author : <a href="mailto:h358911056@qq.com">hubo</a> 2015年6月24日
+	 *         下午10:50:11
+	 * @param content
+	 * @return
+	 */
+	private static String adjust(String content) {
+		return StrUtil.replaceBracket(content).replaceAll(StrUtil.REG_S, "");
 	}
 
 	/**
@@ -162,8 +195,8 @@ public class PoiUtil {
 	 * @return
 	 */
 	private static String getSingleMultiAnswer(String value) {
-		value = StrUtil.replaceBracket(value).replaceAll(StrUtil.REG_S, "");;
-
+ 
+		value = adjust(value);
 		Pattern p = Pattern.compile(StrUtil.REG_AZ);
 		Matcher matcher = p.matcher(value);
 		if (matcher.find()) {
@@ -177,50 +210,55 @@ public class PoiUtil {
 		}
 		return value.toUpperCase();
 	}
-	
+ 
+
 	/**
-	 * 填空题答案解析
+	 * 填空题答案解析 格式：散槽是(加深(加强))的解析为answer为"加深|加强"
 	 * 
 	 * @param value
 	 * @return
 	 */
 	private static String getFillAnswer(String value) {
-		value = StrUtil.replaceBracket(value).replaceAll(StrUtil.REG_S, "");
-
-		Pattern p = Pattern.compile(StrUtil.REG_More);
-		Matcher matcher = p.matcher(value);
+ 
 		StringBuffer sbf = new StringBuffer();
-		while (matcher.find()) {
-			value = StrUtil.replaceBracketNull(matcher.group());
-			sbf.append(value);
-			sbf.append(";");
+		value = adjust(value);
 
+		String result = "";
+		Pattern pattern = Pattern.compile(StrUtil.REG_MORE);
+		Matcher matcher = pattern.matcher(value);
+		int i = 0;
+		while (matcher.find()) {
+			result = matcher.group(0);
+			result = result.replaceAll("\\)", "");
+			result = result.replaceFirst("\\(", "");
+			result = result.replaceFirst("\\(", "|");
+			if (i > 0) {
+				sbf.append(";");
+			}
+			sbf.append(result);
+			i++;
 		}
+
 		return sbf.toString();
 	}
 
-	public static void main(String[] args) {
-		/*
-		 * String regex = "\\([A-Za-z]+\\)"; String str =
-		 * "根据《中华人民共和国气象法》，\n在2007年6月12日中国气象局第16号令《突发气象灾害预警信号发布于传播办法》中，规定发布预警信号的气象灾害分为台风、暴雨等总共（  D  ）类。"
-		 * ; str = StrUtil.replaceBracket(str).replaceAll("/\\s+|\\s|/g/", "");
-		 * str = str.replaceAll(regex, "( @@ )");
-		 * 
-		 * System.out.println(str);
-		 */
+	/**
+	 * 填空题答案解析 格式：散槽是(加深(加强))的解析为answer为"加深|加强"
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private static String getFillQuestion(String txt, String answer) {
+		txt = adjust(txt);
 
-		/*String filepath = "d:/singlechoice.xls";
-		ExamQuestionModel model = new ExamQuestionModel();
-		model.setType(ExamTypeEnum.SINGLE.getKey());
-		List<ExamQuestionModel> parseList = parseList(filepath, model);
-		
-		System.out.println(JSON.toJSONString(parseList));*/
-		
-		
-		String str = "对称性的槽没有发展，疏散槽是（加深（加强））的，汇合槽是（填塞（减弱））的；槽前疏散，槽后汇合，则槽（移动迅速）；当高度槽落后于冷舌时，槽将（减弱）。";
-		 
-		str =getFillAnswer(str);
-		
-		System.out.println(str);
+		String[] arr = answer.split(";");
+		for (int i = 0, len = arr.length; i < len; i++) {
+			String temp = arr[i].replace("|", "(");
+			txt = txt.replace(temp, ExamTypeEnum.FILL.getKey() + i);
+		}
+
+		return txt;
+
 	}
+
 }
