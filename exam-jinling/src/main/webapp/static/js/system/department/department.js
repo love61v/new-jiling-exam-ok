@@ -3,22 +3,22 @@ $(function(){
 
 	$('#department_table').treegrid({  
 			url: ctx +'/department/list.json', 
-		    height: 'auto', 
-		    fitColumns: true,
-		    nowrap: false, 
-		    striped: true, 
-		    border: false, 
-		    collapsible:false,//是否可折叠的 
-		    fit: true,//自动大小 
-		    idField:'id', 
-		    pagination:true,//分页控件 
-		    treeField:'deptName',
-		    onContextMenu: function(e, row) {
-							e.preventDefault();
-							$(this).treegrid('select', row.id);
-							$('#department_menu').menu('show', {
-								left : e.pageX,
-								top : e.pageY
+		    height: 		'auto', 
+		    fitColumns: 	true,
+		    nowrap: 		false, 
+		    striped: 		true, 
+		    border: 		false, 
+		    collapsible:	false,//是否可折叠的 
+		    fit: 			true,//自动大小 
+		    idField:		'deptId', 
+		    pagination:		true,//分页控件 
+		    treeField:		'deptName',
+		    onContextMenu: 	function(e, row) {
+								e.preventDefault();
+								$(this).treegrid('select', row.deptId);
+								$('#department_menu').menu('show', {
+									left : e.pageX,
+									top : e.pageY
 							});
 			}
 	}); 
@@ -53,7 +53,7 @@ var DepartmentHandler = {
 	 */
 	beforeEditDepartment: function (flag){//加载编辑页面
 		var rowsChecked = $('#department_table').treegrid('getSelected');//选中的行
-		var departmentId = rowsChecked.id;debugger;
+		var departmentId = rowsChecked.deptId; 
 		var pname = rowsChecked.deptName;
 		var pid = departmentId;
 		var url =  ctx + "/department/beforeEditDepartment.html?_time=" + new Date().getTime();
@@ -61,8 +61,8 @@ var DepartmentHandler = {
 		if(flag == 2){//修改
 			var tree = $('#department_table').treegrid('getParent',departmentId);
 			pname = tree.deptName;
-			pid = tree.id;
-			url +="&departmentId=" + departmentId;
+			pid = tree.deptId;
+			url +="&deptId=" + departmentId;
 			url +="&pid=" + pid;
 		}else{
 			url +="&pid=" + departmentId;
@@ -111,7 +111,7 @@ var DepartmentHandler = {
     	var parentId = null;
     	 
     	if(rowsChecked){
-    		id = rowsChecked.id;
+    		id = rowsChecked.deptId;
     		//当前选中的节点存在子节点则说明本身是父节点，则删除其下的所有子节点与自身
     		var childs = $('#department_table').treegrid('getChildren',id);
     		parentId = (childs.length > 0 ? id : null);
@@ -119,7 +119,7 @@ var DepartmentHandler = {
     	
     	var url =  ctx + "/department/deleteDepartment.json";
     	$.post(url,{
-    		resourceId: 		id, 
+    		deptId: 			id, 
     		parentId: 			parentId,
     		_time: 				new Date().getTime()
     	},function(data){

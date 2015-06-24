@@ -82,17 +82,21 @@ public class ModuleAction extends BaseAction {
 	 * @throws UnsupportedEncodingException 
 	 */
 	@RequestMapping(value = "/beforeEditModule.html", method = RequestMethod.GET)
-	public String beforeEditModule(Model model, String moduleId,String pname,String pid,String flag) throws UnsupportedEncodingException {
-		if(StringUtils.isNotBlank(flag) && flag.equals("2")){//修改用户信息回选
-			SystemResource module = systemResourceService.getById(Long.valueOf(moduleId), SystemResource.class);
+	public String beforeEditModule(Model model, String moduleId, String pname,
+			String pid, String flag) throws UnsupportedEncodingException {
+		
+		if (StringUtils.isNotBlank(flag) && flag.equals("2")) {// 修改用户信息回选
+			SystemResource module = systemResourceService.getById(
+					Long.valueOf(moduleId), SystemResource.class);
 			model.addAttribute("module", module);
 		}
-		
+
+		if (StringUtils.isNotBlank(pname)) {
+			model.addAttribute("pname",java.net.URLDecoder.decode(pname, "UTF-8"));
+		}
+
 		model.addAttribute("flag", flag);
 		model.addAttribute("pid", pid);
-		if(StringUtils.isNotBlank(pname)){
-			model.addAttribute("pname", java.net.URLDecoder.decode(pname,"UTF-8"));
-		}
 		
 		return "/system/module/edit";
 	}

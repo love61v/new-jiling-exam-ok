@@ -39,7 +39,7 @@
 	<mvc:resources mapping="/fonts/**" location="/static/fonts/" />
 	<mvc:resources mapping="/js/**" location="/static/js/" />
 	<mvc:resources mapping="/images/**" location="/static/images/" />
-	<mvc:resources mapping="/template/**" location="/static/images/" />
-	<mvc:resources mapping="/upload/**" location="/static/images/" />
+	<mvc:resources mapping="/template/**" location="/static/template/" />
+	<mvc:resources mapping="/upload/**" location="/static/upload/" />
 	 
 </beans>

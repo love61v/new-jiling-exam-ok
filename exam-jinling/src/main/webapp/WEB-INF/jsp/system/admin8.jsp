@@ -83,16 +83,22 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				</ul>
 			</div>
 
-			<div title="合同管理" style="overflow: auto; padding: 10px;">
+			<div title="试题管理" style="overflow: auto; padding: 10px;">
 				<ul class='nav nav-stacked'>
 					<li><a href='javascript:void(0);' onclick="toMain(this);">
-							<i class='icon-user'></i> <span>合同分类管理</span>
+							<i class='icon-user'></i> <span>单选题管理</span>
 					</a></li>
 					<li><a href='javascript:void(0);' onclick="toMain(this);">
-							<i class='icon-cog'></i> <span>合同上传管理</span>
+							<i class='icon-cog'></i> <span>填空题管理</span>
 					</a></li>
 					<li><a href='javascript:void(0);' onclick="toMain(this);">
-							<i class='icon-signout'></i> <span>合同查询管理</span>
+							<i class='icon-signout'></i> <span>多选题管理</span>
+					</a></li>
+					<li><a href='javascript:void(0);' onclick="toMain(this);">
+							<i class='icon-signout'></i> <span>简答题管理</span>
+					</a></li>
+					<li><a href='javascript:void(0);' onclick="toMain(this);">
+							<i class='icon-signout'></i> <span>操作题管理</span>
 					</a></li>
 				</ul>
 			</div>
@@ -176,7 +182,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			else if(module_name == "模块管理"){
 				url = "${ctx}/module/list.html";
 			}else if(module_name == "部门管理"){
-				url = "${ctx}/department/list.html" + "?_time=" + new Date().getTime();
+				url = "${ctx}/department/list.html";
+			}else if(module_name == "单选题管理"){
+				url = "${ctx}/singlechoice/list.html";
 			}
 			else{
 			 	url = "${ctx}/user/list.html";

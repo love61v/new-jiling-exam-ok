@@ -53,7 +53,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<div class="menu-sep"></div>
 		<div onclick="collapse('module_table')"> <i class="icon-folder-close"></i>收缩</div>
 		<div class="menu-sep"></div>
-		<div onclick="expand('module_table')"><i class="icon-folder-open"></i>展开</div>
+		<div onclick="expand('module_table','resourceId')"><i class="icon-folder-open"></i>展开</div>
 	</div>
     
     

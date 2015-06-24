@@ -146,4 +146,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			LIMIT #{offset}, #{pageSize}
 		</if>
 	</select>
+	
+	<!-- 查询树 -->
+	<select id="findTreegrid" resultType="com.happy.exam.model.Department">
+		select deptId,deptName,ParentId as _parentId,areaCode
+		from department
+	</select>
 </mapper>

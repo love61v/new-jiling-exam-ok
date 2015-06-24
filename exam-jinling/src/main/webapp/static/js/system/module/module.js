@@ -53,7 +53,7 @@ var ModuleHandler = {
 	 * @param moduleId  模块ID
 	 */
 	beforeEditModule: function (flag){//加载编辑页面
-		debugger;
+	 
 		var rowsChecked = $('#module_table').treegrid('getSelected');//选中的行
 		var moduleId = rowsChecked.resourceId;
 		var pname = rowsChecked.resourceName;
