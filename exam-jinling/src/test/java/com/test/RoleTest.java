@@ -51,7 +51,7 @@ public class RoleTest {
 //		m.setPath("/user/changePassword.html");
 //		m.setParentId("18676996EAE342E5BBFEB22829FE1177");
 		
-		//systemResourceService.save(m);
+		systemResourceService.save(m);
 	}
  
 	

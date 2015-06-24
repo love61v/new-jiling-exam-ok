@@ -21,7 +21,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import com.alibaba.fastjson.JSON;
 import com.happy.exam.common.pager.Pager;
 import com.happy.exam.common.utils.Md5;
+import com.happy.exam.model.ExamFillBlanks;
 import com.happy.exam.model.SystemUser;
+import com.happy.exam.service.ExamFillBlanksService;
 import com.happy.exam.service.SystemUserService;
  
 
@@ -39,6 +41,7 @@ import com.happy.exam.service.SystemUserService;
 public class UserTest {
 
 	@Autowired private SystemUserService systemUserService;
+	@Autowired private ExamFillBlanksService examFillBlanksService;
 	
  
 	/**
@@ -53,6 +56,15 @@ public class UserTest {
 		SystemUser = systemUserService.getUniqueObject(SystemUser);
 		
 		print(SystemUser);
+	}
+	
+	@Test public void examFillBlanksTest() {
+		ExamFillBlanks e = new ExamFillBlanks();
+		e.setAnswer("aaa?");
+		e.setQuestion("adfdsfsdfdsfs");
+		e.setScore("1.5");
+		
+		examFillBlanksService.save(e);
 	}
 	
 	/**

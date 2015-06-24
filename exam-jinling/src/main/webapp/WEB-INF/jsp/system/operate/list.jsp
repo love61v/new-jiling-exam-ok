@@ -34,7 +34,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <thead>
             <tr>
                 <th data-options="field:'operateId',width:50,align:'center'">编号</th>
-                <th data-options="field:'handleName',width:50,align:'center'">名称</th>
+                <th data-options="field:'operateName',width:50,align:'center'">名称</th>
                 <th data-options="field:'engName',width:50,align:'center'">英文名</th>
                 <th data-options="field:'status',width:30,align:'center',formatter: formatStatus">状态</th>
                 <th data-options="field:'remark',width:50,align:'center'">备注</th>
@@ -45,7 +45,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    	<div id="operate_toolbar">
    		<div class="form-inline" >
    			<form id="operate_form" style="margin-top:20px;">
-		   		<input type="text" class="form-control" id="handleName" placeholder="请输入名称">
+		   		<input type="text" class="form-control" id="operateName" placeholder="请输入名称">
 		    	<a class="btn btn-success" href="javascript:void(0)"   onclick="OperateHandler.search();">
 					<i class="icon-search icon-white"></i>查询
 				</a>

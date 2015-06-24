@@ -98,7 +98,7 @@ Date.prototype.addYears = function(y)
     $.fn.serializeJson=function(){  
         var serializeObj={};  
         var array=this.serializeArray();  
-        var str=this.serialize();  
+       
         $(array).each(function(){  
             if(serializeObj[this.name]){  
                 if($.isArray(serializeObj[this.name])){  
@@ -146,20 +146,21 @@ function tipMsg(id,content,position){//气泡提示
 	
 	/**
 	 * treegrid展示与收缩事件
-	 * 
-	 * @param id treegrid的id
+	 * @param treegrid  树grid的id
+	 * @param idField   行数据的idField
 	 */
-	function collapse(id){
-		var node = $('#' + id).treegrid('getSelected');
+	function collapse(treegrid,idField){
+		debugger;
+		var node = $('#' + treegrid).treegrid('getSelected');
 		if (node){
-			$('#' + id).treegrid('collapse', node.id);
+			$('#' + id).treegrid('collapse', node.idField);
 		}
 	};
 	
-	function expand(id){
-		var node = $('#' + id).treegrid('getSelected');
+	function expand(treegrid,idField){
+		var node = $('#' + treegrid).treegrid('getSelected');
 		if (node){
-			$('#' + id).treegrid('expand', node.id);
+			$('#' + treegrid).treegrid('expand', node.idField);
 		}
 	};
  

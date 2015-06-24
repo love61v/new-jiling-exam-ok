@@ -13,7 +13,7 @@
 		</tr>
 		<tr>
 			<c:forEach items="${operatelist}" var="el">
-				<th data-options="field:'id',width:60,align:'center', formatter:formatOperate">${el.handleName }</th>
+				<th data-options="field:'id',width:60,align:'center', formatter:formatOperate">${el.operateName }</th>
 			</c:forEach>
 		</tr>
 	</thead>
