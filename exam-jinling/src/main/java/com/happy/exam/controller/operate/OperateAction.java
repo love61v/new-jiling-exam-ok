@@ -1,6 +1,7 @@
 package com.happy.exam.controller.operate;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,6 +67,23 @@ public class OperateAction extends BaseAction{
 	}
 	
 	/**
+	 * 返回dataGrid角色数据
+	 *
+	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
+	 * @date 2015年5月16日 下午11:56:08
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/findlist.json", method = RequestMethod.POST)
+	@ResponseBody
+	public List<SystemOperate> findlist() {
+		SystemOperate operate = new SystemOperate();
+		operate.setStatus(1);
+
+		return systemOperateService.findList(operate);
+	}
+	
+	/**
 	 * 跳转到编辑用户页面
 	 *
 	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午5:11:03
@@ -85,7 +103,7 @@ public class OperateAction extends BaseAction{
 	}
 	
 	/**
-	 * 编辑用户
+	 * 编辑
 	 * 存在ID则修改，否则添加
 	 *
 	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午11:45:43
@@ -113,7 +131,7 @@ public class OperateAction extends BaseAction{
 	}
 	
 	/**
-	 * 删除用户
+	 * 删除
 	 *
 	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午3:30:41
 	 * @param ids id串

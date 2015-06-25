@@ -151,6 +151,29 @@ var ModuleHandler = {
         	 //return false;
         }
         return true;
+    },
+    
+    choiceModuleTree: function(){//修改时弹出树
+    	$('#module_treegrid').treegrid('unselectAll');
+    	var url =  ctx + "/module/choiceModuleTree.html?_time=" + new Date().getTime();
+    	showModal("choiceModuleTree", url);
+    },
+    
+    selectedTreeNode: function(){//选中树节点，回选数据到表单
+        var row = $('#module_treegrid').treegrid('getSelected');//选中的行
+    	$("#parentId").val( row.id);
+    	$("#parentName").val(row.resourceName);
+    	
+    	this.closeModalTree();
+    },
+    
+    closeModalTree: function(){ //close窗体
+    	$("#choiceModuleTree").modal('hide');
+    },
+    
+    reloadTree: function(){
+    	$('#module_treegrid').treegrid('reload');
+    	$('#module_treegrid').treegrid('unselectAll');
     }
     
 };

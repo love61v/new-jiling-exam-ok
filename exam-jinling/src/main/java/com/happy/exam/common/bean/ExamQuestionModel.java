@@ -15,7 +15,6 @@ public class ExamQuestionModel implements Serializable {
 	private java.lang.String question;
 
 	private java.lang.String answer;
-
  
 	private String score;
 

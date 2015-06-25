@@ -3,9 +3,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
-<form class="form-horizontal" module="form" id="moduleForm">
+<form class="form-horizontal" module="form" id="examtypeForm">
 	<span style="display:none;">
-	      <input type="text"   name="resourceId" id="resourceId" value="${module.resourceId }"  placeholder="当前ID">
+	      <input type="text"   name="id" id="id" value="${module.id }"  placeholder="当前ID">
 	      <input type="text"   name="parentId" id="parentId" value="${pid }"  placeholder="父模ID">
 	   
 	</span>
@@ -16,18 +16,18 @@
 		         value="${pname }" readonly="readonly"  placeholder="上级模块名">
 		<!-- 修改时可变任意节点 -->
 		<c:if test="${flag == 2 }">
-			<a href="javascript:void(0)" onclick="ModuleHandler.choiceModuleTree();">选择...</a>
+			<a href="javascript:void(0)" onclick="examtypeHandler.choiceExamTypeTree();">选择...</a>
 		</c:if>
 	   </div>
 	</div>
 	
 	<div class="form-group"  style="margin-top: 10px;">
-	   <div class="col-sm-2 controls fade" style="color:red;" id="moduleNameTip">
-	   	<i class="icon-exclamation-sign"></i>请输入模块名</div>
-	   <label for="moduleName" class="control-label">模块名</label>
+	   <div class="col-sm-2 controls fade" style="color:red;" id="typeNameTip">
+	   	<i class="icon-exclamation-sign"></i>请输入分类名称</div>
+	   <label for="typeName" class="control-label">分类名</label>
 	   <div class="col-sm-3 controls">
-	      <input type="text" class="input-large span3" name="resourceName" id="resourceName" value="${module.resourceName }"
-		            placeholder="模块名" onfocus="ModuleHandler.hideTip(this);">
+	      <input type="text" class="input-large span3" name="typeName" id="typeName" value="${module.typeName }"
+		            placeholder="分类名称" onfocus="examtypeHandler.hideTip(this);">
 	   </div>
 	</div>
 	
@@ -39,13 +39,7 @@
 	   </div>
 	</div>
 	
-	<div class="form-group" style="margin-top: 30px;">
-	   <label for="engName" class="col-sm-2 control-label">地址</label>
-	   <div class="col-sm-3 controls">
-	      <input type="text" class="input-large span3" name="path" id="path" value="${module.path }"
-		            placeholder="地址">
-	   </div>
-	</div>
+	
 	
 	<div class="form-group" style="margin-top: 30px;">
 	   <label for="sort" class="col-sm-2 control-label">排序</label>
@@ -77,22 +71,22 @@
 </form>
 
  <!--模块编辑 -->
- <div class="modal fade" id="choiceModuleTree">
+ <div class="modal fade" id="choiceExamTypeTree">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" id="cancleChoiceModule"  onclick="ModuleHandler.closeModalTree();" aria-hidden="true">×</button>
+        <button type="button" class="close" id="cancleChoiceExamType"  onclick="ModuleHandler.closeModalTree();" aria-hidden="true">×</button>
         <h4 class="modal-title"><span style="color:blue;">选择模块</span></h4>
       </div>
       <!-- remote加载的页面渲染到此容器中 -->
        <div class="modal-body"></div>
       
       <div class="modal-footer">
-       <a class="btn btn-success" href="javascript:void(0)"   onclick="ModuleHandler.reloadTree();">
+       <a class="btn btn-success" href="javascript:void(0)"   onclick="examtypeHandler.reloadTree();">
 			<i class="icon-refresh icon-white"></i>刷新
 		</a>
-        <button type="button" class="btn btn-danger" onclick="ModuleHandler.closeModalTree();"><i class="icon-remove icon-white"></i>取消</button>
-        <button type="button" class="btn btn-success" onclick="ModuleHandler.selectedTreeNode();"><i class="icon-ok icon-white"></i>&nbsp;确&nbsp;&nbsp;定</button>
+        <button type="button" class="btn btn-danger" onclick="examtypeHandler.closeModalTree();"><i class="icon-remove icon-white"></i>取消</button>
+        <button type="button" class="btn btn-success" onclick="examtypeHandler.selectedTreeNode();"><i class="icon-ok icon-white"></i>&nbsp;确&nbsp;&nbsp;定</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
