@@ -48,9 +48,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<div class="menu-sep"></div>
 		<div onclick="DepartmentHandler.beforeDeleteDepartment();"><i class="icon-remove"></i>删除</div>
 		<div class="menu-sep"></div>
-		<div onclick="collapse('department_table')"> <i class="icon-folder-close"></i>收缩</div>
+		<div onclick="collapse('department_table','deptId')"> <i class="icon-folder-close"></i>收缩</div>
 		<div class="menu-sep"></div>
-		<div onclick="expand('department_table')"><i class="icon-folder-open"></i>展开</div>
+		<div onclick="expand('department_table', 'deptId')"><i class="icon-folder-open"></i>展开</div>
 	</div>
     
     
