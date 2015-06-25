@@ -68,21 +68,56 @@ var RoleHandler = {
 		}
 		
 		//弹出窗体
-        $("#editRole").modal({
-        	 backdrop: 'static',
-    		 keyboard: false,
-        	 remote: url
-        }); 
+		showModal('editRole',url);
     },
     
-    authzResource: function(){//分配资源
-    	var url =  ctx + "/role/authzRole.html";
+    authzResource: function(roleId){//分配资源页面
+    	var url =  ctx + "/role/authzRole.html?roleId=" + roleId + "&t" + Math.random(1000);
+    	$.get(url, null, function(data){
+    	    $('#authzRole .modal-body').html(data); //把页面读取到modal中每次请求新数据
+	    });
+	    $('#authzRole').modal({show:true,backdrop:false});
+    },
+    
+    authzRole: function(){//保存授权角色资源与操作权
+    	var roleId = $("#authc_roleId").val();//角色ID
+    	var arr = []; 
     	
-        $("#authzRole").modal({//弹出窗体
-        	 backdrop: 'static',
-    		 keyboard: false,
-        	 remote: url
-        }); 
+    	var moduel_chkedArr = $("input:checkbox[name^='module_']:checked");//所有选中的模块
+    	if(moduel_chkedArr.length > 0){
+			for (var i = 0, len = moduel_chkedArr.length; i < len; i++) {
+				var moduleId = moduel_chkedArr[i].value;  //模块ID
+				var result = {}; 
+				var operateId = ""; //操作 ID
+				var j = 0;
+				
+				$("input:checkbox[name^='oper_"+moduleId+"']:checked").each(function(){
+					operateId += (j > 0 ? ",": "");
+					operateId += $(this).val();
+					j++;
+ 				});
+				result.roleId = roleId;
+				result.resourceId = moduleId;
+				result.operateId = operateId;
+				
+				arr.push(result);
+    		}
+			 
+			var url =  ctx + "/role/saveAuthzRole.json";//保存
+			$.post(url,
+					{
+						roleId: 	roleId,
+						permissons: JSON.stringify(arr)
+					},
+					function(data){
+						if(data && data.status != 0){ 
+		           			$("#cancleauthzRole").click(); //关闭窗体
+		           			//authlist = [];
+		        		}
+			});
+    	}else{
+    		alert("请选择");
+    	}
     },
 	
 	editRole: function(){//提交编辑用户
@@ -157,9 +192,16 @@ var RoleHandler = {
 	    }
     },
     
-    checkRole: function (id){//验证
-    	alert($("#" + id).val());
-    	debugger;
+    reloadTree: function(){
+    	$('#authzRole_table').treegrid('reload');
+    	$('#authzRole_table').treegrid('unselectAll');
+    },
+
+	allIsCheck : function(obj) {// 授权全选反选
+		$(".allme_9").attr("checked",  obj.checked);// 模块
+	},
+    
+    checkRole: function (id){//验证 
     	var val= $.trim($("#" + id).val());
         if(!val){
         	 $("#" + id + "Tip").addClass("in");
@@ -169,5 +211,13 @@ var RoleHandler = {
     }
     
 };
+
+/*
+ * 格式化操作列
+ */
+function formatAction(val,row,index){
+	return "<a href='javascript:void(0);' onclick=RoleHandler.authzResource('"+row.roleId+"');>分配模块</a>";
+};
+
 
 

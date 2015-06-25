@@ -53,6 +53,21 @@ public class ModuleAction extends BaseAction {
 	}
 	
 	/**
+	 * 模块树页面
+	 *
+	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
+	 * 2015年5月16日 下午11:48:57
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/choiceModuleTree.html", method = RequestMethod.GET)
+	public String choiceModuleTree(Model model) {
+		return "system/module/choiceModuleTree";
+	}
+	
+	
+	/**
 	 * 返回treeGrid模块数据
 	 *
 	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  

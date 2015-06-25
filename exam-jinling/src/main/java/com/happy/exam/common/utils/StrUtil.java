@@ -1,5 +1,6 @@
 package com.happy.exam.common.utils;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,18 +11,27 @@ import java.util.regex.Pattern;
 public class StrUtil {
 	
 	public final static String REG_AZ = "\\([A-Za-z]+\\)"; //匹配(ABc)
+ 
 	public final static String REG_ALL = "\\((.*?)\\)"; //匹配1个括号与其中的内容(ABc在所有)
 	public final static String REG_NUMBER = "([1-9]+|[0-9]*|0)(\\.{1}[0-9]{1})?"; //匹配正数,1位小数
 	public final static String REG_MORE ="\\([^\\(\\)]*(\\(.*?\\)[^\\(\\)]*)*\\)\\w?[, ]*"; //多层括号匹配(ABc(在)所有)
 	public final static String REG_S = "/\\s+|\\s|/g/";    //清除空格
-
+	
 	/**
-	 * 全角括号替换为半角
-	 * @param content
+	 * 全角转半角
+	 * @param src
 	 * @return
 	 */
-	public static String replaceBracket(String content){
-		return content.replaceAll("\\（", "(").replaceAll("\\）", ")").replaceAll(StrUtil.REG_S, "");
+	public static String toSemiangle(String src) {
+		char[] c = src.toCharArray();
+		for (int index = 0; index < c.length; index++) {
+			if (c[index] == 12288) {// 全角空格
+				c[index] = (char) 32;
+			} else if (c[index] > 65280 && c[index] < 65375) {// 其他全角字符
+				c[index] = (char) (c[index] - 65248);
+			}
+		}
+		return String.valueOf(c);
 	}
 	
 	/**
@@ -33,17 +43,23 @@ public class StrUtil {
 		return content.replaceAll("\\(", "").replaceAll("\\)", "").trim();
 	}
 	
-	public static void main(String[] args) {
-		String str = replaceBracket("aa夺标梦想成真（a）放声大哭果园（ab）sdfdsfs");
-		System.out.println(str);
-		
-		String subStr = "aaaadsfsfd疏散槽是(加深(加强))的sfdsfsdfi在无(在无(在有))可奈何花落去d";
-		String regex= "\\([^\\(\\)]*(\\(.*?\\)[^\\(\\)]*)*\\)\\w?[, ]*";
-		
-		String content = get(subStr);
-		
-		System.out.println(content);
+	/**
+	 * 排序字母 ,都转换大写
+	 * bacAe 排序后AABCE
+	 * @param value
+	 * @return
+	 */
+	public static String sortCharater(String value) {
+		StringBuffer sbf = new StringBuffer("");
+		char[] charArray = value.toUpperCase().toCharArray();
+		Arrays.sort(charArray);
+		for (char c : charArray) {
+			sbf.append(String.valueOf(c));
+		}
+
+		return sbf.toString();
 	}
+	
 
 	private static String get(String subStr) {
 		StringBuffer sbf = new StringBuffer();
@@ -66,4 +82,9 @@ public class StrUtil {
 		 
 		return sbf.toString();
 	}
+	
+	public static void main(String[] args) {
+		System.out.println(toSemiangle("西太平洋动路径主, ,，！！！￥￥%%要可以分为（   DSF   ）台风的移动路径主要可以分为（   ABD   ）"));
+	}
+
 }

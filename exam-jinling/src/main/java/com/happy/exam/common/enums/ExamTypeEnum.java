@@ -19,7 +19,7 @@ public enum ExamTypeEnum {
 	
 	OPERATE("@OPERATE@","操作题");
 
-	private String key; //标识
+	private String key; //标识占位符，前台用它替换为input框
 	 
 	private String remark; //备注
 

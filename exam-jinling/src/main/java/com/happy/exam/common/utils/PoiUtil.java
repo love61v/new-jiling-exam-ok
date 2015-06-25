@@ -2,20 +2,34 @@ package com.happy.exam.common.utils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+import com.alibaba.fastjson.JSON;
 import com.happy.exam.common.bean.ExamQuestionModel;
 import com.happy.exam.common.enums.ExamTypeEnum;
+import com.sun.xml.internal.messaging.saaj.packaging.mime.util.BEncoderStream;
 
 /**
  * poi的excel工具类.
@@ -48,15 +62,15 @@ public class PoiUtil {
 
 	/**
 	 * 解析各种考试excel数据到list中 从第2行开始
-	 * 
-	 * @param filepath
-	 *            文件路径
+	 * @param filepath 路径
+	 * @param model    实体
+	 * @param examTypeEnum 考试题目enum,传入值ExamTypeEnum.SINGLE等等
 	 * @return
 	 */
-	public static List<ExamQuestionModel> parseList(String filepath,
-			ExamQuestionModel model, String type) {
+	public static List<ExamQuestionModel> parseList(String filepath,ExamQuestionModel model, ExamTypeEnum examTypeEnum) {
 		List<ExamQuestionModel> dataSet = new ArrayList<ExamQuestionModel>();
-
+		ExamQuestionModel tempModel = null;
+		
 		HSSFWorkbook workbook = readFile(filepath);
 		if (null == workbook) {
 			return dataSet;
@@ -70,23 +84,41 @@ public class PoiUtil {
 			if (null == row) {
 				continue;
 			}
+			
+			if(null == model){
+				tempModel = new ExamQuestionModel();
+			} else {
+				tempModel = new ExamQuestionModel();
+				try {
+					PropertyUtils.copyProperties(tempModel, model);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+				}
+
+			}
 
 			String value = "";
 			HSSFCell cell = row.getCell(0); // 第1个单元格为问题
 			value = cell.getStringCellValue();
-			model = parseData(value, model);
+			tempModel = parseData(value, tempModel, examTypeEnum);
 
-			if (type.equals(ExamTypeEnum.SHORTS.getKey())
-					|| type.equals(ExamTypeEnum.OPERATE.getKey())) {// 简答题或者操作题目
-				HSSFCell cell2 = row.getCell(1); // 第2个单元格为答案
-				model.setAnswer(cell2.getStringCellValue());
+			// 简答题或者操作题目第2个单元格为答案
+			String type = examTypeEnum.getKey(); 
+			boolean boor = type.equals(ExamTypeEnum.SHORTS.getKey())
+					|| type.equals(ExamTypeEnum.OPERATE.getKey());
+			if (boor) {
+				HSSFCell cell2 = row.getCell(1);
+				tempModel.setAnswer(cell2.getStringCellValue());
 			}
 
-			dataSet.add(model);
-
+			dataSet.add(tempModel);
 		}
+		
 		return dataSet;
-
 	}
 
 	/**
@@ -96,37 +128,38 @@ public class PoiUtil {
 	 *            内容
 	 * @param tempModel
 	 *            实体(已包含有当前登陆用户,typeid,操作时间的设值)
+	 * 
+	 * @param examTypeEnum
+	 *            传入ExamTypeEnum.SINGLE等等
 	 * @return
 	 */
-	private static ExamQuestionModel parseData(String value,
-			ExamQuestionModel tempModel) {
-		ExamQuestionModel model = new ExamQuestionModel();
-		String type = tempModel.getType(); // 题型
+	private static ExamQuestionModel parseData(String value,ExamQuestionModel model, ExamTypeEnum examTypeEnum) {
+		String flag = examTypeEnum.getKey(); // 题型
 
-		if (type.equals(ExamTypeEnum.SINGLE.getKey())) {// 单选题
+		switch (examTypeEnum) {
+		case SINGLE: // 单选题
 			model.setAnswer(getSingleMultiAnswer(value)); // 设置答案
-			model.setQuestion(getSingleMultiQuestion(value, type)); // 设置问题
-		}
-
-		if (type.equals(ExamTypeEnum.MULTI.getKey())) {// 多选题
+			model.setQuestion(getSingleMultiQuestion(value, flag)); // 设置问题
+			break;
+		case MULTI: // 多选题
 			model.setAnswer(getSingleMultiAnswer(value));
-			model.setQuestion(getSingleMultiQuestion(value, type));
-		}
-
-		if (type.equals(ExamTypeEnum.FILL.getKey())) {// 填空题
+			model.setQuestion(getSingleMultiQuestion(value, flag));
+			break;
+		case FILL: // 填空题
 			String answer = getFillAnswer(value);
 			model.setAnswer(answer);
 			model.setQuestion(getFillQuestion(value, answer));
-		}
-
-		if (type.equals(ExamTypeEnum.SHORTS.getKey())) {// 简答题,处理问题与分值
-			model.setScore(getShortsScore(value)); // 分值
+			break;
+		case SHORTS: // 简答题
+			model.setScore(getShortsScore(value));
 			model.setQuestion(value); // 问题
-		}
-
-		if (type.equals(ExamTypeEnum.OPERATE.getKey())) {// 操作题
-			model.setScore(getShortsScore(value)); // 分值
-			model.setQuestion(value); // 问题
+			break;
+		case OPERATE: // 操作题
+			model.setScore(getShortsScore(value));
+			model.setQuestion(value);
+			break;
+		default:
+			break;
 		}
 
 		return model;
@@ -134,7 +167,7 @@ public class PoiUtil {
 
 	/**
 	 * 获取简答题的分值
-	 *
+	 * 
 	 * @author : <a href="mailto:h358911056@qq.com">hubo</a> 2015年6月24日
 	 *         下午10:55:08
 	 * @param value
@@ -175,14 +208,14 @@ public class PoiUtil {
 
 	/**
 	 * 将内容中的全角括号替换，且去除所有空格
-	 *
+	 * 
 	 * @author : <a href="mailto:h358911056@qq.com">hubo</a> 2015年6月24日
 	 *         下午10:50:11
 	 * @param content
 	 * @return
 	 */
 	private static String adjust(String content) {
-		return StrUtil.replaceBracket(content).replaceAll(StrUtil.REG_S, "");
+		return StrUtil.toSemiangle(content).replaceAll(StrUtil.REG_S, "");
 	}
 
 	/**
@@ -197,15 +230,13 @@ public class PoiUtil {
 		Matcher matcher = p.matcher(value);
 		if (matcher.find()) {
 			value = StrUtil.replaceBracketNull(matcher.group());
-			char[] charArray = value.toUpperCase().toCharArray();
-			Arrays.sort(charArray);
-			for (char c : charArray) {
-				value.concat(String.valueOf(c));
-			}
-
+			value = StrUtil.sortCharater(value);
+		}else{
+			value = "";
 		}
-		return value.toUpperCase();
+		return value;
 	}
+	
 
 	/**
 	 * 填空题答案解析 格式：散槽是(加深(加强))的解析为answer为"加深|加强"
@@ -214,7 +245,7 @@ public class PoiUtil {
 	 * @return
 	 */
 	private static String getFillAnswer(String value) {
-		StringBuffer sbf = new StringBuffer();
+		StringBuffer sbf = new StringBuffer("");
 		value = adjust(value);
 
 		String result = "";
@@ -237,7 +268,7 @@ public class PoiUtil {
 	}
 
 	/**
-	 * 填空题答案解析 格式：散槽是(加深(加强))的解析为answer为"加深|加强"
+	 * 填空题答案解析 格式：散槽是(加深(加强))的解析为answer为"加深|加强" 表示加深或者加强都是正确答案
 	 * 
 	 * @param value
 	 * @return
@@ -252,7 +283,131 @@ public class PoiUtil {
 		}
 
 		return txt;
+	}
 
+	/**
+	 * 加载模板，写入数据
+	 * 
+	 * @param templatePath
+	 *            模板路径
+	 */
+	@SuppressWarnings("resource")
+	public static void writeDataFromTemplate(String templatePath) {
+		FileInputStream fileIn = null;
+		FileOutputStream fileOut = null;
+		try {
+			fileIn = new FileInputStream(templatePath);
+			POIFSFileSystem filesystem = new POIFSFileSystem(fileIn);
+			HSSFWorkbook workBook = new HSSFWorkbook(filesystem);
+			HSSFSheet sheet = workBook.getSheetAt(0);
+
+			HSSFRow row = sheet.createRow(1);
+			row.createCell(6).setCellValue("你好，测试");
+
+			fileOut = new FileOutputStream("d:/呵呵.xls");
+			workBook.write(fileOut);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				fileIn.close();
+				fileOut.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 测试,写数据到excel中
+	 * 
+	 * @param outputFilename
+	 * @throws IOException
+	 */
+	public static void writeDataXls(String outputFilename) throws IOException {
+		int rownum;
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet s = wb.createSheet();
+		HSSFCellStyle cs = wb.createCellStyle();
+		HSSFCellStyle cs2 = wb.createCellStyle();
+		HSSFCellStyle cs3 = wb.createCellStyle();
+		HSSFFont f = wb.createFont();
+		HSSFFont f2 = wb.createFont();
+
+		f.setFontHeightInPoints((short) 12);
+		f.setColor((short) 0xA);
+		f.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		f2.setFontHeightInPoints((short) 10);
+		f2.setColor((short) 0xf);
+		f2.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		cs.setFont(f);
+		cs.setDataFormat(HSSFDataFormat
+				.getBuiltinFormat("($#,##0_);[Red]($#,##0)"));
+		cs2.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		cs2.setFillPattern((short) 1); // fill w fg
+		cs2.setFillForegroundColor((short) 0xA);
+		cs2.setFont(f2);
+		wb.setSheetName(0, "HSSF Test");
+		for (rownum = 0; rownum < 300; rownum++) {
+			HSSFRow r = s.createRow(rownum);
+			if ((rownum % 2) == 0) {
+				r.setHeight((short) 0x249);
+			}
+
+			for (int cellnum = 0; cellnum < 50; cellnum += 2) {
+				HSSFCell c = r.createCell(cellnum);
+				c.setCellValue(rownum
+						* 10000
+						+ cellnum
+						+ (((double) rownum / 1000) + ((double) cellnum / 10000)));
+				if ((rownum % 2) == 0) {
+					c.setCellStyle(cs);
+				}
+				c = r.createCell(cellnum + 1);
+				c.setCellValue(new HSSFRichTextString("TEST"));
+				// 50 characters divided by 1/20th of a point
+				s.setColumnWidth(cellnum + 1, (int) (50 * 8 / 0.05));
+				if ((rownum % 2) == 0) {
+					c.setCellStyle(cs2);
+				}
+			}
+		}
+
+		// draw a thick black border on the row at the bottom using BLANKS
+		rownum++;
+		rownum++;
+		HSSFRow r = s.createRow(rownum);
+		cs3.setBorderBottom(HSSFCellStyle.BORDER_THICK);
+		for (int cellnum = 0; cellnum < 50; cellnum++) {
+			HSSFCell c = r.createCell(cellnum);
+			c.setCellStyle(cs3);
+		}
+		s.addMergedRegion(new CellRangeAddress(0, 3, 0, 3));
+		s.addMergedRegion(new CellRangeAddress(100, 110, 100, 110));
+
+		// end draw thick black border
+		// create a sheet, set its title then delete it
+		s = wb.createSheet();
+		wb.setSheetName(1, "DeletedSheet");
+		wb.removeSheetAt(1);
+
+		// end deleted sheet
+		FileOutputStream out = new FileOutputStream(outputFilename);
+		wb.write(out);
+		out.close();
+	}
+
+	public static void main(String[] args) {
+		/*String path = "d:/template.xls";
+		writeDataFromTemplate(path);*/
+		
+		//parseData("aaaa", null, ExamTypeEnum.SINGLE);
+		ExamQuestionModel e = new ExamQuestionModel();
+		e.setCreateTime(new Date());
+		List<ExamQuestionModel> parseList = parseList("d:/singlechoice.xls",e , ExamTypeEnum.SINGLE);
+		System.out.println(JSON.toJSONString(parseList));
 	}
 
 }

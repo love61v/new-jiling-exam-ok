@@ -5,16 +5,20 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <script src='${ctx}/js/system/role/authz.js' type='text/javascript'></script>
  
+ <!-- 要授权的角色 -->
+ <span style="display:none;">
+ <input type="text" id="authc_roleId" value="${roleId }"/>
+ </span>
+ 
 <table id="authzRole_table" cellspacing="0" cellpadding="0">
      <thead>
 		<tr>
-			<th data-options="field:'resourceName',width:180,align:'center',formatter: formatResourceName"  rowspan="2">名称</th>
-			<th colspan="${fn:length(operatelist) }">操作</th>
-		</tr>
-		<tr>
-			<c:forEach items="${operatelist}" var="el">
-				<th data-options="field:'id',width:60,align:'center', formatter:formatOperate">${el.operateName }</th>
-			</c:forEach>
+			<th data-options="field:'resourceName',width:180,align:'center',formatter: formatResourceName">
+				名称
+			</th>
+			<th data-options="field:'id',width:320,align:'left', formatter:formatOperate">
+				操作 
+			</th>
 		</tr>
 	</thead>
 </table>

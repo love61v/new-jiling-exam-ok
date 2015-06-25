@@ -78,12 +78,12 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		WHERE
 			Id = #{id} 	</update>
 
-	<!-- 根据ID删除 -->
+	<!-- 根据角色ID删除 -->
 	<delete id="delete">
     	<![CDATA[
         	DELETE FROM system_role_resource 
         	WHERE
-        		Id = #{id} 
+        		RoleId = #{roleId} 
     	]]>
 	</delete>
 	

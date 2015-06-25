@@ -22,16 +22,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.happy.exam.common.bean.DataGridModel;
 import com.happy.exam.common.dto.DatagridDto;
-import com.happy.exam.common.dto.TreegridDto;
 import com.happy.exam.common.pager.Pager;
 import com.happy.exam.controller.BaseAction;
 import com.happy.exam.model.SystemOperate;
-import com.happy.exam.model.SystemResource;
 import com.happy.exam.model.SystemRole;
+import com.happy.exam.model.SystemRoleResource;
 import com.happy.exam.service.SystemOperateService;
 import com.happy.exam.service.SystemResourceService;
+import com.happy.exam.service.SystemRoleResourceService;
 import com.happy.exam.service.SystemRoleService;
 
 /**
@@ -53,6 +54,9 @@ public class RoleAction extends BaseAction {
 	
 	@Autowired
 	private SystemOperateService systemOperateService;
+	
+	@Autowired
+	private SystemRoleResourceService systemRoleResourceService;
 	
 	/**
 	 * 角色表表页面
@@ -93,47 +97,6 @@ public class RoleAction extends BaseAction {
 		return dataGridModel;
 	}
 	
-	
-	/**
-	 * 分配资源页面
-	 *
-	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
-	 * 2015年5月16日 下午11:48:57
-	 * @param model
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value = "/authzRole.html", method = RequestMethod.GET)
-	public String authzRolePage(Model model) {
-		SystemOperate operate = new SystemOperate();
-		operate.setStatus(1);//只查询启用状态的数据
-		
-		List<SystemOperate> operatelist = systemOperateService.findList(operate);
-		model.addAttribute("operatelist", operatelist);
-		
-		return "system/role/authz";
-	}
-	
-	/**
-	 * 分配资源角色数据
-	 *
-	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
-	 * @date 2015年5月16日 下午11:56:08
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value = "/authzRole.json", method = RequestMethod.POST)
-	@ResponseBody
-	public TreegridDto authzRole(SystemResource module) {
-		TreegridDto treegridDto = new TreegridDto();
-		 
-		List<SystemResource> list = systemResourceService.findTreegrid(module);
-		treegridDto.setRows(list);
-		treegridDto.setTotal(list.size());
-
-		return treegridDto;
-	}
-	
 	/**
 	 * 跳转到编辑用户页面
 	 *
@@ -164,21 +127,21 @@ public class RoleAction extends BaseAction {
 	@RequestMapping(value = "/editRole.json", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> editRole(Model model, SystemRole role) {
-		Map<String, Object> map = getStatusMap();
-		
 		int count = 0;
-		if(null != role && null != role.getRoleId()){//修改用户
+		Map<String, Object> map = getStatusMap();
+
+		if (null != role && null != role.getRoleId()) {// 修改
 			role.setUpdateTime(new Date());
 			count = systemRoleService.update(role);
 			map.put("flag", role.getRoleId());
-		}else{//添加
+		} else {// 添加
 			role.setStatus(1);
 			role.setCreateTime(new Date());
-			count =  systemRoleService.save(role);
+			count = systemRoleService.save(role);
 			map.put("flag", null);
 		}
 		map.put("status", count);
-		
+
 		return map;
 	}
 	
@@ -190,17 +153,93 @@ public class RoleAction extends BaseAction {
 	 * @return
 	 */
 	@RequestMapping(value="/deleteRole.json",method=RequestMethod.POST)
-	@ResponseBody public Map<String, Object> deleteRole(String ids){
+	@ResponseBody
+	public Map<String, Object> deleteRole(String ids) {
 		Map<String, Object> map = getStatusMap();
-		
-		if(StringUtils.isNotBlank(ids)){
-			String [] idArr = ids.split(",");
-			int count = systemRoleService.deleteBatch(Arrays.asList(idArr), SystemRole.class);
-			
+
+		if (StringUtils.isNotBlank(ids)) {
+			String[] idArr = ids.split(",");
+			int count = systemRoleService.deleteBatch(Arrays.asList(idArr),SystemRole.class);
+
 			map.put("status", count);
 		}
-		
+
 		return map;
 	}
 	
+	
+	/**
+	 * 分配资源页面
+	 *
+	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
+	 * 2015年5月16日 下午11:48:57
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/authzRole.html", method = RequestMethod.GET)
+	public String authzRolePage(Model model,String roleId) {
+		
+		if (StringUtils.isNotBlank(roleId)) {
+			SystemOperate operate = new SystemOperate();
+			operate.setStatus(1);// 只查询启用状态的数据
+
+			List<SystemOperate> operatelist = systemOperateService.findList(operate);
+			model.addAttribute("operatelist", operatelist);
+			model.addAttribute("roleId", roleId);
+		}
+		
+		return "system/role/authz";
+	}
+	
+	/**
+	 * 根据角色ID查询角色拥有的资源与操作权限
+	 *
+	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
+	 * @date 2015年5月16日 下午11:56:08
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/getAuth.json", method = RequestMethod.POST)
+	@ResponseBody
+	public List<SystemRoleResource> getAuth(String roleId) {
+		List<SystemRoleResource> authlist = null;
+		if (StringUtils.isNotBlank(roleId)) {
+			SystemRoleResource roleResource = new SystemRoleResource();
+			roleResource.setRoleId(Long.valueOf(roleId));
+
+			authlist = systemRoleResourceService.findList(roleResource);
+		}
+
+		return authlist;
+	}
+	
+	/**
+	 * 保存角色资源及操作权限
+	 *
+	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
+	 * @date 2015年5月16日 下午11:56:08
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/saveAuthzRole.json", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> saveAuthzRole(String roleId, String permissons) {
+		Map<String, Object> map = getStatusMap();
+		
+		if (StringUtils.isNotBlank(permissons) && StringUtils.isNotBlank(roleId)) {
+			Class<SystemRoleResource> clzz = SystemRoleResource.class;
+
+			// 先根据角色ID删除所有再添加新数据
+			int count = systemRoleResourceService.delete(Long.valueOf(roleId), clzz);
+			if(count >= 0){
+				List<SystemRoleResource> list = JSON.parseArray(permissons, clzz);
+				count = systemRoleResourceService.saveBatch(list, clzz);
+			}
+
+			map.put("status", count);
+		}
+
+		return map;
+	}
 }

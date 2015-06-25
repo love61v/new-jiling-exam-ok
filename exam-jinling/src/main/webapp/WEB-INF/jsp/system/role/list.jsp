@@ -25,7 +25,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <script type="text/javascript" src="${ctx }/js/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.min.js"></script>
 <script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.easyui.min.js"></script>
-
+<script type="text/javascript" src="${ctx }/js/plugins/json2/json2.js"></script>
 
 <title>角色管理</title>
 </head>
@@ -39,6 +39,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 <th data-options="field:'remark',width:50,align:'center'">备注</th>
                 <th data-options="field:'status',width:30, formatter: formatStatus,align:'center'">状态</th>
                 <th data-options="field:'createTime',width:80, formatter:formatTime,align:'center'">创建时间</th>
+                <th data-options="field:'x',width:50,formatter:formatAction,align:'center'">操作</th>
             </tr>
         </thead>
    	</table>
@@ -88,7 +89,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<!-- 用户编辑 -->
+<!-- 角色授权 -->
  <div class="modal fade" id="authzRole">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -97,9 +98,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <h4 class="modal-title"><span style="color:blue;">分配资源</span></h4>
       </div>
       <!-- remote加载的页面渲染到此容器中 -->
-       <div class="modal-body"></div>
+       <div class="modal-body" id="authzBody"></div>
       
       <div class="modal-footer">
+      	<input type="checkbox" name="allChk" onchange="RoleHandler.allIsCheck(this);" />全选 / 反选 
+        <a class="btn btn-success" href="javascript:void(0)"   onclick="RoleHandler.reloadTree();">
+			<i class="icon-refresh icon-white"></i>刷新
+		</a>
         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
         <button type="button" class="btn btn-success" onclick="RoleHandler.authzRole();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
       </div>
