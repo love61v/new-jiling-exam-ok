@@ -16,7 +16,7 @@ import com.happy.exam.model.SystemResource;
 @Service
 public class SystemResourceDaoImpl extends MybatisBaseDaoImpl<SystemResource, java.lang.Long> implements SystemResourceDao {
 
-private final String CLZZ_NAME = SystemResource.class.getName();
+	private final String CLZZ_NAME = SystemResource.class.getName();
 	
 	private final String FIND_TREE_GRID = CLZZ_NAME + ".findTreegrid";
 	

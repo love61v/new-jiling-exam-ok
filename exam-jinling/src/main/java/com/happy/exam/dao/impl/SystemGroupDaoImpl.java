@@ -1,10 +1,10 @@
 package com.happy.exam.dao.impl;  
 import java.util.List;
 
-import com.happy.exam.dao.SystemGroupDao; 
-import com.happy.exam.model.SystemGroup;
-
 import org.springframework.stereotype.Service;
+
+import com.happy.exam.dao.SystemGroupDao;
+import com.happy.exam.model.SystemGroup;
 
 /**
  *  SystemGroupDao
@@ -16,10 +16,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class SystemGroupDaoImpl extends MybatisBaseDaoImpl<SystemGroup, java.lang.Long> implements SystemGroupDao {
 
+	private final String CLZZ_NAME = SystemGroup.class.getName();
+	
+	private final String FIND_TREE_GRID = CLZZ_NAME + ".findTreegrid";
+	private final String DELETEUNION = CLZZ_NAME + ".deleteUnion";
+	 
 	@Override
 	public List<SystemGroup> findTreegrid(SystemGroup group) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getSqlSessionTemplate().selectList(FIND_TREE_GRID, group);
+	}
+
+	@Override
+	public int deleteUnion(SystemGroup group) {
+		return this.getSqlSessionTemplate().delete(DELETEUNION, group);
 	} 
 
 }

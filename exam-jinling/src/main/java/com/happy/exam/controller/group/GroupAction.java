@@ -1,7 +1,11 @@
 package com.happy.exam.controller.group;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +16,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.happy.exam.common.dto.TreegridDto;
 import com.happy.exam.controller.BaseAction;
 import com.happy.exam.model.SystemGroup;
+import com.happy.exam.model.SystemRoleGroup;
+import com.happy.exam.model.SystemUserGroup;
 import com.happy.exam.service.SystemGroupService;
+import com.happy.exam.service.SystemRoleGroupService;
+import com.happy.exam.service.SystemUserGroupService;
 
 
 /**
@@ -28,6 +36,12 @@ public class GroupAction extends BaseAction{
 
 	@Autowired
 	private SystemGroupService systemGroupService;
+	
+	@Autowired
+	private SystemUserGroupService systemUserGroupService;
+	
+	@Autowired
+	private SystemRoleGroupService systemRoleGroupService;
 
 	/**
 	 * 组页面
@@ -39,9 +53,24 @@ public class GroupAction extends BaseAction{
 	 * @return
 	 */
 	@RequestMapping(value = "/list.html", method = RequestMethod.GET)
-	public String showModules(Model model) {
+	public String showGroups(Model model) {
 		return "/system/group/list";
 	}
+	
+	/**
+	 * 分组树页面
+	 *
+	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
+	 * 2015年5月16日 下午11:48:57
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/choiceGroupTree.html", method = RequestMethod.GET)
+	public String choiceGroupTree(Model model) {
+		return "system/group/choiceGroupTree";
+	}
+	
 	
 	/**
 	 * 返回treeGrid模块数据
@@ -53,7 +82,7 @@ public class GroupAction extends BaseAction{
 	 */
 	@RequestMapping(value = "/list.json", method = RequestMethod.POST)
 	@ResponseBody
-	public TreegridDto showModulelist(SystemGroup group) {
+	public TreegridDto showGrouplist(SystemGroup group) {
 		TreegridDto treegridDto = new TreegridDto();
 		 
 		List<SystemGroup> list = systemGroupService.findTreegrid(group);
@@ -62,4 +91,106 @@ public class GroupAction extends BaseAction{
 
 		return treegridDto;
 	}
+	
+	/**
+	 * 跳转到编辑用户页面
+	 *
+	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午5:11:03
+	 * @param model
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException 
+	 */
+	@RequestMapping(value = "/beforeEditGroup.html", method = RequestMethod.GET)
+	public String beforeEditGroup(Model model, String groupId, String pname,
+			String pid, String flag) throws UnsupportedEncodingException {
+		
+		if (StringUtils.isNotBlank(flag) && flag.equals("2")) {// 修改用户信息回选
+			SystemGroup group = systemGroupService.getById(
+					Long.valueOf(groupId), SystemGroup.class);
+			model.addAttribute("group", group);
+		}
+
+		if (StringUtils.isNotBlank(pname)) {
+			model.addAttribute("pname",java.net.URLDecoder.decode(pname, "UTF-8"));
+		}
+
+		model.addAttribute("flag", flag);
+		model.addAttribute("pid", pid);
+		
+		return "/system/group/edit";
+	}
+	
+	/**
+	 * 编辑用户
+	 * 存在ID则修改，否则添加
+	 *
+	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午11:45:43
+	 * @param model
+	 * @param group
+	 * @return
+	 */
+	@RequestMapping(value = "/editGroup.json", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> editGroup(Model model, SystemGroup group) {
+		Map<String, Object> map = getStatusMap();
+		
+		int count = 0;
+		if(null != group && null !=group.getGroupId()){//修改用户
+			group.setUpdateTime(new Date());
+			count = systemGroupService.update(group);
+			map.put("flag", group.getGroupId());
+		}else{//添加
+			group.setStatus(1);
+			group.setCreateTime(new Date());
+			count =  systemGroupService.save(group);
+		}
+		map.put("status", count);
+		
+		return map;
+	}
+	
+	/**
+	 * 删除模块
+	 *
+	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午3:30:41
+	 * @param id  当前选中节点的id
+	 * @param parnetId  不为空则上节点为父节点，则删除自身与其下所有子节点
+	 * @return
+	 */
+	@RequestMapping(value="/deleteGroup.json",method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteGroup(SystemGroup group) {
+		Map<String, Object> map = getStatusMap();
+		boolean boor = false;
+		Long groupId = group.getGroupId();
+
+		if (null != groupId) {
+			SystemUserGroup userGroup = new SystemUserGroup();
+			userGroup.setGroupId(groupId);
+			long userCount = systemUserGroupService.getTotalCount(userGroup);
+			
+			if (userCount > 0) {
+				map.put("msg", "分组下存在用户，无法删除");
+			} else {
+				SystemRoleGroup roleGroup = new SystemRoleGroup();
+				roleGroup.setGroupId(groupId);
+				long roleCount = systemRoleGroupService.getTotalCount(roleGroup);
+				
+				if (roleCount > 0) {
+					map.put("msg", "分组下存在角色，无法删除");
+				} else {
+					boor = true;
+				}
+			}
+
+			if (boor) {
+				int count = systemGroupService.deleteUnion(group);
+				map.put("status", count);
+			}
+		}
+
+		return map;
+	}
+	
 }

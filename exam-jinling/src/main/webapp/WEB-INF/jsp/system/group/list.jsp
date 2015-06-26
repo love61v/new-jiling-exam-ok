@@ -31,10 +31,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 </head>
 <body>
-	<table id="group_table" toolbar="#group_toolbar" cellspacing="0" cellpadding="0">
+
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'west',split:true,border:false" style="width:200px">
+    	<table id="group_table" cellspacing="0" cellpadding="0">
         <thead>
 			<tr>
-				<th data-options="field:'groupName',width:80">名称</th>
+				<th data-options="field:'groupName',width:80">分组树</th>
 			</tr>
 		</thead>
    	</table>
@@ -47,45 +50,52 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<div class="menu-sep"></div>
 		<div onclick="GroupHandler.beforeDeleteGroup();"><i class="icon-remove"></i>删除</div>
 		<div class="menu-sep"></div>
-		<div onclick="collapse('group_table')"> <i class="icon-folder-close"></i>收缩</div>
-		<div class="menu-sep"></div>
-		<div onclick="expand('group_table')"><i class="icon-folder-open"></i>展开</div>
 	</div>
-	
-	<div id="group_toolbar">
+   
+    </div>
+   
+   <!-- 用户列表 -->
+    <div data-options="region:'center',border:false">
+   	 	<table id="userGroup_table" cellspacing="0" cellpadding="0" toolbar="#toolbar" style="margin-top:3px;">
+	        <thead>
+	            <tr>
+	                <th data-options="field:'loginName',width:50,align:'center'">账号</th>
+	                <th data-options="field:'userName',width:50,align:'center'">用户名</th>
+	                <th data-options="field:'department',width:50,formatter: formatDept,align:'center'">部门</th>
+	                <th data-options="field:'email',width:50,align:'center'">邮箱</th>
+<!-- 	                <th data-options="field:'sex',width:30, formatter:formatSex,align:'center'">性别</th> -->
+	                <th data-options="field:'status',width:30, formatter: formatStatus,align:'center'">状态</th>
+	                <th data-options="field:'createTime',width:80, formatter:formatTime,align:'center'">创建时间</th>
+	            </tr>
+	        </thead>
+   		</table>
+   	
+   	<div id="toolbar">
    		<div class="form-inline" >
-		   		<input type="text" class="form-control" id="groupName" placeholder="请输入名称">
-		    	<a class="btn btn-success" href="javascript:void(0)"   onclick="GroupHandler.search();">
+		  <form id="user_form" style="margin-top:20px;">
+		   		<input type="text" class="form-control" name="loginName" id="loginName" placeholder="账号  / 用户名称">
+		    	<a class="btn btn-success" href="javascript:void(0)"   onclick="UserHandler.search();">
 					<i class="icon-search icon-white"></i>查询
 				</a>
 			 
-			<span class="pull-right">
-		    	<a class="btn btn-success" id="saveGroup" href="javascript:void(0)"   onclick="GroupHandler.beforeEditGroup(1);">
-					<i class="icon-plus icon-white"></i>添加用户
-				</a>
-		    	<a class="btn btn-success" id="updateGroup" href="javascript:void(0)" onclick="GroupHandler.beforeEditGroup(2);">
-					<i class="icon-edit icon-white"></i>添加角色
-				</a>
-				<a class="btn btn-info" id="beforeDeleteGroup" href="javascript:void(0)"  onclick="GroupHandler.beforeDeleteGroup();">
-					<i class="icon-remove icon-white"></i>删除用户
-				</a>
-		    	<a class="btn btn-info" id="updateGroup" href="javascript:void(0)" onclick="GroupHandler.beforeEditGroup(2);">
-					<i class="icon-remove icon-white"></i>删除角色
-				</a>
-				 
-			</span>
+				<span class="pull-right">
+			    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="UserHandler.appendUser();">
+						<i class="icon-plus icon-white"></i>追加用户
+					</a>
+				</span>
+			</form>
 		</div>
 	</div>
-    
-    
-    
-    <!--模块编辑 -->
+	 
+</div>
+
+ <!--模块编辑 -->
  <div class="modal fade" id="editGroup">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" id="cancleEditGroup"  data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title"><span style="color:blue;">编辑模块</span></h4>
+        <h4 class="modal-title"><span style="color:blue;">编辑分组</span></h4>
       </div>
       <!-- remote加载的页面渲染到此容器中 -->
        <div class="modal-body"></div>
@@ -122,7 +132,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<script src='${ctx}/js/common.js' type='text/javascript'></script>
 <script src='${ctx}/js/system/group/group.js' type='text/javascript'></script> 
 </body>
 </html>

@@ -72,14 +72,9 @@ var ModuleHandler = {
 		 
 		url +="&flag=" + flag;
     	url +="&pname=" + encodeURI(encodeURI(pname));
-		
-		//弹出窗体
-        $("#editModule").modal({
-        	 backdrop: 'static',
-    		 keyboard: false,
-        	 remote: url
-        }); 
-    },
+    	
+    	showModal("editModule", url); //弹出窗体
+     },
 	
 	editModule: function(){//提交编辑用户
 		if(!this.checkModule("moduleName")){

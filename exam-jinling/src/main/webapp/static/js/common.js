@@ -215,6 +215,22 @@ function formatTime(val, row, index) {
 };
 
 /**
+ * 格式化性别
+ * @param val
+ * @param row
+ * @param index
+ * @returns
+ */
+function formatSex(val,row,index){
+	return val == 1 ? '男' : '女';
+};
+
+function formatDept(val,row,index){//格式化部门
+	val = val || "";
+	return val.deptName;
+};
+
+/**
  * treegrid收缩事件
  * 
  * @param treegrid

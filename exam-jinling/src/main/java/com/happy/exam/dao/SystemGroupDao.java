@@ -15,4 +15,6 @@ public interface SystemGroupDao extends BaseDao<SystemGroup,java.lang.Long>{
 
 	List<SystemGroup> findTreegrid(SystemGroup group);
 
+	int deleteUnion(SystemGroup group);
+
 }

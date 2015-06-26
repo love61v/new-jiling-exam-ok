@@ -14,4 +14,6 @@ public interface SystemGroupService extends BaseService<SystemGroup,java.lang.Lo
 
 	List<SystemGroup> findTreegrid(SystemGroup group);
 
+	int deleteUnion(SystemGroup group);
+
 }
