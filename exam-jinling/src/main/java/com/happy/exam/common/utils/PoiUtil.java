@@ -4,16 +4,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -26,10 +24,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-import com.alibaba.fastjson.JSON;
 import com.happy.exam.common.bean.ExamQuestionModel;
 import com.happy.exam.common.enums.ExamTypeEnum;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.BEncoderStream;
 
 /**
  * poi的excel工具类.
@@ -59,6 +55,28 @@ public class PoiUtil {
 		}
 		return null;
 	}
+	
+	/**
+	 * 加载excel文件
+	 * 
+	 * @param filename
+	 *            文件路径
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public static HSSFWorkbook readFile(InputStream inputStream) {
+		try {
+			return new HSSFWorkbook(inputStream);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 
 	/**
 	 * 解析各种考试excel数据到list中 从第2行开始
@@ -67,11 +85,11 @@ public class PoiUtil {
 	 * @param examTypeEnum 考试题目enum,传入值ExamTypeEnum.SINGLE等等
 	 * @return
 	 */
-	public static List<ExamQuestionModel> parseList(String filepath,ExamQuestionModel model, ExamTypeEnum examTypeEnum) {
+	public static List<ExamQuestionModel> parseList(InputStream inputStream,ExamQuestionModel model, ExamTypeEnum examTypeEnum) {
 		List<ExamQuestionModel> dataSet = new ArrayList<ExamQuestionModel>();
 		ExamQuestionModel tempModel = null;
 		
-		HSSFWorkbook workbook = readFile(filepath);
+		HSSFWorkbook workbook = readFile(inputStream);
 		if (null == workbook) {
 			return dataSet;
 		}
@@ -85,26 +103,15 @@ public class PoiUtil {
 				continue;
 			}
 			
-			if(null == model){
-				tempModel = new ExamQuestionModel();
-			} else {
-				tempModel = new ExamQuestionModel();
-				try {
-					PropertyUtils.copyProperties(tempModel, model);
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
-				}
-
-			}
+			tempModel = setBean(model);
 
 			String value = "";
 			HSSFCell cell = row.getCell(0); // 第1个单元格为问题
 			value = cell.getStringCellValue();
-			tempModel = parseData(value, tempModel, examTypeEnum);
+			
+			HSSFCell cellAnswer = row.getCell(1); // 第2个单元格为问题
+			String sencond = cellAnswer.getStringCellValue();  //第二列是单选与多选的答案
+			tempModel = parseData(value,sencond, tempModel, examTypeEnum);
 
 			// 简答题或者操作题目第2个单元格为答案
 			String type = examTypeEnum.getKey(); 
@@ -121,11 +128,32 @@ public class PoiUtil {
 		return dataSet;
 	}
 
+	private static ExamQuestionModel setBean(ExamQuestionModel model) {
+		ExamQuestionModel tempModel;
+		if(null == model){
+			tempModel = new ExamQuestionModel();
+		} else {
+			tempModel = new ExamQuestionModel();
+			try {
+				PropertyUtils.copyProperties(tempModel, model);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			}
+		}
+		return tempModel;
+	}
+
 	/**
 	 * 解析单元格行数据到实体中
 	 * 
 	 * @param value
 	 *            内容
+	 * @param sencond
+	 *            单选多选答案
 	 * @param tempModel
 	 *            实体(已包含有当前登陆用户,typeid,操作时间的设值)
 	 * 
@@ -133,13 +161,15 @@ public class PoiUtil {
 	 *            传入ExamTypeEnum.SINGLE等等
 	 * @return
 	 */
-	private static ExamQuestionModel parseData(String value,ExamQuestionModel model, ExamTypeEnum examTypeEnum) {
+	private static ExamQuestionModel parseData(String value,String sencond,ExamQuestionModel model, ExamTypeEnum examTypeEnum) {
 		String flag = examTypeEnum.getKey(); // 题型
 
 		switch (examTypeEnum) {
 		case SINGLE: // 单选题
-			model.setAnswer(getSingleMultiAnswer(value)); // 设置答案
-			model.setQuestion(getSingleMultiQuestion(value, flag)); // 设置问题
+			//model.setAnswer(getSingleMultiAnswer(value)); // 设置答案
+			model.setAnswer(sencond); // 设置答案
+			//model.setQuestion(getSingleMultiQuestion(value, flag)); // 设置问题
+			model.setQuestion(value); // 设置问题
 			break;
 		case MULTI: // 多选题
 			model.setAnswer(getSingleMultiAnswer(value));
@@ -406,8 +436,8 @@ public class PoiUtil {
 		//parseData("aaaa", null, ExamTypeEnum.SINGLE);
 		ExamQuestionModel e = new ExamQuestionModel();
 		e.setCreateTime(new Date());
-		List<ExamQuestionModel> parseList = parseList("d:/singlechoice.xls",e , ExamTypeEnum.SINGLE);
-		System.out.println(JSON.toJSONString(parseList));
+		//List<ExamQuestionModel> parseList = parseList("d:/singlechoice.xls",e , ExamTypeEnum.SINGLE);
+		//System.out.println(JSON.toJSONString(parseList));
 	}
 
 }
