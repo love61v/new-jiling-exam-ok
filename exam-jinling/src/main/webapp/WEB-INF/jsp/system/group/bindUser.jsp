@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
-<table id="bindUser_table" toolbar="#toolbar" cellspacing="0" cellpadding="0">
+<table id="bindUser_table" toolbar="#tbar_bindUser" cellspacing="0" cellpadding="0">
 	<thead>
 		<tr>
 			<th data-options="field:'department',width:50,formatter: formatDept,align:'center'">部门</th>
@@ -14,7 +14,7 @@
 	</thead>
 </table>
 
-<div id="toolbar">
+<div id="tbar_bindUser">
   		<div class="form-inline" >
   				<form id="bindUser_form" style="margin-top:5px;">
 	   		<input type="text" class="form-control" name="userQuery" id="userQuery" placeholder="账号  / 用户名称">

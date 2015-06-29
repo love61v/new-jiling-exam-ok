@@ -5,10 +5,8 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <script src='${ctx}/js/system/role/authz.js' type='text/javascript'></script>
  
- <!-- 要授权的角色 -->
- <span style="display:none;">
- <input type="text" id="authc_roleId" value="${roleId }"/>
- </span>
+ <!-- 要授权的角色 --> 
+ <input type="hidden" id="authc_roleId" value="${roleId }"/>
  
 <table id="authzRole_table" cellspacing="0" cellpadding="0">
      <thead>
