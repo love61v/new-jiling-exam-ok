@@ -25,6 +25,7 @@ $(function(){
 	    striped: 		true, 
 	    border: 		true, 
 	    collapsible:	false,//是否可折叠的  
+	    processing: 	false,
 	    idField:		'resourceId', 
 	    treeField:		'resourceName'
 	}); 

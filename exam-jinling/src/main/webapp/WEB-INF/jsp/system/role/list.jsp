@@ -101,12 +101,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
        <div class="modal-body" id="authzBody"></div>
       
       <div class="modal-footer">
-      	<input type="checkbox" name="allChk" onchange="RoleHandler.allIsCheck(this);" />全选 / 反选 
+      	<span class="pull-left"><input type="checkbox" name="allChk" onchange="RoleHandler.allIsCheck(this);" />全选 / 取消</span> 
+      	<span id="acceptAuthz" style="margin-right: 10px;">&nbsp;</span>
         <a class="btn btn-success" href="javascript:void(0)"   onclick="RoleHandler.reloadTree();">
 			<i class="icon-refresh icon-white"></i>刷新
 		</a>
         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
-        <button type="button" class="btn btn-success" onclick="RoleHandler.authzRole();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
+        <button type="button" class="btn btn-success"  onclick="RoleHandler.authzRole();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

@@ -17,25 +17,23 @@ $(function(){
 	    rownumbers:true,//行号 
 	    frozenColumns:[[ 
 	        {field:'ck',checkbox:true} 
-	    ]],
-	    
+	    ]]
 	}); 
 	
+	pageFmt("role_table");//设置分页控件 
 	
-	//设置分页控件 
-	var p = $('#role_table').datagrid('getPager'); 
-	$(p).pagination({ 
-		pageSize: 10,//每页显示的记录条数，默认为15 
-	    pageList: [10,15,30,50,100],//可以设置每页记录条数的列表 
-	    beforePageText: '第',//页数文本框前显示的汉字 
-	    afterPageText: '页    共 {pages} 页', 
-	    displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录', 
-	});  
+	/**
+	 * 编辑角色信息窗体关闭时触发事件
+	 */
+	$("#editRole").on("hidden", function() {
+	    $(this).removeData("modal");
+	});
 	
-	$(function(){
-		$("#editRole").on("hidden", function() {
-		    $(this).removeData("modal");
-		});
+	/**
+	 * 角色授权窗体关闭时触发事件
+	 */
+	$('#authzRole').on('hidden.bs.modal', function () {
+		RoleHandler.cancleAllChk();
 	});
 
 });
@@ -104,6 +102,7 @@ var RoleHandler = {
     		}
 			 
 			var url =  ctx + "/role/saveAuthzRole.json";//保存
+			var me = this;
 			$.post(url,
 					{
 						roleId: 	roleId,
@@ -112,11 +111,13 @@ var RoleHandler = {
 					function(data){
 						if(data && data.status != 0){ 
 		           			$("#cancleauthzRole").click(); //关闭窗体
-		           			//authlist = [];
+		           			
+		           			me.cancleAllChk();
 		        		}
 			});
     	}else{
-    		alert("请选择");
+    		tipMsg("acceptAuthz","请勾选资源与操作","top");
+    		return false;
     	}
     },
 	
@@ -192,13 +193,22 @@ var RoleHandler = {
 	    }
     },
     
-    reloadTree: function(){
+    reloadTree: function(){ //刷新重新加载树
     	$('#authzRole_table').treegrid('reload');
     	$('#authzRole_table').treegrid('unselectAll');
     },
 
 	allIsCheck : function(obj) {// 授权全选反选
-		$(".allme_9").attr("checked",  obj.checked);// 模块
+		var isChked = obj.checked;
+		if(isChked){
+			$(".allme_9").attr("checked",  obj.checked);// 模块
+		}else{
+			this.reloadTree();
+		}
+	},
+	
+	cancleAllChk: function(){//全选checkbox勾选中
+		$("input:checkbox[name='allChk']").attr("checked",false);
 	},
     
     checkRole: function (id){//验证 

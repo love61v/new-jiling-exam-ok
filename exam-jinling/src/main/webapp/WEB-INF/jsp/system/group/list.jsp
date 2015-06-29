@@ -31,61 +31,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 </head>
 <body>
-	<table id="group_table" toolbar="#group_toolbar" cellspacing="0" cellpadding="0">
-        <thead>
-			<tr>
-				<th data-options="field:'groupName',width:80">名称</th>
-			</tr>
-		</thead>
-   	</table>
-   	
-   	<!-- 右键菜单 -->
-   	<div id="group_menu" class="easyui-menu" style="width:120px;">
-		<div onclick="GroupHandler.beforeEditGroup(1);"><i class="icon-plus"></i>添加</div>
-		<div class="menu-sep"></div>
-		<div onclick="GroupHandler.beforeEditGroup(2);"><i class="icon-edit"></i>修改</div>
-		<div class="menu-sep"></div>
-		<div onclick="GroupHandler.beforeDeleteGroup();"><i class="icon-remove"></i>删除</div>
-		<div class="menu-sep"></div>
-		<div onclick="collapse('group_table')"> <i class="icon-folder-close"></i>收缩</div>
-		<div class="menu-sep"></div>
-		<div onclick="expand('group_table')"><i class="icon-folder-open"></i>展开</div>
-	</div>
-	
-	<div id="group_toolbar">
-   		<div class="form-inline" >
-		   		<input type="text" class="form-control" id="groupName" placeholder="请输入名称">
-		    	<a class="btn btn-success" href="javascript:void(0)"   onclick="GroupHandler.search();">
-					<i class="icon-search icon-white"></i>查询
-				</a>
-			 
-			<span class="pull-right">
-		    	<a class="btn btn-success" id="saveGroup" href="javascript:void(0)"   onclick="GroupHandler.beforeEditGroup(1);">
-					<i class="icon-plus icon-white"></i>添加用户
-				</a>
-		    	<a class="btn btn-success" id="updateGroup" href="javascript:void(0)" onclick="GroupHandler.beforeEditGroup(2);">
-					<i class="icon-edit icon-white"></i>添加角色
-				</a>
-				<a class="btn btn-info" id="beforeDeleteGroup" href="javascript:void(0)"  onclick="GroupHandler.beforeDeleteGroup();">
-					<i class="icon-remove icon-white"></i>删除用户
-				</a>
-		    	<a class="btn btn-info" id="updateGroup" href="javascript:void(0)" onclick="GroupHandler.beforeEditGroup(2);">
-					<i class="icon-remove icon-white"></i>删除角色
-				</a>
-				 
-			</span>
-		</div>
-	</div>
-    
-    
-    
-    <!--模块编辑 -->
+
+<!--分组编辑 -->
  <div class="modal fade" id="editGroup">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" id="cancleEditGroup"  data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title"><span style="color:blue;">编辑模块</span></h4>
+        <h4 class="modal-title"><span style="color:blue;">编辑分组</span></h4>
       </div>
       <!-- remote加载的页面渲染到此容器中 -->
        <div class="modal-body"></div>
@@ -93,6 +46,44 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
         <button type="button" class="btn btn-success" onclick="GroupHandler.editGroup();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--绑定用户 -->
+ <div class="modal fade" id="bindUserModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" id="cancleEditGroup"  data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title"><span style="color:blue;">绑定用户</span></h4>
+      </div>
+      <!-- remote加载的页面渲染到此容器中 -->
+       <div class="modal-body"></div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
+        <button type="button" class="btn btn-success" onclick="GroupHandler.bindUser();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--绑定角色 -->
+ <div class="modal fade" id="bindRoleModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" id="cancleEditGroup"  data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title"><span style="color:blue;">绑定角色</span></h4>
+      </div>
+      <!-- remote加载的页面渲染到此容器中 -->
+       <div class="modal-body"></div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
+        <button type="button" class="btn btn-success" onclick="GroupHandler.bindRole();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -122,7 +113,91 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<script src='${ctx}/js/common.js' type='text/javascript'></script>
+<!-- 提示是否解除 -->
+ <div class="modal fade" id="removeFromGroupTip">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title"><span style="color:blue;">提示</span></h4>
+      </div>
+      <div class="modal-body">
+        <p><h3 style="color:red">你确定解除用户吗?</h3></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="cancleDelGroup" data-dismiss="modal">
+        	<i class="icon-remove icon-white"></i>取消
+        </button>
+        <button type="button" class="btn btn-success" onclick="GroupHandler.removeFromGroup()">
+        	<i class="icon-ok icon-white"></i>&nbsp;确&nbsp;&nbsp;定
+        </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- 左树，右边表格 -->
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'west',split:true,border:false" style="width:200px">
+    	<table id="group_table" cellspacing="0" cellpadding="0">
+        <thead>
+			<tr>
+				<th data-options="field:'groupName',width:80">分组树 (右键编辑)</th>
+			</tr>
+		</thead>
+   	</table>
+   	
+   	<!-- 右键菜单 -->
+   	<div id="group_menu" class="easyui-menu" style="width:120px;">
+		<div onclick="GroupHandler.beforeEditGroup(1);"><i class="icon-plus"></i>&nbsp;&nbsp;添加</div>
+		<div class="menu-sep"></div>
+		<div onclick="GroupHandler.beforeEditGroup(2);"><i class="icon-edit"></i>&nbsp;&nbsp;修改</div>
+		<div class="menu-sep"></div>
+		<div onclick="GroupHandler.beforeDeleteGroup();"><i class="icon-remove"></i>&nbsp;&nbsp;删除</div>
+		<div class="menu-sep"></div>
+		<div onclick="GroupHandler.beforeUserBind();"><i class="icon-fire"></i>&nbsp;&nbsp;绑定用户</div>
+		<div class="menu-sep"></div>
+		<div onclick="GroupHandler.beforeRoleBind();"><i class="icon-leaf"></i>&nbsp;&nbsp;授权角色</div>
+		<div class="menu-sep"></div>
+	</div>
+   
+    </div>
+   
+   <!-- 用户列表 -->
+    <div data-options="region:'center',border:false">
+   	 	<table id="userGroup_table" cellspacing="0" cellpadding="0" toolbar="#tbar_ug" style="margin-top:3px;">
+	        <thead>
+	            <tr>
+	                <th data-options="field:'deptName',width:50,align:'center'">部门</th>
+	                <th data-options="field:'loginName',width:50,align:'center'">账号</th>
+	                <th data-options="field:'userName',width:50,align:'center'">用户名</th>
+	                <th data-options="field:'phoneNumber',width:50,align:'center'">电话</th>
+	            </tr>
+	        </thead>
+   		</table>
+   	
+   	<div id="tbar_ug">
+   		<div class="form-inline" >
+		  <form id="usergroup_form" style="margin-top:20px;">
+		  		<!-- 组ID -->
+				<input type="hidden" name="groupId" id="groupId"/>
+		   		<input type="text" class="form-control" name="findInGroup" id="findInGroup" placeholder="账号   / 用户名称">
+		    	<a class="btn btn-success" href="javascript:void(0)"   onclick="GroupHandler.searchUserGroup();">
+					<i class="icon-search icon-white"></i>查询
+				</a>
+			 
+				<span class="pull-right">
+			    	<a class="btn btn-success" id="removeFromGroup" href="javascript:void(0)"   onclick="GroupHandler.removeFromGroup();">
+						<i class="icon-remove icon-white"></i>解除组用户
+					</a>
+				</span>
+			</form>
+		</div>
+	</div>
+	 
+</div>
+
 <script src='${ctx}/js/system/group/group.js' type='text/javascript'></script> 
+<%-- <script src='${ctx}/js/system/user/user.js' type='text/javascript'></script>  --%>
 </body>
 </html>

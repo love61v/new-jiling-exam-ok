@@ -72,13 +72,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		</div>
 	</div>
     
- <!-- 用户编辑 -->
+ <!-- 用户单选题目 -->
  <div class="modal fade" id="editSinglechoice">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" id="cancleEdit"  data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title"><span style="color:blue;">编辑用户</span></h4>
+        <h4 class="modal-title"><span style="color:blue;">编辑单选题目</span></h4>
       </div>
       <!-- remote加载的页面渲染到此容器中 -->
        <div class="modal-body"></div>
@@ -104,7 +104,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
-        <button type="button" class="btn btn-success" onclick="SinglechoiceHandler.authzSinglechoice();"><i class="icon-ok icon-white"></i>&nbsp;确&nbsp;&nbsp;定</button>
+        <button type="button" class="btn btn-success" onclick="SinglechoiceHandler.uploadExcel();"><i class="icon-ok icon-white"></i>&nbsp;确&nbsp;&nbsp;定</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
