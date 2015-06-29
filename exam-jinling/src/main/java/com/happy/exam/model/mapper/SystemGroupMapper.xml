@@ -127,6 +127,19 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	]]>
 	</delete>
 	
+	<!-- 删除节点与子节点 -->
+	<delete id="deleteUnion">
+       	DELETE FROM system_group 
+       	<where>
+       		<if test="groupId != null">
+					AND GroupId = #{groupId}
+				</if>
+       		<if test="parentId != null">
+					OR ParentId = #{parentId}
+			</if>
+       	</where> 
+	</delete>
+	
 	<!-- 批量删除 -->
 	<delete id="delete_batch">
         DELETE FROM system_group 
@@ -203,6 +216,17 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		
 		<if test="offset != null and pageSize != null">
 			LIMIT  #{offset}, #{pageSize}
+		</if>
+	</select>
+	
+	<!-- 查询模块树treegrid -->
+	<select id="findTreegrid" resultType="com.happy.exam.model.SystemGroup">
+		select
+			groupId,groupName,engName,ParentId as _parentId,status,remark,createUser,createTime,updateTime
+		 from system_group
+		 where status = 1
+		<if test="sortColumns != null and sortColumns !=''">
+			ORDER BY ${sortColumns}
 		</if>
 	</select>
 

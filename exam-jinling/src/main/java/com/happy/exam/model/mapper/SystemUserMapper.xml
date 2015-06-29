@@ -181,7 +181,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			#{item.majorFirst} ,
 			#{item.graduateFirst} ,
 			#{item.educationSecond} ,
-			#{item.schoolSecond} ,
+			#{item.schoolSecond}
+			,
 			#{item.majorSecond} ,
 			#{item.graduateSecond} ,
 			#{item.jobTitle} ,
@@ -344,21 +345,23 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 				AND ForcastNumber = #{model.forcastNumber}
 			</if>
 			<if test="model.loginName != null and model.loginName !=''">
-				AND LoginName LIKE CONCAT('%',CONCAT(#{model.loginName},'%')) 
+				AND LoginName LIKE
+				CONCAT('%',CONCAT(#{model.loginName},'%'))
 			</if>
 			<if test="model.password != null and model.password !=''">
 				AND Password = #{model.password}
 			</if>
 			<if test="model.userName != null and model.userName !=''">
-				OR UserName LIKE CONCAT('%',CONCAT(#{model.userName},'%')) 
+				OR UserName LIKE
+				CONCAT('%',CONCAT(#{model.userName},'%'))
 			</if>
 			<if test="model.engName != null and model.engName !=''">
 				AND EngName = #{model.engName}
 			</if>
 			<if test="model.birthday != null">
-				AND Birthday  = #{model.birthday}
+				AND Birthday = #{model.birthday}
 			</if>
-			 
+
 			<if test="model.phoneNumber != null and model.phoneNumber !=''">
 				AND PhoneNumber = #{model.phoneNumber}
 			</if>
@@ -386,7 +389,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			<if test="model.graduateFirst != null">
 				AND GraduateFirst = #{model.graduateFirst}
 			</if>
-			 
+
 			<if test="model.educationSecond != null and model.educationSecond !=''">
 				AND EducationSecond = #{model.educationSecond}
 			</if>
@@ -399,21 +402,21 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			<if test="model.graduateSecond != null">
 				AND GraduateSecond = #{model.graduateSecond}
 			</if>
-		 
+
 			<if test="model.jobTitle != null and model.jobTitle !=''">
 				AND JobTitle = #{model.jobTitle}
 			</if>
 			<if test="model.jobDate != null">
 				AND JobDate = #{model.jobDate}
 			</if>
-			 
+
 			<if test="model.jobRemark != null and model.jobRemark !=''">
 				AND JobRemark = #{model.jobRemark}
 			</if>
 			<if test="model.forcastBeginDate != null">
 				AND ForcastBeginDate = #{model.forcastBeginDate}
 			</if>
-			 
+
 			<if test="model.train != null and model.train !=''">
 				AND Train = #{model.train}
 			</if>
@@ -461,6 +464,30 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		<if test="offset != null and pageSize != null">
 			LIMIT #{offset}, #{pageSize}
 		</if>
+	</select>
+
+	<!-- 根据组ID查询组下的所有用户 -->
+	<select id="findUserByGroupId" resultType="com.happy.exam.common.bean.UserGroupModel">
+		SELECT 
+			sug.id as userGroupId,dept.deptId, dept.deptName, su.userId, su.userName,su.loginName,su.phoneNumber 
+		FROM
+		system_user su, system_group sg, system_user_group sug, department dept
+
+		WHERE su.DeptId = dept.DeptId and su.UserId = sug.UserId and
+		sg.GroupId = sug.GroupId 
+		
+		<if test="groupId != null">
+			AND sug.groupId = #{groupId}
+		</if>
+		<if test="user.loginName != null">
+			AND LoginName LIKE CONCAT('%',CONCAT(#{user.loginName},'%'))
+		</if>
+		<if test="user.userName != null">
+			OR UserName LIKE CONCAT('%',CONCAT(#{user.userName},'%'))
+		</if>
+		
+		GROUP BY su.UserId
+		ORDER BY sug.id desc
 	</select>
 
 </mapper>

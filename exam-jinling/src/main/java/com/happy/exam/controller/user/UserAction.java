@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.happy.exam.common.bean.DataGridModel;
+import com.happy.exam.common.bean.UserGroupModel;
 import com.happy.exam.common.dto.DatagridDto;
 import com.happy.exam.common.pager.Pager;
 import com.happy.exam.common.utils.Md5;
@@ -56,11 +57,17 @@ public class UserAction extends BaseAction {
 	 */
 	@RequestMapping(value = "/list.json", method = RequestMethod.POST)
 	@ResponseBody
-	public DataGridModel showUserlist(DatagridDto dgDto,SystemUser user) {
+	public DataGridModel showUserlist(DatagridDto dgDto,SystemUser user,String userQuery) {
 		DataGridModel dataGridModel = new DataGridModel();
 		
 		user.setSortColumns("CREATETIME DESC");
 		user.setUserName(user.getLoginName());
+		
+		if(StringUtils.isNotBlank(userQuery)){
+			user.setUserName(userQuery);
+			user.setLoginName(userQuery);
+		}
+		
 		Long total = systemUserService.getTotalCount(user);
 		
 		Pager pager = new Pager(dgDto.getPage(), dgDto.getRows(), total);
@@ -68,6 +75,31 @@ public class UserAction extends BaseAction {
 
 		dataGridModel.setRows(pager.getDatas());
 		dataGridModel.setTotal(total);
+
+		return dataGridModel;
+	}
+	
+	/**
+	 * 根据groupId查询用户列表
+	 *
+	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月28日 下午10:27:54
+	 * @param dgDto
+	 * @param user
+	 * @param findInGroup
+	 * @return
+	 */
+	@RequestMapping(value = "/findUserByGroupId.json", method = RequestMethod.POST)
+	@ResponseBody
+	public DataGridModel findUserByGroupId(SystemUser user,Long groupId,String findInGroup) {
+		DataGridModel dataGridModel = new DataGridModel();
+		
+		if(StringUtils.isNotBlank(findInGroup)){
+			user.setUserName(findInGroup);
+			user.setLoginName(findInGroup);
+		}
+		
+		List<UserGroupModel> datalist= systemUserService.findUserByGroupId(user,groupId);
+		dataGridModel.setRows(datalist);
 
 		return dataGridModel;
 	}
@@ -108,8 +140,6 @@ public class UserAction extends BaseAction {
 		
 		return "/system/user/authz";
 	}
-	
-	
 	
 	/**
 	 * 跳转到编辑用户页面

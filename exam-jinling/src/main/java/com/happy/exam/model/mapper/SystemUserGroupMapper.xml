@@ -87,6 +87,16 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			#{ids}
 		</foreach>
     </delete>
+    
+    <!-- groupID与userId组合删除 -->
+    <delete id="deleteUnion">
+     	DELETE FROM system_user_group 
+     	 WHERE groupId = #{groupId} and 
+     	 userId IN 
+        <foreach item="ids" collection="userIdList" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+    </delete>
 
 	<!-- selsect -->
 	<select id="getById" resultMap="RM_SystemUserGroup">

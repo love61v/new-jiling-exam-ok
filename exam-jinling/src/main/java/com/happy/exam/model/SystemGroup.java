@@ -30,6 +30,8 @@ public class SystemGroup extends BaseModel{
      * @字段:ParentId BIGINT(19)  
      */	
 	private java.lang.Long parentId;
+	
+	private java.lang.Long _parentId;
 
 	/**
      * @备注:状态:  1应用, 2禁用     
@@ -200,5 +202,12 @@ public class SystemGroup extends BaseModel{
 	public java.util.Date getUpdateTime() {
 		return this.updateTime;
 	}
-	 
+
+	public java.lang.Long get_parentId() {
+		return _parentId;
+	}
+
+	public void set_parentId(java.lang.Long _parentId) {
+		this._parentId = _parentId;
+	}
 }

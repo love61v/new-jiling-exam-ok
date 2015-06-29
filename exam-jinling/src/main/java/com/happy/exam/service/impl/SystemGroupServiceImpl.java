@@ -25,6 +25,11 @@ public class SystemGroupServiceImpl extends MybatisBaseServiceImpl<SystemGroup, 
 	@Override
 	public List<SystemGroup> findTreegrid(SystemGroup group) {
 		return systemGroupDao.findTreegrid(group);
+	}
+
+	@Override
+	public int deleteUnion(SystemGroup group) {
+		return systemGroupDao.deleteUnion(group);
 	} 
 
 }
