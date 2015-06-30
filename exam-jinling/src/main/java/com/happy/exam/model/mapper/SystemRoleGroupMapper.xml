@@ -79,6 +79,14 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
     	]]>
 	</delete>
 	
+	<!-- 根据roleID与groupId联合删除：在添加绑定组角色时没有排除有则不能再重复插入 -->
+	<delete id="deleteGroupRole" parameterType="com.happy.exam.model.SystemRoleGroup">
+    	<![CDATA[
+        	DELETE FROM system_role_group 
+        	WHERE RoleId = #{roleId} and GroupId =#{groupId} 
+    	]]>
+	</delete>
+	
 	<!-- 批量删除 -->
 	<delete id="delete_batch">
         DELETE FROM system_role_group 
@@ -132,6 +140,14 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		<if test="offset != null and pageSize != null">
 			LIMIT  #{offset}, #{pageSize}
 		</if>
+	</select>
+	
+	<!-- 根据groupId查组的所有角色 -->
+	<select id="findRoleByGroupId" resultType="com.happy.exam.model.SystemRole">
+		SELECT distinct srg.id, r.roleId, r.roleName,r. engName, r.remark FROM system_role r, system_group sg, system_role_group srg
+		WHERE r.RoleId = srg.RoleId and sg.GroupId = srg.GroupId
+		and srg.GroupId = #{groupId}
+		group by r.roleName
 	</select>
 
 </mapper>

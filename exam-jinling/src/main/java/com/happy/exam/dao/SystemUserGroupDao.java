@@ -2,6 +2,7 @@ package com.happy.exam.dao;
 import java.util.Map;
 
 import com.happy.exam.dao.BaseDao;
+import com.happy.exam.model.SystemRoleGroup;
 import com.happy.exam.model.SystemUserGroup;
 
 /**
@@ -21,5 +22,4 @@ public interface SystemUserGroupDao extends BaseDao<SystemUserGroup,java.lang.Lo
 	 * @return
 	 */
 	long deleteUnion(Map<String, Object> params);
-
 }

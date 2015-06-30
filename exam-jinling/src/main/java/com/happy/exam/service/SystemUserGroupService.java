@@ -1,6 +1,7 @@
 package com.happy.exam.service;   
 import java.util.List;
 
+import com.happy.exam.model.SystemRoleGroup;
 import com.happy.exam.model.SystemUserGroup;
 
 /**
@@ -13,7 +14,7 @@ import com.happy.exam.model.SystemUserGroup;
 public interface SystemUserGroupService extends BaseService<SystemUserGroup,java.lang.Long>{
 
 	/**
-	 * 根据groupId,与userID删除
+	 * 根据groupId与userID删除
 	 *
 	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月29日 上午12:01:38
 	 * @param groupId

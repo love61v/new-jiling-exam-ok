@@ -1,10 +1,10 @@
 package com.happy.exam.dao.impl;  
 import java.util.Map;
 
-import com.happy.exam.dao.SystemUserGroupDao; 
-import com.happy.exam.model.SystemUserGroup;
-
 import org.springframework.stereotype.Service;
+
+import com.happy.exam.dao.SystemUserGroupDao;
+import com.happy.exam.model.SystemUserGroup;
 
 /**
  *  SystemUserGroupDao
@@ -19,9 +19,10 @@ public class SystemUserGroupDaoImpl extends MybatisBaseDaoImpl<SystemUserGroup, 
 	private final static String CLZZ = SystemUserGroup.class.getName();
 	private final static String DELETE_UNION = CLZZ + ".deleteUnion";
 	
+	
 	@Override
 	public long deleteUnion(Map<String, Object> params) {
 		return this.getSqlSessionTemplate().delete(DELETE_UNION, params);
-	} 
+	}
 
 }
