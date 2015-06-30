@@ -24,7 +24,6 @@
 <script src="${ctx}/js/ace/js/respond.min.js"></script>
 <![endif]-->
 </head>
-
 <body class="login-layout">
 
 <div class="main-container" style="margin-top:130px;">

@@ -15,6 +15,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <base href="<%=basePath%>">
 
+<title>用户管理</title>
 <link href='${ctx}/css/bootstrap/bootstrap.css' media='all' rel='stylesheet' type='text/css' /> 
 <link rel="stylesheet" type="text/css" href="${ctx }/css/icon.css">
 <link href='${ctx }/css/light-theme.css' id='color-settings-body-color' media='all' rel='stylesheet' type='text/css' />
@@ -22,48 +23,43 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <link rel="stylesheet" type="text/css" href="${ctx }/js/jquery-easyui/themes/bootstrap/easyui.css">
 <link rel="stylesheet" type="text/css" href="${ctx }/js/jquery-easyui/themes/bootstrap/datalist.css">
 
+
 <script type="text/javascript" src="${ctx }/js/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.min.js"></script>
 <script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="${ctx }/js/plugins/json2/json2.js"></script>
-
-<title>角色管理</title>
-</head>
+ 
 <body>
-      <table id="role_table" cellspacing="0" cellpadding="0" toolbar="#role_toolbar" style="margin-top:3px;">
+      <table id="user_table" cellspacing="0" cellpadding="0" toolbar="#toolbar" style="margin-top:3px;">
         <thead>
             <tr>
-                <th data-options="field:'roleId',width:20,align:'center'">编号</th>
-                <th data-options="field:'roleName',width:50,align:'center'">名称</th>
-                <th data-options="field:'engName',width:50,align:'center'">英文名</th>
-                <th data-options="field:'remark',width:50,align:'center'">备注</th>
-                <th data-options="field:'status',width:30, formatter: formatStatus,align:'center'">状态</th>
+                <th data-options="field:'id',width:20,align:'center'">编号</th>
+                <th data-options="field:'question',width:50,align:'center'">问题</th>
+                <th data-options="field:'answer',width:50,align:'center'">答案</th>
+                <th data-options="field:'score',width:50,formatter: formatDept,align:'center'">分值</th>
+                <th data-options="field:'typeId',width:50,align:'center'">类别</th>
                 <th data-options="field:'createTime',width:80, formatter:formatTime,align:'center'">创建时间</th>
-                <th data-options="field:'x',width:50,formatter:formatAction,align:'center'">操作</th>
+                <th data-options="field:'updateTime',width:80, formatter:formatTime,align:'center'">更新时间</th>
             </tr>
         </thead>
    	</table>
    	
-   	<div id="role_toolbar">
+   	<div id="toolbar">
    		<div class="form-inline" >
-			<form id="role_form" style="margin-top:20px;">
-	   		<input type="text" class="form-control" name="roleName" id="roleName" placeholder="名称">
-	    	<a class="btn btn-success" href="javascript:void(0)"   onclick="RoleHandler.search();">
-				<i class="icon-search icon-white"></i>查询
-			</a>
+   				<form id="user_form" style="margin-top:20px;">
+		   		<input type="text" class="form-control" name="loginName" id="loginName" placeholder="账号  / 用户名称">
+		    	<a class="btn btn-success" href="javascript:void(0)"   onclick="UserHandler.search();">
+					<i class="icon-search icon-white"></i>查询
+				</a>
 			 
 			<span class="pull-right">
-		    	<a class="btn btn-success" id="saveRole" href="javascript:void(0)"   onclick="RoleHandler.beforeEditRole(1);">
+		    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="UserHandler.beforeEditUser(1);">
 					<i class="icon-plus icon-white"></i>添加
 				</a>
-		    	<a class="btn btn-success" id="updateRole" href="javascript:void(0)" onclick="RoleHandler.beforeEditRole(2);">
+		    	<a class="btn btn-success" id="update" href="javascript:void(0)" onclick="UserHandler.beforeEditUser(2);">
 					<i class="icon-edit icon-white"></i>修改
 				</a>
-				<a class="btn btn-info" id="beforeDeleteRole" href="javascript:void(0)"  onclick="RoleHandler.beforeDeleteRole();">
+				<a class="btn btn-info" id="beforeDeleteUser" href="javascript:void(0)"  onclick="UserHandler.beforeDeleteUser();">
 					<i class="icon-remove icon-white"></i>删除 
-				</a>
-				<a class="btn btn-info" id="authzResource" href="javascript:void(0)"  onclick="RoleHandler.authzResource();">
-					<i class="icon-remove icon-white"></i>分配资源 
 				</a>
 			</span>
 			</form>
@@ -71,11 +67,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	</div>
     
  <!-- 用户编辑 -->
- <div class="modal fade" id="editRole">
+ <div class="modal fade" id="editUser">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" id="cancleEditRole"  data-dismiss="modal" aria-hidden="true">×</button>
+        <button type="button" class="close" id="cancleEdit"  data-dismiss="modal" aria-hidden="true">×</button>
         <h4 class="modal-title"><span style="color:blue;">编辑用户</span></h4>
       </div>
       <!-- remote加载的页面渲染到此容器中 -->
@@ -83,14 +79,33 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
-        <button type="button" class="btn btn-success" onclick="RoleHandler.editRole();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
+        <button type="button" class="btn btn-success" onclick="UserHandler.editUser();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- 授权用户 -->
+ <div class="modal fade" id="authzUser">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" id="cancleauthzUser"  data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title"><span style="color:blue;">授权用户</span></h4>
+      </div>
+      <!-- remote加载的页面渲染到此容器中 -->
+       <div class="modal-body"></div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
+        <button type="button" class="btn btn-success" onclick="UserHandler.authzUser();"><i class="icon-ok icon-white"></i>&nbsp;确&nbsp;&nbsp;定</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
  <!-- 提示是否删除 -->
- <div class="modal fade" id="isDeleteRoleTip">
+ <div class="modal fade" id="isDeleteTip">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -104,19 +119,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <button type="button" class="btn btn-danger" id="cancleDel" data-dismiss="modal">
         	<i class="icon-remove icon-white"></i>取消
         </button>
-        <button type="button" class="btn btn-success" onclick="RoleHandler.deleteRole()">
+        <button type="button" class="btn btn-success" onclick="UserHandler.deleteUser()">
         	<i class="icon-ok icon-white"></i>&nbsp;确&nbsp;&nbsp;定
         </button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
+    
 <script src="${ctx}/js/bootstrap/bootstrap.min.js"></script>
 <script src='${ctx}/js/plugins/validate/jquery.validate.min.js' type='text/javascript'></script>
 <script src='${ctx}/js/plugins/validate/additional-methods.js' type='text/javascript'></script>
 <script src='${ctx}/js/common.js' type='text/javascript'></script>
-<script src='${ctx}/js/system/role/role.js' type='text/javascript'></script>
-
+<script src='${ctx}/js/questiontypes/singlechoice/singlechoice.js' type='text/javascript'></script>
 </body>
 </html>

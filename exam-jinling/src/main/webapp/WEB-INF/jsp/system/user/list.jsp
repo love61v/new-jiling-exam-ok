@@ -59,7 +59,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		    	<a class="btn btn-success" id="update" href="javascript:void(0)" onclick="UserHandler.beforeEditUser(2);">
 					<i class="icon-edit icon-white"></i>修改
 				</a>
-				<a class="btn btn-info" id="beforeDeleteUser" href="javascript:void(0)"  onclick="UserHandler.beforeDeleteUser();">
+				<!-- <a class="btn btn-success" id="assignRole" href="javascript:void(0)"  onclick="UserHandler.authz();">
+					<i class="icon-leaf icon-white"></i>分配角色
+				</a> -->
+				<a class="btn btn-success" id="beforeDeleteUser" href="javascript:void(0)"  onclick="UserHandler.beforeDeleteUser();">
 					<i class="icon-remove icon-white"></i>删除 
 				</a>
 			</span>
@@ -86,13 +89,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<!-- 授权用户 -->
+<!-- 授权分配角色 -->
  <div class="modal fade" id="authzUser">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" id="cancleauthzUser"  data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title"><span style="color:blue;">授权用户</span></h4>
+        <h4 class="modal-title"><span style="color:blue;">分配角色</span></h4>
       </div>
       <!-- remote加载的页面渲染到此容器中 -->
        <div class="modal-body"></div>

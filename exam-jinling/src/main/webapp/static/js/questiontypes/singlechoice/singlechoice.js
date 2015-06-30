@@ -66,7 +66,7 @@ var SinglechoiceHandler = {
 		var url = ctx +  "singlechoice/importExcel.html";
 		$("#singleChoiceForm").attr("action",url).submit();
 	},
-	
+	 
 	authz: function(){//授权
 		var rowsChecked = $('#singlechoice_table').datagrid('getChecked');
 		var len = rowsChecked.length;

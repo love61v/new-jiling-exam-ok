@@ -10,6 +10,7 @@ $(function(){
 		    border: 		false, 
 		    collapsible:	false,//是否可折叠的 
 		    fit: 			true,//自动大小 
+		    lines:			true,
 		    idField:		'deptId', 
 		    pagination:		true,//分页控件 
 		    treeField:		'deptName',

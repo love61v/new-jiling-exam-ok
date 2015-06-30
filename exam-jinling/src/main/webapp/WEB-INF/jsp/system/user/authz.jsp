@@ -7,10 +7,7 @@
    <caption>角色列表</caption>
    <thead>
       <tr>
-        <th>
-			<input type="checkbox" name="roleChkbox" id="roleChkbox">
-		</th>
-         <th style="display: none;">编号</th>
+        <th> &nbsp;</th>
          <th>角色名称</th>
          <th>备注</th>
       </tr>
@@ -19,9 +16,8 @@
    	<c:forEach items="${rolelist }" var="el">
       <tr>
          <td>
-			<input type="checkbox" value="${el.roleId }">
+			<input type="checkbox" name="roleChkbox" value="${el.roleId }">
 		</td>
-         <td style="display: none;">${el.roleId }</td>
          <td>${el.roleName }</td>
          <td>${el.remark }</td>
       </tr>

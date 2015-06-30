@@ -11,21 +11,20 @@ $(function(){
 	    striped: 		true, 
 	    border: 		false, 
 	    collapsible:	false, 
+	    lines:			true,
 	    idField:		'groupId', 
 	    treeField:		'groupName',
-	    onContextMenu: function(e, row) {
-						e.preventDefault();
-						$(this).treegrid('select', row.groupId);
-						$('#group_menu').menu('show', {
-							left : e.pageX,
-							top : e.pageY
-						});
-		}
+	    onClickRow:      function(row){//单击树的行，加载右边表格加载数据
+	    	$("#groupId").val(row.groupId);
+	    	GroupHandler.reloadUserGroup();
+	    },
+	    onContextMenu:  onContextMenuFun
 	}); 
 	
 	//右边用户列表
 	$('#userGroup_table').datagrid({  
-		url: 			ctx +'/user/list.json', 
+		url: 			ctx +'user/findUserByGroupId.json', 
+		title:  		'用户信息',
 		idField:		'userId', 
 	    height: 		'auto', 
 	    fitColumns: 	true,
@@ -35,34 +34,76 @@ $(function(){
 	    border: 		false, 
 	    collapsible:	false,
 	    processing: 	true,
-        pageLength: 	15,
-	    singleSelect:	true,//是否单选 
-	    pagination:		true,//分页控件 
-	    rownumbers:		true
+	    singleSelect:	false,//是否单选 
+	    rownumbers:		true,
+	    frozenColumns:[[ 
+	        	        {field:'ck',checkbox:true} 
+	        	    ]]
 	}); 
 	
-	//设置分页控件 
-	var p = $('#userGroup_table').datagrid('getPager'); 
-	$(p).pagination({ 
-		pageSize: 10,
-	    pageList: [10,15,30,50,100], 
-	    beforePageText: '第',
-	    afterPageText: '页    共 {pages} 页', 
-	    displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录', 
-	});  
-	
 });
+
+function onContextMenuFun(e, row) {//右键菜单
+		e.preventDefault();
+		$(this).treegrid('select', row.groupId);
+		$('#group_menu').menu('show', {
+			left : e.pageX,
+			top : e.pageY
+		});
+		 
+		var node = $('#group_table').treegrid('getParent', row.groupId);
+		var isHide = function(method){//组的根节点只有添加操作
+			for(var i=0,len = $(".menuGrouphide").size();i < len;i++){
+    			var item = $('#group_menu').menu('getItem',$(".menuGrouphide")[i]);
+    			$('#group_menu').menu(method, item.target);
+    		}
+		};
+    	if(!node){
+    		isHide('disableItem');
+		}else{
+			isHide('enableItem');
+		}
+};
 
 $(function(){//清除模态窗体的数据,每次打重新加载
 	$("#editGroup").on("hidden", function() {
 	    $(this).removeData("modal");
 	});
+	 
+	$('#bindUserModal').on('hidden.bs.modal', function () {
+		$("#bindUser_table").datagrid("clearSelections");
+	});
+	
+	$('#bindRoleModal').on('hidden.bs.modal', function () {
+		$("#bindRole_table").datagrid("clearSelections");
+	});
+	
 });
 
 /**
  * 组事件操作
  */
 var GroupHandler = {
+		
+	reloadUserGroup: function(){//组用户列表reload
+		$("#userGroup_table").datagrid("uncheckAll");
+		var params = $("#usergroup_form").serializeJson();
+    	$("#userGroup_table").datagrid("load",params);
+	},
+	
+	userSearch: function(){ 
+		var params = $("#bindUser_form").serializeJson();
+		params._time = new Date().getTime();
+		 
+		$('#bindUser_table').datagrid('load',params); 
+	},
+	
+	searchUserGroup: function(){//查询组下的所有用户
+		var params = $("#usergroup_form").serializeJson();
+		params._time = new Date().getTime();
+		 
+		$('#userGroup_table').datagrid('load',params); 
+	},
 	
 	/**
 	 * 打开编辑页面
@@ -77,6 +118,9 @@ var GroupHandler = {
 		var url =  ctx + "/group/beforeEditGroup.html?_time=" + new Date().getTime();
 		 
 		if(flag == 2){//修改
+			if(groupId == 1){
+				return false;
+			}
 			var tree = $('#group_table').treegrid('getParent',groupId);
 			pname = tree.groupName;
 			pid = tree.groupId;
@@ -88,14 +132,90 @@ var GroupHandler = {
 		 
 		url +="&flag=" + flag;
     	url +="&pname=" + encodeURI(encodeURI(pname));
-
-    	  $("#editGroup").modal({
-    	    	 backdrop: false,
-    	    	 remote: url
-    	    }); 
-//    	showModal("editGroup", url); //弹出窗体
+    	
+    	showModal("editGroup", url);
     },
 	
+    parentNodeAct: function(){//根节点无删除，绑定权限功能
+    	var rowsChecked = $('#group_table').treegrid('getSelected');//选中的行
+		var node = $('#group_table').treegrid('getParent', rowsChecked.groupId);
+    	if(!node){
+			return false;
+		}
+    	return true;
+    },
+    
+    beforeUserBind: function(){//跳绑定用户页面
+    	var url =  ctx + "/group/beforeUserBind.html";
+    	showModal("bindUserModal", url);
+    },
+    
+    beforeRoleBind: function(){//跳绑定角色页面
+    	var url =  ctx + "/group/beforeRoleBind.html";
+    	showModal("bindRoleModal", url);
+    },
+    
+    bindUser: function(){//绑定用户
+    	var rowsChecked = $("#bindUser_table").datagrid("getChecked");
+    	var len = rowsChecked.length;
+    	if(len > 0){
+    		var groupId = $("#group_table").treegrid("getSelected").groupId;
+    		var userGroupArr = [];
+    		for(var i=0; i < len; i++ ){
+    			var userGrop = {};
+    			userGrop.groupId = groupId;
+    			userGrop.userId = rowsChecked[i].userId;
+    			
+    			userGroupArr.push(userGrop);
+        	}
+    		
+    		var url =  ctx + "/group/bindUser.json";
+    		var me = this;
+        	$.post(url,{
+        		userGroups: JSON.stringify(userGroupArr), 
+        		_time: new Date().getTime()
+        	},function(data){
+        		if(data && data.status != 0){
+        			me.reloadUserGroup();
+        			$('#bindUser_table').datagrid('clearSelections');//清除缓存之前选中的行
+        			$("#bindUserModal").modal("hide");
+        		}
+        	});
+        	
+    	} 
+    },
+    
+    bindRole: function(){//绑定角色
+    	//绑定用户 
+    	var rowsChecked = $("#bindRole_table").datagrid("getChecked");
+    	var len = rowsChecked.length;
+    	if(len > 0){
+    		var groupId = $("#group_table").treegrid("getSelected").groupId;
+    		var roleGroupArr = [];
+    		for(var i=0; i < len; i++ ){
+    			var roleGrop = {};
+    			roleGrop.groupId = groupId;
+    			roleGrop.roleId = rowsChecked[i].roleId;
+    			
+    			roleGroupArr.push(roleGrop);
+        	}
+    		
+    		var me = this;
+    		var url =  ctx + "/group/bindRole.json";
+        	$.post(url,{
+        		roleGroups: JSON.stringify(roleGroupArr), 
+        		_time: new Date().getTime()
+        	},function(data){
+        		if(data && data.status != 0){
+        			//me.reloadUserGroup();;  //表格重新加载
+        			$('#bindRole_table').datagrid('clearSelections');//清除缓存之前选中的行
+        			$("#bindRoleModal").modal("hide");
+        		}
+        	});
+        	
+    	} 
+    },
+    
 	editGroup: function(){//提交编辑用户
 		if(!this.checkGroup("groupName")){
 			return false;
@@ -159,6 +279,49 @@ var GroupHandler = {
     		 keyboard: false
     	 });  
     	return false;
+    },
+    
+    beforeRemoveFromGroup: function(){//确认是否解除用户
+    	$("#removeFromGroupTip").modal({
+   		 backdrop: 'static',
+   		 keyboard: false
+   	 });  
+   	return false;
+    },
+    
+    removeFromGroup: function(){//解除用户
+    	var groupChecked = $('#group_table').treegrid('getSelected');//选中的行
+    	if(!groupChecked){
+    		tipMsg("removeFromGroup", "请选择组");
+    		return false;
+    	}
+    	var userChecked = $('#userGroup_table').datagrid('getChecked');
+    	var len = userChecked.length;
+    	if(len == 0){
+    		tipMsg("removeFromGroup", "请选用户");
+    		return false;
+    	}
+    	
+		var groupId = groupChecked.groupId;
+    	var uerIds = "";
+    	for(var i=0; i < len; i++ ){
+    		uerIds += (i > 0 ? "," : "");
+    		uerIds += userChecked[i].userId;
+    	}
+    	
+    	var me = this;
+    	var url =  ctx + "/group/removeFromGroup.json";
+    	$.post(url,{
+    		groupId: groupId,
+    		uerIds: uerIds,
+    		_time: new Date().getTime()
+    	},function(data){
+    		if(data && data.status != 0){
+    			$("#removeFromGroupTip").modal("hide"); //隐藏提示窗体
+    			me.reloadUserGroup();  //表格重新加载
+    		}
+    	});
+    
     },
     
     checkGroup: function (id){//验证 

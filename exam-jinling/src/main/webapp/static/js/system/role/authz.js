@@ -12,21 +12,9 @@ $(function(){
 	    idField:		'resourceId', 
 	    treeField:		'resourceName'
 	}); 
-	
+	 
 	authlist = getAuth();//资源权
 	  
-});
-
-
-$(function(){
-	$('#authzRole').on('shown.bs.modal', function () {
-		 $('#authzRole_table').treegrid('reload'); 
-	});
-	$('#authzRole').on('hidden.bs.modal', function () {
-		$("#authc_roleId").val("");
-		authlist = [];
-	});
-	
 });
 
 /*
@@ -67,17 +55,16 @@ function formatResourceName(val,row,index){
 		return val;
 	} 
 	 
-	var checkbox = val + "&nbsp;&nbsp;<input  type='checkbox' name='module_#' id='module_#' value='#' @checked />";
+	var checkbox = val + "&nbsp;&nbsp;<input class='allme_9'  type='checkbox' name='module_#' id='module_#' value='#' @checked />";
 	checkbox = checkbox.replaceAll("#", moduleID);
-	
+	 
 	for(var i=0,len = authlist.length;i < len;i++){
 		if(authlist[i].resourceId == moduleID){
 			checkbox = checkbox.replace("@checked","checked='checked'");
-		}else{
-			checkbox = checkbox.replaceAll("@checked", "");
-		}
+			break;
+		} 
 	}
-	
+	checkbox = checkbox.replaceAll("@checked", "");
 	return checkbox;
 };
 
@@ -118,39 +105,36 @@ function formatOperate(val,row,index){
 	        });
 	}
 	
-	var raw = "";
-	if(len > 0){debugger;
-		var checkbox = "<input style='margin-left:10px;'  type='checkbox' @checked  name='oper_@moduleID' value='#'/>&nbsp;&nbsp;@name";
+	var inputArr = [];
+	if(len > 0){
+		var checkbox = "<input style='margin-left:10px;' class='allme_9' type='checkbox' @checked  name='oper_@moduleID' value='#'/>&nbsp;&nbsp;@name";
 		for (var i = 0; i < len; i++) {
 			var tem = checkbox;
 			tem = tem.replaceAll("#", operateArr[i].operateId)
 					  .replace("@moduleID", row.resourceId)
 					  .replace("@name", operateArr[i].operateName);
-			raw += tem;
-			if (i > 0 && i % 4 == 0 ){
-				raw += "<p><p>";
-			}
 			 
-			for(var k=0,len2 = authlist.length;k < len2;k++){
-				if(row.resourceId == authlist[k].resourceId){
-					var authOperStr = authlist[k].operateId ; //已授权的操作用逗号分隔的串
-					if(null == authOperStr){
-						continue;
-					}
-					var authOperStr = authOperStr.split(",");
-					for ( var j = 0, len3 = authOperStr.length; j < len3; j++) {
-						if (authOperStr[j] = operateArr[j].operateId) {
-							tem = tem.replace("@checked", "checked='checked'");
-							 
-						}
-					}
-				}else{
-					raw = raw.replaceAll("@checked", "");
-				}
+			if (i > 0 && i % 4 == 0 ){
+				tem += "<p><p>";
 			}
-		};
+			inputArr[operateArr[i].operateId] = tem;
+		}
+			 
+		for(var k=0,len2 = authlist.length;k < len2;k++){
+			if(row.resourceId == authlist[k].resourceId){
+				var authOperStr = authlist[k].operateId ; //已授权的操作用逗号分隔的串
+				if(null == authOperStr){
+					continue;
+				}
+				var authOperStr = authOperStr.split(",");
+				for (var j = 0, len3 = authOperStr.length; j < len3; j++) {
+					inputArr[Number(authOperStr[j])] = inputArr[Number(authOperStr[j])].replace("@checked", "checked='checked'");
+				}
+			} 
+		}
 	}
 	
+	var raw = inputArr.toString().replaceAll("@checked", "").replaceAll(",", "");
 	return raw;
  };
 

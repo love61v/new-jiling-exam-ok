@@ -25,11 +25,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.happy.exam.common.bean.DataGridModel;
 import com.happy.exam.common.dto.DatagridDto;
-import com.happy.exam.common.dto.TreegridDto;
 import com.happy.exam.common.pager.Pager;
 import com.happy.exam.controller.BaseAction;
 import com.happy.exam.model.SystemOperate;
-import com.happy.exam.model.SystemResource;
 import com.happy.exam.model.SystemRole;
 import com.happy.exam.model.SystemRoleResource;
 import com.happy.exam.service.SystemOperateService;
@@ -226,13 +224,19 @@ public class RoleAction extends BaseAction {
 	 */
 	@RequestMapping(value = "/saveAuthzRole.json", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> saveAuthzRole(String permissons) {
+	public Map<String, Object> saveAuthzRole(String roleId, String permissons) {
 		Map<String, Object> map = getStatusMap();
-		if (StringUtils.isNotBlank(permissons)) {
+		
+		if (StringUtils.isNotBlank(permissons) && StringUtils.isNotBlank(roleId)) {
 			Class<SystemRoleResource> clzz = SystemRoleResource.class;
-			List<SystemRoleResource> list = JSON.parseArray(permissons, clzz);
 
-			int count = systemRoleResourceService.saveBatch(list, clzz);
+			// 先根据角色ID删除所有再添加新数据
+			int count = systemRoleResourceService.delete(Long.valueOf(roleId), clzz);
+			if(count >= 0){
+				List<SystemRoleResource> list = JSON.parseArray(permissons, clzz);
+				count = systemRoleResourceService.saveBatch(list, clzz);
+			}
+
 			map.put("status", count);
 		}
 

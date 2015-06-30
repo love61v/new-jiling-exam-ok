@@ -1,6 +1,8 @@
 package com.happy.exam.controller.group;
 
 import java.io.UnsupportedEncodingException;
+ 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.happy.exam.common.dto.TreegridDto;
 import com.happy.exam.controller.BaseAction;
 import com.happy.exam.model.SystemGroup;
@@ -70,7 +73,35 @@ public class GroupAction extends BaseAction{
 	public String choiceGroupTree(Model model) {
 		return "system/group/choiceGroupTree";
 	}
+ 
+	/**
+	 * 跳绑定用户页面
+	 *
+	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
+	 * 2015年5月16日 下午11:48:57
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/beforeUserBind.html", method = RequestMethod.GET)
+	public String beforeUserBind(Model model) {
+		return "system/group/bindUser";
+	}
 	
+	/**
+	 * 跳绑定用户页面
+	 *
+	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
+	 * 2015年5月16日 下午11:48:57
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/beforeRoleBind.html", method = RequestMethod.GET)
+	public String beforeRoleBind(Model model) {
+		return "system/group/bindRole";
+	}
+	 
 	
 	/**
 	 * 返回treeGrid模块数据
@@ -193,4 +224,72 @@ public class GroupAction extends BaseAction{
 		return map;
 	}
 	
+ 
+	/**
+	 * 绑定用户
+	 * 存在ID则修改，否则添加
+	 *
+	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午11:45:43
+	 * @param model
+	 * @param group
+	 * @return
+	 */
+	@RequestMapping(value = "/bindUser.json", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> bindUser(Model model,String userGroups) {
+		Map<String, Object> map = getStatusMap();
+		long count = 0L;
+		
+		if(StringUtils.isNotBlank(userGroups)){
+			Class<SystemUserGroup> clzz = SystemUserGroup.class;
+			List<SystemUserGroup> list = JSON.parseArray(userGroups, clzz);
+			count = systemUserGroupService.saveBatch(list, clzz);
+		}
+		 
+		map.put("status", count);
+		
+		return map;
+	}
+	
+	@RequestMapping(value = "/removeFromGroup.json", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> removeFromGroup(String groupId,String uerIds) {
+		Map<String, Object> map = getStatusMap();
+		long count = 0L;
+		
+		if(StringUtils.isNotBlank(groupId) && StringUtils.isNotBlank(uerIds)){
+			count = systemUserGroupService.deleteUnion(groupId,Arrays.asList(uerIds.split(",")));
+		}
+		 
+		map.put("status", count);
+		
+		return map;
+	}
+	
+	/**
+	 * 绑定角色到组
+	 * 存在ID则修改，否则添加
+	 *
+	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午11:45:43
+	 * @param model
+	 * @param group
+	 * @return
+	 */
+	@RequestMapping(value = "/bindRole.json", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> bindRole(Model model,String roleGroups) {
+		Map<String, Object> map = getStatusMap();
+		long count = 0L;
+		
+		if(StringUtils.isNotBlank(roleGroups)){
+			Class<SystemRoleGroup> clzz = SystemRoleGroup.class;
+			List<SystemRoleGroup> list = JSON.parseArray(roleGroups, clzz);
+			count = systemRoleGroupService.saveBatch(list, clzz);
+		}
+		 
+		map.put("status", count);
+		
+		return map;
+	}
+	 
 }

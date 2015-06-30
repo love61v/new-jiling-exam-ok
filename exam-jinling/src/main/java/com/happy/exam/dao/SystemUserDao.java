@@ -1,4 +1,8 @@
 package com.happy.exam.dao;  
+import java.util.List;
+import java.util.Map;
+
+import com.happy.exam.common.bean.UserGroupModel;
 import com.happy.exam.dao.BaseDao;
 import com.happy.exam.model.SystemUser;
 
@@ -10,5 +14,7 @@ import com.happy.exam.model.SystemUser;
  * @date	: 2015年5月17日 下午9:01:26 
  */
 public interface SystemUserDao extends BaseDao<SystemUser,java.lang.Long>{
+
+	List<UserGroupModel> findUserByGroupId(Map<String, Object> params);
 
 }
