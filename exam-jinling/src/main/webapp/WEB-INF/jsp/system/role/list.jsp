@@ -59,12 +59,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		    	<a class="btn btn-success" id="updateRole" href="javascript:void(0)" onclick="RoleHandler.beforeEditRole(2);">
 					<i class="icon-edit icon-white"></i>修改
 				</a>
-				<a class="btn btn-info" id="beforeDeleteRole" href="javascript:void(0)"  onclick="RoleHandler.beforeDeleteRole();">
-					<i class="icon-remove icon-white"></i>删除 
+				<a class="btn btn-success" id="beforeDeleteRole" href="javascript:void(0)"  onclick="RoleHandler.beforeDeleteRole();">
+					<i class="icon-trash icon-white"></i>删除 
 				</a>
-				<a class="btn btn-info" id="authzResource" href="javascript:void(0)"  onclick="RoleHandler.authzResource();">
+				<!-- <a class="btn btn-info" id="authzResource" href="javascript:void(0)"  onclick="RoleHandler.authzResource();">
 					<i class="icon-remove icon-white"></i>分配资源 
-				</a>
+				</a> -->
 			</span>
 			</form>
 		</div>
@@ -84,6 +84,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
         <button type="button" class="btn btn-success" onclick="RoleHandler.editRole();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- 分配角色资源 -->
+ <div class="modal fade" id="authzRole">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" id="cancleauthzRole"  data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title"><span style="color:blue;">绑定用户</span></h4>
+      </div>
+      <!-- remote加载的页面渲染到此容器中 -->
+       <div class="modal-body" id="authzBody"></div>
+      
+      <div class="modal-footer">
+      	<span class="pull-left"><input type="checkbox" name="allChk" onchange="RoleHandler.allIsCheck(this);" />全选 / 取消</span> 
+      	<span id="acceptAuthz" style="margin-right: 10px;">&nbsp;</span>
+        <a class="btn btn-success" href="javascript:void(0)"   onclick="RoleHandler.reloadTree();">
+			<i class="icon-refresh icon-white"></i>刷新
+		</a>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
+        <button type="button" class="btn btn-success"  onclick="RoleHandler.authzRole();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

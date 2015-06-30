@@ -111,7 +111,6 @@ var RoleHandler = {
 					function(data){
 						if(data && data.status != 0){ 
 		           			$("#cancleauthzRole").click(); //关闭窗体
-		           			
 		           			me.cancleAllChk();
 		        		}
 			});
@@ -192,7 +191,7 @@ var RoleHandler = {
 	    	return false;
 	    }
     },
-    
+
     reloadTree: function(){ //刷新重新加载树
     	$('#authzRole_table').treegrid('reload');
     	$('#authzRole_table').treegrid('unselectAll');
@@ -226,7 +225,7 @@ var RoleHandler = {
  * 格式化操作列
  */
 function formatAction(val,row,index){
-	return "<a href='javascript:void(0);' onclick=RoleHandler.authzResource('"+row.roleId+"');>分配模块</a>";
+	return "<a href='javascript:void(0);' onclick=RoleHandler.authzResource('"+row.roleId+"');>分配资源</a>";
 };
 
 

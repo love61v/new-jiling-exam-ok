@@ -5,6 +5,7 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <script src='${ctx}/js/system/role/authz.js' type='text/javascript'></script>
  
+ 
  <!-- 要授权的角色 --> 
  <input type="hidden" id="authc_roleId" value="${roleId }"/>
  

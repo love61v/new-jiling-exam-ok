@@ -57,12 +57,16 @@ var SinglechoiceHandler = {
 	},
 	
 	importExcel: function(){//导入excel
-		
         $("#importExcelModal").modal({//弹出窗体
-        	 remote: ctx + '/singlechoice/breforeImportExcel.html'
+        	 remote: ctx + 'singlechoice/breforeImportExcel.html'
         }); 
 	},
 	
+	uploadExcel: function(){//上传
+		var url = ctx +  "singlechoice/importExcel.html";
+		$("#singleChoiceForm").attr("action",url).submit();
+	},
+	 
 	authz: function(){//授权
 		var rowsChecked = $('#singlechoice_table').datagrid('getChecked');
 		var len = rowsChecked.length;

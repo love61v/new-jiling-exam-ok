@@ -50,22 +50,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		   		<input type="text" class="form-control" name="loginName" id="loginName" placeholder="账号  / 用户名称">
 		    	<a class="btn btn-success" href="javascript:void(0)"   onclick="UserHandler.search();">
 					<i class="icon-search icon-white"></i>查询
-				</a>
+				</a> 				
+				<div class="pull-right"> 
+				  <div class="btn-group" data-toggle="buttons-checkbox">
+	               <button class="btn btn-success" type="button" id="save" onclick="UserHandler.beforeEditUser(1);">
+	               	<i class="icon-plus icon-white"></i>添加
+	               </button>
+	                <button class="btn btn-success" type="button" id="update"  onclick="UserHandler.beforeEditUser(2);">
+	                	<i class="icon-edit icon-white"></i>修改
+	                </button>
+	                <button class="btn btn-success" type="button"  id="beforeDeleteUser" onclick="UserHandler.beforeDeleteUser();">
+	                	<i class="icon-trash icon-white"></i>删除 
+	                </button>
+	            </div>
+           	 </div>
 			 
-			<span class="pull-right">
-		    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="UserHandler.beforeEditUser(1);">
-					<i class="icon-plus icon-white"></i>添加
-				</a>
-		    	<a class="btn btn-success" id="update" href="javascript:void(0)" onclick="UserHandler.beforeEditUser(2);">
-					<i class="icon-edit icon-white"></i>修改
-				</a>
-				<a class="btn btn-info" id="beforeDeleteUser" href="javascript:void(0)"  onclick="UserHandler.beforeDeleteUser();">
-					<i class="icon-remove icon-white"></i>删除 
-				</a>
-				<a class="btn btn-info" id="assignRole" href="javascript:void(0)"  onclick="UserHandler.assignRole();">
-					<i class="icon-remove icon-white"></i>分配角色
-				</a>
-			</span>
 			</form>
 		</div>
 	</div>

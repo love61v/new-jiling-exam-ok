@@ -29,7 +29,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.easyui.min.js"></script>
  
 <body>
-      <table id="singlechoice_table" cellspacing="0" cellpadding="0" toolbar="#toolbar" style="margin-top:3px;">
+      <table id="singlechoice_table" cellspacing="0" cellpadding="0" toolbar="#tbar_single" style="margin-top:3px;">
         <thead>
             <tr>
                 <th data-options="field:'id',width:20,align:'center'">编号</th>
@@ -43,7 +43,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         </thead>
    	</table>
    	
-   	<div id="toolbar">
+   	<div id="tbar_single">
    		<div class="form-inline" >
    				<form id="singlechoice_form" style="margin-top:20px;">
 		   		<input type="text" class="form-control" name="question" id="question" placeholder="名称">
@@ -53,7 +53,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			 
 			<span class="pull-right">
 		    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="SinglechoiceHandler.importExcel();">
-					<i class="icon-leaf icon-white"></i>导入excel
+					<i class="icon-tint icon-white"></i>导入excel
 				</a>
 		    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="SinglechoiceHandler.exportExcel();">
 					<i class="icon-fire icon-white"></i>导出模板
@@ -64,8 +64,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		    	<a class="btn btn-success" id="update" href="javascript:void(0)" onclick="SinglechoiceHandler.beforeEditSinglechoice(2);">
 					<i class="icon-edit icon-white"></i>修改
 				</a>
-				<a class="btn btn-info" id="beforeDeleteSinglechoice" href="javascript:void(0)"  onclick="SinglechoiceHandler.beforeDeleteSinglechoice();">
-					<i class="icon-remove icon-white"></i>删除 
+				<a class="btn btn-success" id="beforeDeleteSinglechoice" href="javascript:void(0)"  onclick="SinglechoiceHandler.beforeDeleteSinglechoice();">
+					<i class="icon-trash icon-white"></i>删除 
 				</a>
 			</span>
 			</form>

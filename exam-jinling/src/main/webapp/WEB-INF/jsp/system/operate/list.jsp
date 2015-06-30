@@ -33,7 +33,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
       <table id="operate_table" cellspacing="0" cellpadding="0" toolbar="#operate_toolbar" style="margin-top:3px;">
         <thead>
             <tr>
-<!--                 <th data-options="field:'operateId',width:50,align:'center'">编号</th> -->
                 <th data-options="field:'operateName',width:50,align:'center'">名称</th>
                 <th data-options="field:'engName',width:50,align:'center'">英文名</th>
                 <th data-options="field:'status',width:30,align:'center',formatter: formatStatus">状态</th>
@@ -57,8 +56,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		    	<a class="btn btn-success" id="updateOperate" href="javascript:void(0)" onclick="OperateHandler.beforeEditOperate(2);">
 					<i class="icon-edit icon-white"></i>修改
 				</a>
-				<a class="btn btn-info" id="beforeDeleteOperate" href="javascript:void(0)"  onclick="OperateHandler.beforeDeleteOperate();">
-					<i class="icon-remove icon-white"></i>删除 
+				<a class="btn btn-success" id="beforeDeleteOperate" href="javascript:void(0)"  onclick="OperateHandler.beforeDeleteOperate();">
+					<i class="icon-trash icon-white"></i>删除 
 				</a>
 			</span>
 		 </form>

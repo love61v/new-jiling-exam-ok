@@ -4,11 +4,9 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <form class="form-horizontal" module="form" id="moduleForm">
-	<span style="display:none;">
-	      <input type="text"   name="resourceId" id="resourceId" value="${module.resourceId }"  placeholder="当前ID">
-	      <input type="text"   name="parentId" id="parentId" value="${pid }"  placeholder="父模ID">
+     <input type="hidden"  name="resourceId" id="resourceId" value="${module.resourceId }"  placeholder="当前ID">
+     <input type="hidden"  name="parentId" id="parentId" value="${pid }"  placeholder="父模ID">
 	   
-	</span>
 	<div class="form-group" style="margin-top: 10px;"> 
 	   <label for="parentName" class="col-sm-2 control-label">上级模块</label>
 	   <div class="col-sm-3 controls">
@@ -63,7 +61,7 @@
 	   </div>
 	</div>
 	
-	<div class="form-group" style="margin-top: 30px;">
+	<div class="form-group" style="margin-top: 20px;">
 	   <label for="status" class="col-sm-2 control-label">状态</label>
 	   <div class="col-sm-6 controls">
 	        <span>

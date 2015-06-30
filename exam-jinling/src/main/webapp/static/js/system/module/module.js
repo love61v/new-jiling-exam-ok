@@ -15,18 +15,34 @@ $(function(){
 		    idField: 'resourceId', 
 		    treeField:	'resourceName',
 		    pagination:	true,//分页控件 
-		    onContextMenu: function(e, row) {
-							e.preventDefault();
-							$(this).treegrid('select', row.resourceId);
-							$('#module_menu').menu('show', {
-								left : e.pageX,
-								top : e.pageY
-							});
-			}
+		    onContextMenu: onModuleMenuFun
 	}); 
 	
 	pageFmt("module_table");//设置分页控件 
 });
+
+function onModuleMenuFun(e, row) {//右键菜单
+	e.preventDefault();
+	$(this).treegrid('select', row.resourceId);
+	$('#module_menu').menu('show', {
+		left : e.pageX,
+		top : e.pageY
+	});
+	 
+	var node = $('#module_table').treegrid('getParent', row.resourceId);
+	var isHide = function(method){//组的根节点只有添加操作
+		for(var i=0,len = $(".menuModulehide").size();i < len;i++){
+			var item = $('#module_menu').menu('getItem',$(".menuModulehide")[i]);
+			$('#module_menu').menu(method, item.target);
+		}
+	};
+	if(!node){
+		isHide('disableItem');
+	}else{
+		isHide('enableItem');
+	}
+};
+
 
 $(function(){
 	$("#editModule").on("hidden", function() {
@@ -64,14 +80,9 @@ var ModuleHandler = {
 		 
 		url +="&flag=" + flag;
     	url +="&pname=" + encodeURI(encodeURI(pname));
-		
-		//弹出窗体
-        $("#editModule").modal({
-        	 backdrop: 'static',
-    		 keyboard: false,
-        	 remote: url
-        }); 
-    },
+    	
+    	showModal("editModule", url); //弹出窗体
+     },
 	
 	editModule: function(){//提交编辑用户
 		if(!this.checkModule("moduleName")){

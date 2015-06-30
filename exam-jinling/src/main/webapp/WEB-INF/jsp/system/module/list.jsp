@@ -47,9 +47,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    	<div id="module_menu" class="easyui-menu" style="width:120px;">
 		<div onclick="ModuleHandler.beforeEditModule(1);"><i class="icon-plus"></i>添加</div>
 		<div class="menu-sep"></div>
-		<div onclick="ModuleHandler.beforeEditModule(2);"><i class="icon-edit"></i>修改</div>
+		<div class="menuModulehide" onclick="ModuleHandler.beforeEditModule(2);"><i class="icon-edit"></i>修改</div>
 		<div class="menu-sep"></div>
-		<div onclick="ModuleHandler.beforeDeleteModule();"><i class="icon-remove"></i>删除</div>
+		<div class="menuModulehide" onclick="ModuleHandler.beforeDeleteModule();"><i class="icon-trash"></i>删除</div>
 		<div class="menu-sep"></div>
 		<div onclick="collapse('module_table','resourceId')"> <i class="icon-folder-close"></i>收缩</div>
 		<div class="menu-sep"></div>

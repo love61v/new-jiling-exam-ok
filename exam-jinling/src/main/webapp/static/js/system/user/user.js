@@ -179,23 +179,3 @@ function checkDept(id){
 	}
 	return true;
 }
-
-function formatSex(val,row,index){//格式化性别
-	return val == 1 ? '男' : '女';
-};
-
-function formatStatus(val,row,index){//格式化性别
-	return val == 1 ? '应用' : '禁用';
-};
-
-function formatDept(val,row,index){//格式化部门
-	val = val || "";
-	return val.deptName;
-}
-
-function formatTime(val,row,index){//格式化日期时间
-	var time = val || '';
-	if(time){ 
-		return new Date(val).format('yyyy-MM-dd HH:mm:ss');
-	} 
-}
