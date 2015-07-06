@@ -1,13 +1,6 @@
-/*
- * Beijing YESWAY Information Technology Co,Ltd.
- * All rights reserved.
- * 北京九五智驾信息技术股份有限公司
- * <p>AuthenticationRealm.java</p>
- */
 package com.happy.exam.shiro;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
