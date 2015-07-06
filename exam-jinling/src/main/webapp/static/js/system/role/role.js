@@ -7,7 +7,7 @@ $(function(){
 	    height: 'auto', 
 	    fitColumns: true,
 	    nowrap: false, 
-	    striped: true, 
+	    striped: false, 
 	    border: false, 
 	    collapsible:false,//是否可折叠的 
 	    fit: true,//自动大小 
@@ -19,8 +19,6 @@ $(function(){
 	        {field:'ck',checkbox:true} 
 	    ]]
 	}); 
-	
-	pageFmt("role_table");//设置分页控件 
 	
 	/**
 	 * 编辑角色信息窗体关闭时触发事件
@@ -147,11 +145,6 @@ var RoleHandler = {
 		
     },
     
-    hideTip: function(obj){//隐藏验证提示
-    	var id = $(obj).attr("id");
-    	$("#" + id + "Tip").removeClass("in");
-    },
-    
     isDeleteTip: function(){//是否删除提示框
     	 $("#isDeleteRoleTip").modal({
     		 backdrop: 'static',
@@ -210,11 +203,13 @@ var RoleHandler = {
 		$("input:checkbox[name='allChk']").attr("checked",false);
 	},
     
-    checkRole: function (id){//验证 
-    	var val= $.trim($("#" + id).val());
+    checkRole: function (id){//验证
+    	var val= $.trim($("#" + id, ".modal-body").val());
         if(!val){
-        	 $("#" + id + "Tip").addClass("in");
-        	 //return false;
+        	 $("#" + id + "Tip").show();
+        	 return false;
+        }else{
+        	$("#" + id + "Tip").hide();
         }
         return true;
     }
@@ -225,7 +220,7 @@ var RoleHandler = {
  * 格式化操作列
  */
 function formatAction(val,row,index){
-	return "<a href='javascript:void(0);' onclick=RoleHandler.authzResource('"+row.roleId+"');>分配模块</a>";
+	return "<a href='javascript:void(0);' onclick=RoleHandler.authzResource('"+row.roleId+"');>分配资源</a>";
 };
 
 

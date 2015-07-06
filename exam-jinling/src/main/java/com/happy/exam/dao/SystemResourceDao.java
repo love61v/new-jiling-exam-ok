@@ -17,4 +17,6 @@ public interface SystemResourceDao extends BaseDao<SystemResource,java.lang.Long
 
 	int deleteUnion(SystemResource systemResource);
 
+	List<SystemResource> findUserModuleTree(Long userId);
+
 }

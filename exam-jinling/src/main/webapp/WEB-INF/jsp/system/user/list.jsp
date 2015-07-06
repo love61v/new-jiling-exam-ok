@@ -1,6 +1,8 @@
 <%@page language="java" contentType="text/html; charset=utf-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
+
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%
 String path = request.getContextPath();
@@ -16,18 +18,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <base href="<%=basePath%>">
 
 <title>用户管理</title>
-<link href='${ctx}/css/bootstrap/bootstrap.css' media='all' rel='stylesheet' type='text/css' /> 
-<link rel="stylesheet" type="text/css" href="${ctx }/css/icon.css">
-<link href='${ctx }/css/light-theme.css' id='color-settings-body-color' media='all' rel='stylesheet' type='text/css' />
-<%-- <link rel="stylesheet" type="text/css" href="${ctx }/js/jquery-easyui/themes/default/easyui.css"> --%>
-<link rel="stylesheet" type="text/css" href="${ctx }/js/jquery-easyui/themes/bootstrap/easyui.css">
-<link rel="stylesheet" type="text/css" href="${ctx }/js/jquery-easyui/themes/bootstrap/datalist.css">
-
-
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.min.js"></script>
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.easyui.min.js"></script>
- 
 <body>
       <table id="user_table" cellspacing="0" cellpadding="0" toolbar="#toolbar" style="margin-top:3px;">
         <thead>
@@ -45,29 +35,33 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    	</table>
    	
    	<div id="toolbar">
-   		<div class="form-inline" >
-   				<form id="user_form" style="margin-top:20px;">
-		   		<input type="text" class="form-control" name="loginName" id="loginName" placeholder="账号  / 用户名称">
-		    	<a class="btn btn-success" href="javascript:void(0)"   onclick="UserHandler.search();">
-					<i class="icon-search icon-white"></i>查询
-				</a>
-			 
-			<span class="pull-right">
-		    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="UserHandler.beforeEditUser(1);">
-					<i class="icon-plus icon-white"></i>添加
-				</a>
-		    	<a class="btn btn-success" id="update" href="javascript:void(0)" onclick="UserHandler.beforeEditUser(2);">
-					<i class="icon-edit icon-white"></i>修改
-				</a>
-				<!-- <a class="btn btn-success" id="assignRole" href="javascript:void(0)"  onclick="UserHandler.authz();">
-					<i class="icon-leaf icon-white"></i>分配角色
-				</a> -->
-				<a class="btn btn-success" id="beforeDeleteUser" href="javascript:void(0)"  onclick="UserHandler.beforeDeleteUser();">
-					<i class="icon-remove icon-white"></i>删除 
-				</a>
-			</span>
-			</form>
-		</div>
+	   	<div class="form-inline" >
+ 		  <form id="user_form" style="margin-top:20px;">
+	   		<input type="text" class="form-control" name="loginName" id="loginName" placeholder="账号  / 用户名称">
+	    	<a class="btn btn-success" href="javascript:void(0)"   onclick="UserHandler.search();">
+				<i class="icon-search icon-white"></i>查询
+			</a>
+			 				
+	  		<shiro:hasAnyRoles name="country_admin,city_admin,system_admin,super_admin">
+				<div class="pull-right"> 
+					  <div class="btn-group" data-toggle="buttons-checkbox">
+			               <button class="btn btn-success" type="button" id="save" onclick="UserHandler.beforeEditUser(1);">
+			               	<i class="icon-plus icon-white"></i>添加
+			               </button>
+			                <button class="btn btn-success" type="button" id="update"  onclick="UserHandler.beforeEditUser(2);">
+			                	<i class="icon-edit icon-white"></i>修改
+			                </button>
+			                <button class="btn btn-success" type="button"  id="beforeDeleteUser" onclick="UserHandler.beforeDeleteUser();">
+			                	<i class="icon-trash icon-white"></i>删除 
+			                </button>
+			               <button class="btn btn-success" type="button" id="save" onclick="UserHandler.beforeImportUser();">
+			               	<i class="icon-tint icon-white"></i>导入用户
+			               </button>
+		             </div>
+	 		</shiro:hasAnyRoles>
+	           	 </div>
+				</form>
+			</div>
 	</div>
     
  <!-- 用户编辑 -->
@@ -131,9 +125,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
     
-<script src="${ctx}/js/bootstrap/bootstrap.min.js"></script>
-<script src='${ctx}/js/plugins/validate/jquery.validate.min.js' type='text/javascript'></script>
-<script src='${ctx}/js/plugins/validate/additional-methods.js' type='text/javascript'></script>
 <script src='${ctx}/js/common.js' type='text/javascript'></script>
 <script src='${ctx}/js/system/user/user.js' type='text/javascript'></script>
 </body>

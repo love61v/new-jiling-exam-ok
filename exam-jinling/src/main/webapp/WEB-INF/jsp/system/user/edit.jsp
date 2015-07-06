@@ -12,23 +12,23 @@
 </div>
 
 <div class="form-group">
-   <div class="col-sm-2 controls fade" style="color:red;" id="loginNameTip">
+   <div class="col-sm-2 controls" style="color:red;display:none;" id="loginNameTip">
    		<i class="icon-exclamation-sign"></i>请输入登陆账号
    	</div>
    <label for="loginName" class="control-label">登陆账号</label>
    <div class="col-sm-2 controls">
       <input type="text" class="input-large span3" name="loginName" id="loginName" value="${user.loginName }"
-	            placeholder="登陆账号" onfocus="UserHandler.hideTip(this);">
+	            placeholder="登陆账号" onfocus="doHideTip(this);">
    </div>
 </div>
 
 <div class="form-group" style="margin-top: 30px;">
-   <div class="col-sm-2 controls fade" style="color:red;" id="userNameTip">
+   <div class="col-sm-2 controls" style="color:red;display:none;" id="userNameTip">
    	<i class="icon-exclamation-sign"></i>请输入用户名</div>
    <label for="userId" class="control-label">用户名</label>
    <div class="col-sm-3 controls">
       <input type="text" class="input-large span3" name="userName" id="userName" value="${user.userName }"
-	            placeholder="用户名称" onfocus="UserHandler.hideTip(this);">
+	            placeholder="用户名称" onfocus="doHideTip(this);">
    </div>
 </div>
 
@@ -49,13 +49,13 @@
 </div>
 
  <div class="form-group" style="margin-top: 20px;">
-	 <div class="col-sm-2 controls fade" style="color:red;" id="deptIdTip">
+	 <div class="col-sm-2 controls" style="color:red;display:none;" id="deptIdTip">
 	 	<i class="icon-exclamation-sign"></i>请选择部门
 	 </div>
 	 
    	<label for="deptId" class="col-sm-2 control-label">部门 </label>
    	<div class="col-sm-3 controls">
-     <select class="input-large span3" name="deptId" id="deptId" onchange="UserHandler.hideTip(this);">
+     <select class="input-large span3" name="deptId" id="deptId" onchange="doHideTip(this);">
      	 <option value="0">-请选择部门-</option>
 		<c:forEach items="${deptList }" var="el">
 	        <option value="${el.deptId }" <c:if test="${user.deptId == el.deptId  }">selected="selected"</c:if> >${el.deptName }</option>

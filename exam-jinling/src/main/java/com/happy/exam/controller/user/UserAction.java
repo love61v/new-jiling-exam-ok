@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,8 +24,10 @@ import com.happy.exam.controller.BaseAction;
 import com.happy.exam.model.Department;
 import com.happy.exam.model.SystemRole;
 import com.happy.exam.model.SystemUser;
+import com.happy.exam.model.SystemUserRole;
 import com.happy.exam.service.DepartmentService;
 import com.happy.exam.service.SystemRoleService;
+import com.happy.exam.service.SystemUserRoleService;
 import com.happy.exam.service.SystemUserService;
 
 /**
@@ -46,6 +50,24 @@ public class UserAction extends BaseAction {
 	@Autowired
 	private SystemRoleService systemRoleService;
 	
+	@Autowired
+	private SystemUserRoleService systemUserRoleService;
+	
+	/**
+	 * 返回数据到list页面
+	 *
+	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
+	 * 2015年5月16日 下午11:48:57
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/list.html", method = RequestMethod.GET)
+	public String showuserpage(Model model) {
+
+		return "system/user/list";
+	}
+	
 	
 	/**
 	 * 返回dataGrid用户数据
@@ -63,13 +85,17 @@ public class UserAction extends BaseAction {
 		user.setSortColumns("CREATETIME DESC");
 		user.setUserName(user.getLoginName());
 		
-		if(StringUtils.isNotBlank(userQuery)){
+		if(StringUtils.isNotBlank(userQuery)){//搜索可按账号与用户名查
 			user.setUserName(userQuery);
 			user.setLoginName(userQuery);
 		}
 		
-		Long total = systemUserService.getTotalCount(user);
+		if(super.hasRole("country_admin")){//县级管理员只能查询本机构的人员
+			SystemUser currentUser = super.getCurrentSystemUser();
+			user.setDeptId(currentUser.getDeptId()); //部门ID
+		}
 		
+		Long total = systemUserService.getTotalCount(user);
 		Pager pager = new Pager(dgDto.getPage(), dgDto.getRows(), total);
 		pager = systemUserService.findPageList(user, pager);
 
@@ -80,17 +106,17 @@ public class UserAction extends BaseAction {
 	}
 	
 	/**
-	 * 根据groupId查询用户列表
-	 *
-	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月28日 下午10:27:54
-	 * @param dgDto
+	 * 根据groupId查此组下的用户
+	 * 
+	 * @author 	: <a href="mailto:358911056@qq.com">hubo</a>  2015-7-6 上午10:33:49
 	 * @param user
-	 * @param findInGroup
+	 * @param userGroupId 组ID
+	 * @param findInGroup 搜索框内容
 	 * @return
 	 */
 	@RequestMapping(value = "/findUserByGroupId.json", method = RequestMethod.POST)
 	@ResponseBody
-	public DataGridModel findUserByGroupId(SystemUser user,Long groupId,String findInGroup) {
+	public DataGridModel findUserByGroupId(SystemUser user,Long userGroupId,String findInGroup) {
 		DataGridModel dataGridModel = new DataGridModel();
 		
 		if(StringUtils.isNotBlank(findInGroup)){
@@ -98,30 +124,10 @@ public class UserAction extends BaseAction {
 			user.setLoginName(findInGroup);
 		}
 		
-		List<UserGroupModel> datalist= systemUserService.findUserByGroupId(user,groupId);
+		List<UserGroupModel> datalist= systemUserService.findUserByGroupId(user,userGroupId);
 		dataGridModel.setRows(datalist);
 
 		return dataGridModel;
-	}
-
-	/**
-	 * 返回数据到list页面
-	 *
-	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
-	 * 2015年5月16日 下午11:48:57
-	 * @param model
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value = "/list.html", method = RequestMethod.GET)
-	public String sayHello(Model model) {
-		SystemUser user = new SystemUser();
-		user.setSortColumns("CREATETIME  DESC");
-		
-		List<SystemUser> list = systemUserService.findList(user);
-		model.addAttribute("list", list);
-
-		return "/system/user/list";
 	}
 	
 	/**
@@ -178,7 +184,8 @@ public class UserAction extends BaseAction {
 		
 		List<Department> deptList = departmentService.findList(new Department());
 		model.addAttribute("deptList", deptList); //部门
-		
+		 
+		super.setCreateUser(user);//设置创建用户
 		int count = 0;
 		if(null != user && null != user.getUserId()){//修改用户
 			user.setUpdateTime(new Date());
@@ -186,9 +193,16 @@ public class UserAction extends BaseAction {
 			map.put("flag", user.getUserId());
 		}else{//添加
 			user.setStatus(1);
-			user.setPassword(Md5.md5("123456"));
+			user.setPassword(Md5.md5("123456"));//初始密码
 			user.setCreateTime(new Date());
-			count =  systemUserService.save(user);
+			count =  systemUserService.save(user); //保存用户
+			
+			//默认每个用户都是考生的角色
+			SystemUserRole userRole = new SystemUserRole();
+			userRole.setUserId(user.getUserId());
+			userRole.setRoleId(3L); //考生角色ID
+			systemUserRoleService.save(userRole);
+			
 			map.put("flag", null);
 		}
 		map.put("status", count);

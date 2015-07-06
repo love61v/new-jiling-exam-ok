@@ -16,9 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.happy.exam.common.bean.DataGridModel;
+import com.happy.exam.common.dto.DatagridDto;
 import com.happy.exam.common.dto.TreegridDto;
+import com.happy.exam.common.pager.Pager;
 import com.happy.exam.controller.BaseAction;
 import com.happy.exam.model.SystemGroup;
+import com.happy.exam.model.SystemRole;
 import com.happy.exam.model.SystemRoleGroup;
 import com.happy.exam.model.SystemUserGroup;
 import com.happy.exam.service.SystemGroupService;
@@ -182,7 +186,7 @@ public class GroupAction extends BaseAction{
 	}
 	
 	/**
-	 * 删除模块
+	 * 删除组
 	 *
 	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午3:30:41
 	 * @param id  当前选中节点的id
@@ -251,6 +255,14 @@ public class GroupAction extends BaseAction{
 		return map;
 	}
 	
+	/**
+	 * 删除组下的所有用户
+	 *
+	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年7月1日 上午1:19:55
+	 * @param groupId
+	 * @param uerIds
+	 * @return
+	 */
 	@RequestMapping(value = "/removeFromGroup.json", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> removeFromGroup(String groupId,String uerIds) {
@@ -265,6 +277,28 @@ public class GroupAction extends BaseAction{
 		
 		return map;
 	}
+	
+	/**
+	 * 删除组下的角色
+	 *
+	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年7月1日 上午1:25:37
+	 * @param systemRoleGroup
+	 * @return
+	 */
+	@RequestMapping(value = "/deleteGroupRole.json", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteGroupRole(SystemRoleGroup systemRoleGroup) {
+		Map<String, Object> map = getStatusMap();
+		long count = 0L;
+		if(null != systemRoleGroup.getRoleId() && null != systemRoleGroup.getGroupId()){
+			count = systemRoleGroupService.deleteGroupRole(systemRoleGroup);
+		}
+		 
+		map.put("status", count);
+		
+		return map;
+	}
+	
 	
 	/**
 	 * 绑定角色到组
@@ -290,6 +324,24 @@ public class GroupAction extends BaseAction{
 		map.put("status", count);
 		
 		return map;
+	}
+	
+	/**
+	 * 根据groupId查组的所有角色
+	 *
+	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
+	 * @date 2015年5月16日 下午11:56:08
+	 * @param groupId 组ID
+	 * @return
+	 */
+	@RequestMapping(value = "/findRoleByGroupId.json", method = RequestMethod.POST,produces="application/json")
+	@ResponseBody
+	public DataGridModel findRoleByGroupId(Long groupId) {
+		DataGridModel dataGridModel = new DataGridModel();
+		List<SystemRole> list = systemRoleGroupService.findRoleByGroupId(groupId);
+		dataGridModel.setRows(list);
+
+		return dataGridModel;
 	}
 	 
 }

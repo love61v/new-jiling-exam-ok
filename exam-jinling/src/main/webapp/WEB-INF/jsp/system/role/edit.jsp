@@ -12,12 +12,12 @@
 </div>
 
 <div class="form-group" style="margin-top: 30px;">
-   <div class="col-sm-2 controls fade" style="color:red;" id="roleNameTip">
+   <div class="col-sm-2 controls" style="color:red;display:none;" id="roleNameTip">
    	<i class="icon-exclamation-sign"></i>请输入角色名</div>
    <label for="roleName" class="control-label">角色名</label>
    <div class="col-sm-3 controls">
       <input type="text" class="input-large span3" name="roleName" id="roleName" value="${role.roleName }"
-	            placeholder="用户名称" onfocus="RoleHandler.hideTip(this);">
+	            placeholder="用户名称" onfocus="doHideTip(this);">
    </div>
 </div>
 

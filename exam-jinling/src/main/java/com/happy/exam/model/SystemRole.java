@@ -6,6 +6,9 @@ public class SystemRole extends BaseModel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	/*构造字段： 用户角色查询是用或者映射其它表的主键别名*/
+	private java.lang.Long id;
 
 	/**
      * @备注:角色主键ID     
@@ -179,6 +182,14 @@ public class SystemRole extends BaseModel{
 	 */
 	public java.util.Date getUpdateTime() {
 		return this.updateTime;
+	}
+
+	public java.lang.Long getId() {
+		return id;
+	}
+
+	public void setId(java.lang.Long id) {
+		this.id = id;
 	}
 	 
 }

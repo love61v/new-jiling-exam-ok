@@ -6,27 +6,40 @@ $(function(){
 		    height: 'auto', 
 		    fitColumns: true,
 		    nowrap: false, 
-		    striped: true, 
+		    striped: false, 
 		    border: false, 
-		    collapsible: false,//是否可折叠的 
-		    singleSelect: true,//是否单选 
-		    lines: true,
-		    fit: true,//自动大小 
+		    collapsible: false, 
+		    singleSelect: true, 
+		    fit: true,  
 		    idField: 'resourceId', 
 		    treeField:	'resourceName',
-		    pagination:	true,//分页控件 
-		    onContextMenu: function(e, row) {
-							e.preventDefault();
-							$(this).treegrid('select', row.resourceId);
-							$('#module_menu').menu('show', {
-								left : e.pageX,
-								top : e.pageY
-							});
-			}
+		    onContextMenu: onModuleMenuFun //右键菜单
 	}); 
 	
-	pageFmt("module_table");//设置分页控件 
 });
+
+function onModuleMenuFun(e, row) {//右键菜单
+	e.preventDefault();
+	$(this).treegrid('select', row.resourceId);
+	$('#module_menu').menu('show', {
+		left : e.pageX,
+		top : e.pageY
+	});
+	 
+	var node = $('#module_table').treegrid('getParent', row.resourceId);
+	var isHide = function(method){//组的根节点只有添加操作
+		for(var i=0,len = $(".menuModulehide").size();i < len;i++){
+			var item = $('#module_menu').menu('getItem',$(".menuModulehide")[i]);
+			$('#module_menu').menu(method, item.target);
+		}
+	};
+	if(!node){
+		isHide('disableItem');
+	}else{
+		isHide('enableItem');
+	}
+};
+
 
 $(function(){
 	$("#editModule").on("hidden", function() {
@@ -69,7 +82,7 @@ var ModuleHandler = {
      },
 	
 	editModule: function(){//提交编辑用户
-		if(!this.checkModule("moduleName")){
+		if(!this.checkModule("resourceName")){
 			return false;
 		}
 		 
@@ -132,10 +145,10 @@ var ModuleHandler = {
     },
     
     checkModule: function (id){//验证
-    	var val= $.trim($("#" + id).val());
+    	var val= $.trim($("#" + id,".modal-body").val());
         if(!val){
-        	 $("#" + id + "Tip").addClass("in");
-        	 //return false;
+        	 $("#" + id + "Tip").show();
+        	 return false;
         }
         return true;
     },
@@ -148,8 +161,8 @@ var ModuleHandler = {
     
     selectedTreeNode: function(){//选中树节点，回选数据到表单
         var row = $('#module_treegrid').treegrid('getSelected');//选中的行
-    	$("#parentId").val( row.id);
-    	$("#parentName").val(row.resourceName);
+    	$("#module_parentId").val(row.resourceId);
+    	$("#module_parentName").val(row.resourceName);
     	
     	this.closeModalTree();
     },

@@ -4,72 +4,39 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 
-<form class="form-horizontal" module="form" id="moduleForm">
+<form class="form-horizontal" department="form" id="departmentForm">
 <span style="display:none;">
-      <input type="text"   name="resourceId" id="resourceId" value="${module.resourceId }"  placeholder="当前ID">
-      <input type="text"   name="parentId" id="parentId" value="${pid }"  placeholder="父模ID">
+      <input type="text" name="deptId" id="deptId" value="${department.deptId }"  placeholder="当前ID">
+      <input type="text" name="parentId" id="parentId" value="${pid }"  placeholder="父模ID">
    
 </span>
-<div class="form-group" style="margin-top: 10px;"> 
-   <label for="parentName" class="col-sm-2 control-label">上级模块</label>
+<div class="form-group" style="margin-top: 30px;"> 
+   <label for="parentName" class="col-sm-2 control-label">上级部门</label>
    <div class="col-sm-3 controls">
    <input type="text" class="input-large span3 easyui-combotree" name="parentName" id="parentName"
-	         value="${pname }"   placeholder="上级模块名">
+	         value="${pname }"   placeholder="上级部门名">
    </div>
 </div>
 
-<div class="form-group"  style="margin-top: 10px;">
-   <div class="col-sm-2 controls fade" style="color:red;" id="moduleNameTip">
-   	<i class="icon-exclamation-sign"></i>请输入模块名</div>
-   <label for="moduleName" class="control-label">模块名</label>
+<div class="form-group"  style="margin-top: 30px;">
+   <div class="col-sm-2 controls" style="color:red;display:none;" id="deptNameTip">
+   	<i class="icon-exclamation-sign"></i>请输入部门名</div>
+   <label for="deptName" class="control-label">部门名</label>
    <div class="col-sm-3 controls">
-      <input type="text" class="input-large span3" name="resourceName" id="resourceName" value="${module.resourceName }"
-	            placeholder="模块名" onfocus="ModuleHandler.hideTip(this);">
+      <input type="text" class="input-large span3" name="deptName" id="deptName" value="${department.deptName }"
+	            placeholder="部门名" onfocus="doHideTip(this);">
    </div>
 </div>
-
-<div class="form-group" style="margin-top: 30px;">
-   <label for="engName" class="col-sm-2 control-label">模块英文名</label>
-   <div class="col-sm-3 controls">
-      <input type="text" class="input-large span3" name="engName" id="engName" value="${module.engName }"
-	            placeholder="模块英文名">
-   </div>
-</div>
+ 
 
 <div class="form-group" style="margin-top: 30px;">
-   <label for="engName" class="col-sm-2 control-label">地址</label>
+   <label for="engName" class="col-sm-2 control-label">区域编码 </label>
    <div class="col-sm-3 controls">
-      <input type="text" class="input-large span3" name="path" id="path" value="${module.path }"
+      <input type="text" class="input-large span3" name="areaCode" id="areaCode" value="${department.areaCode }"
 	            placeholder="地址">
    </div>
 </div>
-
-<div class="form-group" style="margin-top: 30px;">
-   <label for="sort" class="col-sm-2 control-label">排序</label>
-   <div class="col-sm-3 controls">
-      <input type="text" class="input-large span3" name="sort" id="sort" value="${module.sort }"
-	            placeholder="排序">
-   </div>
-</div>
-
-<div class="form-group" style="margin-top: 30px;">
-   <label for="remark" class="col-sm-2 control-label">备注</label>
-   <div class="col-sm-3 controls">
-      <input type="text" class="input-large span3" name="remark" id="remark" value="${module.remark }"
-	            placeholder="备注">
-   </div>
-</div>
-
-<div class="form-group" style="margin-top: 30px;">
-   <label for="status" class="col-sm-2 control-label">状态</label>
-   <div class="col-sm-6 controls">
-        <span>
-        	<input type="radio" name="status" id="status" value="1" checked="checked">应用
-        </span>
-		<span style="margin-left:30px;">
-			<input type="radio"  name="status" id="status" value="2"  <c:if test="${module.status== 2  }">checked="checked"</c:if> > 禁用
-		</span>
-   </div>
-</div>
+ 
+ 
  
 </form>

@@ -16,23 +16,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <base href="<%=basePath%>">
 
 <title>单选题管理</title>
-<link href='${ctx}/css/bootstrap/bootstrap.css' media='all' rel='stylesheet' type='text/css' /> 
-<link rel="stylesheet" type="text/css" href="${ctx }/css/icon.css">
-<link href='${ctx }/css/light-theme.css' id='color-settings-body-color' media='all' rel='stylesheet' type='text/css' />
-<%-- <link rel="stylesheet" type="text/css" href="${ctx }/js/jquery-easyui/themes/default/easyui.css"> --%>
-<link rel="stylesheet" type="text/css" href="${ctx }/js/jquery-easyui/themes/bootstrap/easyui.css">
-<link rel="stylesheet" type="text/css" href="${ctx }/js/jquery-easyui/themes/bootstrap/datalist.css">
-
-
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/locale/easyui-lang-zh_CN.js"></script>
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.min.js"></script>
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.easyui.min.js"></script>
  
 <body>
-      <table id="singlechoice_table" cellspacing="0" cellpadding="0" toolbar="#toolbar" style="margin-top:3px;">
+      <table id="singlechoice_table" cellspacing="0" cellpadding="0" toolbar="#tbar_single" style="margin-top:3px;">
         <thead>
             <tr>
-                <th data-options="field:'id',width:20,align:'center'">编号</th>
                 <th data-options="field:'question',width:50,align:'center'">问题</th>
                 <th data-options="field:'answer',width:50,align:'center'">答案</th>
                 <th data-options="field:'score',width:50,align:'center'">分值</th>
@@ -43,31 +31,33 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         </thead>
    	</table>
    	
-   	<div id="toolbar">
+   	<div id="tbar_single">
    		<div class="form-inline" >
-   				<form id="singlechoice_form" style="margin-top:20px;">
+   			<form id="singlechoice_form" style="margin-top:20px;">
 		   		<input type="text" class="form-control" name="question" id="question" placeholder="名称">
 		    	<a class="btn btn-success" href="javascript:void(0)"   onclick="SinglechoiceHandler.search();">
 					<i class="icon-search icon-white"></i>查询
 				</a>
 			 
-			<span class="pull-right">
-		    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="SinglechoiceHandler.importExcel();">
-					<i class="icon-leaf icon-white"></i>导入excel
-				</a>
-		    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="SinglechoiceHandler.exportExcel();">
-					<i class="icon-fire icon-white"></i>导出模板
-				</a>
-		    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="SinglechoiceHandler.beforeEditSinglechoice(1);">
-					<i class="icon-plus icon-white"></i>添加
-				</a>
-		    	<a class="btn btn-success" id="update" href="javascript:void(0)" onclick="SinglechoiceHandler.beforeEditSinglechoice(2);">
-					<i class="icon-edit icon-white"></i>修改
-				</a>
-				<a class="btn btn-info" id="beforeDeleteSinglechoice" href="javascript:void(0)"  onclick="SinglechoiceHandler.beforeDeleteSinglechoice();">
-					<i class="icon-remove icon-white"></i>删除 
-				</a>
-			</span>
+				<div class="pull-right"> 
+				  <div class="btn-group" data-toggle="buttons-checkbox">
+			    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="SinglechoiceHandler.importExcel();">
+						<i class="icon-tint icon-white"></i>导入excel
+					</a>
+			    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="SinglechoiceHandler.exportExcel();">
+						<i class="icon-fire icon-white"></i>导出模板
+					</a>
+			    	<a class="btn btn-success" id="save" href="javascript:void(0)"   onclick="SinglechoiceHandler.beforeEditSinglechoice(1);">
+						<i class="icon-plus icon-white"></i>添加
+					</a>
+			    	<a class="btn btn-success" id="update" href="javascript:void(0)" onclick="SinglechoiceHandler.beforeEditSinglechoice(2);">
+						<i class="icon-edit icon-white"></i>修改
+					</a>
+					<a class="btn btn-success" id="beforeDeleteSinglechoice" href="javascript:void(0)"  onclick="SinglechoiceHandler.beforeDeleteSinglechoice();">
+						<i class="icon-trash icon-white"></i>删除 
+					</a>
+					</div>
+				 </div>
 			</form>
 		</div>
 	</div>
@@ -133,10 +123,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
     
-<script src="${ctx}/js/bootstrap/bootstrap.min.js"></script>
-<script src='${ctx}/js/plugins/validate/jquery.validate.min.js' type='text/javascript'></script>
-<script src='${ctx}/js/plugins/validate/additional-methods.js' type='text/javascript'></script>
-<script src='${ctx}/js/common.js' type='text/javascript'></script>
 <script src='${ctx}/js/questiontypes/singlechoice/singlechoice.js' type='text/javascript'></script>
 </body>
 </html>

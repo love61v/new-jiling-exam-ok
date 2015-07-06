@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.shiro.SecurityUtils;
 
 import com.happy.exam.common.enums.ResponseCodeEnum;
+import com.happy.exam.model.BaseModel;
 import com.happy.exam.model.SystemUser;
 
 /**
@@ -56,5 +57,26 @@ public class BaseAction {
 		map.put("status", code);
 		
 		return map;
+	}
+	
+	/**
+	 * 设置创建用户
+	 *
+	 * @author 	: <a href="mailto:358911056@qq.com">hubo</a>  2015-7-6 上午10:07:54
+	 * @param model 当前操作的model
+	 */
+	public void setCreateUser(BaseModel model){
+		model.setCreateUser(getCurrentSystemUser().getUserId());
+	}
+	
+	/**
+	 * 验证当前用户是否有此角色
+	 *
+	 * @author 	: <a href="mailto:358911056@qq.com">hubo</a>  2015-7-6 下午1:22:52
+	 * @param roleIdentifier  角色标识字符串
+	 * @return
+	 */
+	public boolean hasRole(String roleIdentifier){
+		return SecurityUtils.getSubject().hasRole(roleIdentifier);
 	}
 }

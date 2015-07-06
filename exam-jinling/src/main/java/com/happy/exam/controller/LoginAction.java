@@ -7,7 +7,6 @@ import org.apache.shiro.authc.DisabledAccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.happy.exam.common.utils.Md5;
 import com.happy.exam.model.SystemUser;
+import com.happy.exam.service.SystemResourceService;
 import com.happy.exam.service.SystemUserService;
 import com.happy.exam.shiro.CaptchaUsernamePasswordToken;
 import com.happy.exam.shiro.IncorrectCaptchaException;
@@ -33,6 +33,9 @@ public class LoginAction extends BaseAction{
 	
 	@Autowired
 	private SystemUserService systemUserService;
+	
+	@Autowired
+	private SystemResourceService systemResourceService;
 
 	/**
 	 * 跳转到登陆页面o
@@ -51,8 +54,9 @@ public class LoginAction extends BaseAction{
 	 *
 	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  2015年5月17日 上午2:30:05
 	 * @param model
-	 * @param username
-	 * @param password
+	 * @param username 用户名
+	 * @param password 密码
+	 * @param captcha  验证码
 	 * @return
 	 */
 	@RequestMapping(value = "/login.html", method = RequestMethod.POST)
@@ -71,10 +75,7 @@ public class LoginAction extends BaseAction{
 			if(currentSystemUser.isAuthenticated()){//身份认证成功
 				SystemUser user = (SystemUser) currentSystemUser.getPrincipal();
 				super.setCurrentSystemUser(user);
-				
-				Session session = currentSystemUser.getSession(false);
-				session.setTimeout(3600000);
-				
+				 
 				return "system/admin8";
 			}
 		} catch (UnknownAccountException e) {

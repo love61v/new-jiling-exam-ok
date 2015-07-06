@@ -266,11 +266,63 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<!-- 查询模块树treegrid -->
 	<select id="findTreegrid" resultType="com.happy.exam.model.SystemResource">
 		select
-		 resourceId,resourceName,ParentId as _parentId,
+		 resourceId,resourceName,ParentId as parentId, ParentId as _parentId,
 		 path,sourceIcon ,sourceType,status,remark,sort,createTime,updateTime
 		 from system_resource
 		 where status = 1
 		 order by sort
 	</select>
 
+	<!-- 查询用户被分配的模块 -->
+	<select id="findUserModuleTree" resultType="com.happy.exam.model.SystemResource">
+	SELECT resourceID, parentId as _parentId,resourceName,path ,sourceIcon from  system_resource  where LENGTH(ParentId) is NULL
+		UNION all
+		SELECT resourceID, sr.parentId as _parentId, resourceName, path, t.sourceIcon
+		FROM  system_resource sr  INNER JOIN
+			(
+					SELECT  srs.parentId, srs.sourceIcon
+					FROM system_user_group sug INNER JOIN  system_user su on su.UserId = sug.UserId 
+					INNER JOIN  system_group sg  on sug.GroupId = sg.GroupId 
+					INNER JOIN  system_role_group srg on srg.GroupId = sg.GroupId
+					INNER JOIN  system_role sr on sr.RoleId = srg.RoleId 
+					INNER JOIN  system_role_resource srr on srr.roleId = sr.RoleId
+					INNER JOIN  system_resource srs ON srs.ResourceId = srr.ResourceId 
+					WHERE srs.status = 1 and  sug.UserId = #{userId}
+					ORDER BY srs.sort
+			) t ON  sr.resourceID = t.parentId GROUP BY  sr.resourceID
+		
+		UNION ALL 
+
+		SELECT  srs.resourceID, srs.parentId as _parentId, srs.resourceName, srs.path, srs.sourceIcon
+		FROM system_user_group sug INNER JOIN  system_user su on su.UserId = sug.UserId 
+			INNER JOIN  system_group sg  on sug.GroupId = sg.GroupId 
+			INNER JOIN  system_role_group srg on srg.GroupId = sg.GroupId
+			INNER JOIN  system_role sr on sr.RoleId = srg.RoleId 
+			INNER JOIN  system_role_resource srr on srr.roleId = sr.RoleId
+			INNER JOIN  system_resource srs ON srs.ResourceId = srr.ResourceId 
+		WHERE srs.status = 1 and  sug.UserId = #{userId}
+		
+		UNION
+
+			SELECT srs.resourceID, srs.parentId as _parentId, srs.resourceName, srs.path, srs.sourceIcon 
+			FROM system_user su 
+					INNER JOIN 	system_user_role sur on sur.UserId = su.UserId
+          INNER JOIN  system_role_resource srr on srr.roleId = sur.RoleId	
+					INNER JOIN  system_resource srs ON srs.ResourceId = srr.ResourceId 
+			WHERE srs.status = 1 and  su.UserId = #{userId} 				 
+			
+		UNION
+		
+		      SELECT res.resourceID, res.parentId as _parentId, res.resourceName, res.path, res.sourceIcon from 
+					system_resource res ,
+					(
+						SELECT srs.ParentId FROM system_resource srs 
+									INNER JOIN  system_role_resource srr on srr.ResourceId = srs.ResourceId
+									INNER JOIN system_user_role sur on sur.roleId = srr.RoleId
+									
+						WHERE srs.status = 1 and  sur.UserId = #{userId}  
+						GROUP BY srs.ParentId
+					) t
+					WHERE res.ResourceId = t.ParentId
+	</select>
 </mapper>

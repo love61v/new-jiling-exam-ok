@@ -23,7 +23,9 @@ import com.happy.exam.common.pager.Pager;
 import com.happy.exam.common.utils.Md5;
 import com.happy.exam.model.ExamFillBlanks;
 import com.happy.exam.model.SystemUser;
+import com.happy.exam.model.SystemUserRole;
 import com.happy.exam.service.ExamFillBlanksService;
+import com.happy.exam.service.SystemUserRoleService;
 import com.happy.exam.service.SystemUserService;
  
 
@@ -42,7 +44,20 @@ public class UserTest {
 
 	@Autowired private SystemUserService systemUserService;
 	@Autowired private ExamFillBlanksService examFillBlanksService;
+	@Autowired private SystemUserRoleService systemUserRoleService;
 	
+	@Test
+	public void addUserRole(){
+		List<SystemUserRole> list = new ArrayList<SystemUserRole>();
+		for(int i = 21; i < 35;i++){
+			SystemUserRole userRole = new SystemUserRole();
+			userRole.setUserId(Long.valueOf(i));
+			userRole.setRoleId(3L);
+			
+			list.add(userRole);
+		}
+		systemUserRoleService.saveBatch(list, SystemUserRole.class);
+	}
  
 	/**
 	 * getUniqueObject()按条件返回实体对象方法测试

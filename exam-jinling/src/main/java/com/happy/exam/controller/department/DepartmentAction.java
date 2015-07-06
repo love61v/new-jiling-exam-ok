@@ -6,8 +6,11 @@
  */
 package com.happy.exam.controller.department;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.happy.exam.common.dto.TreegridDto;
+import com.happy.exam.controller.BaseAction;
 import com.happy.exam.model.Department;
 import com.happy.exam.service.DepartmentService;
 
@@ -28,7 +32,7 @@ import com.happy.exam.service.DepartmentService;
  */
 @Controller
 @RequestMapping("/department")
-public class DepartmentAction {
+public class DepartmentAction extends BaseAction{
 
 	@Autowired
 	private DepartmentService departmentService;
@@ -44,7 +48,7 @@ public class DepartmentAction {
 	 */
 	@RequestMapping(value = "/list.html", method = RequestMethod.GET)
 	public String showDepartment(Model model) {
-		return "/system/department/list";
+		return "system/department/list";
 	}
 	
 	/**
@@ -65,6 +69,81 @@ public class DepartmentAction {
 		treegridDto.setTotal(list.size());
 
 		return treegridDto;
+	}
+	
+	/**
+	 * 跳转到编辑部门页面
+	 *
+	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午5:11:03
+	 * @param model
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException 
+	 */
+	@RequestMapping(value = "/beforeEditDepartment.html", method = RequestMethod.GET)
+	public String beforeEditDepartment(Model model, Long deptId, String pname,
+			Long pid, String flag) throws UnsupportedEncodingException {
+		
+		if (StringUtils.isNotBlank(flag) && flag.equals("2")) {// 修改部门信息回选
+			Department department = departmentService.getById(deptId, Department.class);
+			model.addAttribute("department", department);
+		}
+
+		if (StringUtils.isNotBlank(pname)) {
+			model.addAttribute("pname",java.net.URLDecoder.decode(pname, "UTF-8"));
+		}
+
+		model.addAttribute("flag", flag);
+		model.addAttribute("pid", pid);
+		
+		return "/system/department/edit";
+	}
+	
+	/**
+	 * 编辑部门
+	 * 存在ID则修改，否则添加
+	 *
+	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午11:45:43
+	 * @param model
+	 * @param department
+	 * @return
+	 */
+	@RequestMapping(value = "/editDepartment.json", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> editDepartment(Model model, Department department) {
+		Map<String, Object> map = getStatusMap();
+		
+		int count = 0;
+		if(null != department && null !=department.getDeptId()){//修改部门
+			count = departmentService.update(department);
+			map.put("flag", department.getDeptId());
+		}else{//添加
+			count =  departmentService.save(department);
+			map.put("flag", null);
+		}
+		map.put("status", count);
+		
+		return map;
+	}
+	
+	/**
+	 * 删除模块
+	 *
+	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午3:30:41
+	 * @param id  当前选中节点的id
+	 * @param parnetId  不为空则上节点为父节点，则删除自身与其下所有子节点
+	 * @return
+	 */
+	@RequestMapping(value="/deleteDepartment.json",method=RequestMethod.POST)
+	@ResponseBody public Map<String, Object> deleteDepartment(Department department){
+		Map<String, Object> map = getStatusMap();
+		
+		if(null != department.getDeptId()){
+			int count = departmentService.delete(department.getDeptId(),Department.class);
+			map.put("status", count);
+		}
+		
+		return map;
 	}
 	
 }

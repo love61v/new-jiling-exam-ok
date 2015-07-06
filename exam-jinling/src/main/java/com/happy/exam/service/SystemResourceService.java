@@ -16,4 +16,13 @@ public interface SystemResourceService extends BaseService<SystemResource,java.l
 	
 	public int deleteUnion(SystemResource systemResource);
 
+	/**
+	 * 查询用户被分配的模块权限
+	 *
+	 * @author 	: <a href="mailto:358911056@qq.com">hubo</a>  2015-7-2 上午11:49:10
+	 * @param userId
+	 * @return
+	 */
+	List<SystemResource> findUserModuleTree(Long userId);
+
 }

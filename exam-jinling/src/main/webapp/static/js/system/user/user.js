@@ -7,15 +7,12 @@ $(function(){
 	    height: 'auto', 
 	    fitColumns: true,
 	    nowrap: false, 
-	    striped: true, 
+	    striped: false, 
 	    border: false, 
 	    collapsible:false,//是否可折叠的 
 	    processing: true,	//载入数据的时候是否显示“载入中”
         pageLength: 15,		//首次加载的数据条数
 	    fit: true,//自动大小 
-//	    sortName: 'createTime', 
-//	    sortOrder: 'desc', 
-//	    remoteSort:false,  
 	    idField:'userId', 
 	    singleSelect:false,//是否单选 
 	    pagination:true,//分页控件 
@@ -25,8 +22,6 @@ $(function(){
 	    ]]
 	    
 	}); 
-	
-	pageFmt("user_table");//设置分页控件 
 	
 	$(function(){
 		$("#editUser").on("hidden", function() {
@@ -88,10 +83,10 @@ var UserHandler = {
     },
 	
 	editUser: function(){//提交编辑用户
-		if(!check("loginName")){
+		if(!this.check("loginName")){
 			return false;
 		}
-		if(!checkDept("deptId")){
+		if(!this.checkDept("deptId")){
 			return false;
 		}
 		
@@ -115,11 +110,6 @@ var UserHandler = {
         	}
         });
 		
-    },
-    
-    hideTip: function(obj){//隐藏验证提示
-    	var id = $(obj).attr("id");
-    	$("#" + id + "Tip").removeClass("in");
     },
     
     isDeleteTip: function(){//是否删除提示框
@@ -160,22 +150,28 @@ var UserHandler = {
 	    	me.isDeleteTip(); //确认是否删除
 	    	return false;
 	    }
+    },
+    
+    /*验证账号*/
+    check: function(id){ 
+    	var loginName = $.trim($("#" + id,".modal-body").val());
+        if(!loginName){
+        	 $("#" + id + "Tip").show();
+        	 return false;
+        }else{
+        	 $("#" + id + "Tip").hide();
+        }
+        return true;
+    },
+    
+    /*验证部门*/
+    checkDept: function (id){ 
+    	if($("#"+id,".modal-body").val() == 0){
+    		 $("#" + id + "Tip").show();
+    		return false;
+    	}else{
+    		 $("#" + id + "Tip").hide();
+    	}
+    	return true;
     }
 };
-
-function check(id){
-	var loginName = $.trim($("#" + id).val());
-    if(!loginName){
-    	 $("#" + id + "Tip").addClass("in");
-    	 return false;
-    }
-    return true;
-};
-
-function checkDept(id){
-	if($("#"+id).val() == 0){
-		 $("#" + id + "Tip").addClass("in");
-		return false;
-	}
-	return true;
-}

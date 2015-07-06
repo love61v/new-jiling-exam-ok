@@ -16,18 +16,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <base href="<%=basePath%>">
 
 <title>部门管理</title>
-<link rel="stylesheet" type="text/css" href="${ctx }/css/icon.css">
-<link rel="stylesheet" type="text/css" href="${ctx }/js/jquery-easyui/themes/bootstrap/easyui.css">
-
-<!--[if lt IE 9]>
-    <script src='${ctx}js/html5shiv.js' type='text/javascript'></script>
-<![endif]-->
-<link href='${ctx}/css/bootstrap/bootstrap.css' media='all' rel='stylesheet' type='text/css' />
-<link href='${ctx}/css/bootstrap/bootstrap-responsive.css' media='all' rel='stylesheet' type='text/css' />
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.min.js"></script>
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.easyui.min.js"></script>
-<script src="${ctx}/js/bootstrap/bootstrap.min.js"></script>
-<script src='${ctx}/js/common.js' type='text/javascript'></script>
 
 </head>
 <body>
@@ -46,7 +34,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<div class="menu-sep"></div>
 		<div onclick="DepartmentHandler.beforeEditDepartment(2);"><i class="icon-edit"></i>修改</div>
 		<div class="menu-sep"></div>
-		<div onclick="DepartmentHandler.beforeDeleteDepartment();"><i class="icon-remove"></i>删除</div>
+		<div onclick="DepartmentHandler.beforeDeleteDepartment();"><i class="icon-trash"></i>删除</div>
 		<div class="menu-sep"></div>
 		<div onclick="collapse('department_table','deptId')"> <i class="icon-folder-close"></i>收缩</div>
 		<div class="menu-sep"></div>

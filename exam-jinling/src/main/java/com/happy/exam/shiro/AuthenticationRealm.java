@@ -6,7 +6,9 @@
  */
 package com.happy.exam.shiro;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -25,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.happy.exam.common.bean.UserRolePermissionModel;
+import com.happy.exam.model.SystemRole;
 import com.happy.exam.model.SystemUser;
 import com.happy.exam.service.SystemUserService;
 
@@ -49,7 +53,7 @@ public class AuthenticationRealm extends AuthorizingRealm {
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken)
 			throws AuthenticationException {
-		logs.debug("登陆认证回调函数doGetAuthenticationInfo(token)....");
+		logs.debug("登陆认证回调函数");
 		
 		//SystemUsernamePasswordToken token = (SystemUsernamePasswordToken) authcToken;
 		CaptchaUsernamePasswordToken token = (CaptchaUsernamePasswordToken) authcToken;
@@ -89,13 +93,36 @@ public class AuthenticationRealm extends AuthorizingRealm {
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		logs.debug("授权查询doGetAuthenticationInfo(principals)....");
+		logs.debug("授权查询角色与操作权...");
 		SystemUser user = (SystemUser) principals.getPrimaryPrincipal();
 		
 		if (user != null && StringUtils.isNotBlank(user.getLoginName())) {
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-			info.addRoles(Arrays.asList("admin"));
-			info.addStringPermissions(Arrays.asList("user:add","user:update"));
+			
+			Long userId = user.getUserId(); //用户ID
+			List<SystemRole> rolesList = systemUserService.findRoleListByUserId(userId);
+			List<String> roles = new ArrayList<String>();
+			for(SystemRole role : rolesList){
+				roles.add(role.getEngName());
+			}
+			info.addRoles(roles); //添加角色
+			
+			List<UserRolePermissionModel> permissions = systemUserService.findPermissionsByUserId(userId);
+			if(null != permissions){
+				List<String> tempList = new ArrayList<String>();
+				String resource = ""; //模块英文名
+				String opers = ""; //操作id串
+				for(UserRolePermissionModel permission : permissions){
+					resource = permission.getModuleEngName();
+					opers = permission.getOperateId();
+					if(StringUtils.isNotBlank(opers)){
+						for(String id : opers.split(",")){
+							tempList.add(resource.concat(":").concat(id));
+						}
+					}
+				}
+				info.addStringPermissions(tempList);//添加权限
+			}
 			
 			return info;
 		}

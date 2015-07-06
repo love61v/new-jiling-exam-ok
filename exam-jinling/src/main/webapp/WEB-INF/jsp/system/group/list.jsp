@@ -16,18 +16,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <base href="<%=basePath%>">
 
 <title>组管理</title>
-<link rel="stylesheet" type="text/css" href="${ctx }/css/icon.css">
-<link rel="stylesheet" type="text/css" href="${ctx }/js/jquery-easyui/themes/bootstrap/easyui.css">
-
-<!--[if lt IE 9]>
-    <script src='${ctx}js/html5shiv.js' type='text/javascript'></script>
-<![endif]-->
-<link href='${ctx}/css/bootstrap/bootstrap.css' media='all' rel='stylesheet' type='text/css' />
-<link href='${ctx}/css/bootstrap/bootstrap-responsive.css' media='all' rel='stylesheet' type='text/css' />
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.min.js"></script>
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.easyui.min.js"></script>
-<script src="${ctx}/js/bootstrap/bootstrap.min.js"></script>
-<script src='${ctx}/js/common.js' type='text/javascript'></script>
 
 </head>
 <body>
@@ -142,7 +130,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     	<table id="group_table" cellspacing="0" cellpadding="0">
         <thead>
 			<tr>
-				<th data-options="field:'groupName',width:80">分组树 (右键编辑)</th>
+				<th data-options="field:'groupName',width:80">权限组 (右键编辑)</th>
 			</tr>
 		</thead>
    	</table>
@@ -153,11 +141,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<div class="menu-sep"></div>
 		<div onclick="GroupHandler.beforeEditGroup(2);" class="menuGrouphide"><i class="icon-edit"></i>&nbsp;&nbsp;修改</div>
 		<div class="menu-sep"></div>
-		<div onclick="GroupHandler.beforeDeleteGroup();" class="menuGrouphide"><i class="icon-remove"></i>&nbsp;&nbsp;删除</div>
+		<div onclick="GroupHandler.beforeDeleteGroup();" class="menuGrouphide pGroupHide"><i class="icon-trash"></i>&nbsp;&nbsp;删除</div>
 		<div class="menu-sep"></div>
-		<div onclick="GroupHandler.beforeUserBind();" class="menuGrouphide"><i class="icon-fire"></i>&nbsp;&nbsp;绑定用户</div>
+		<div onclick="GroupHandler.beforeUserBind();" class="menuGrouphide pGroupHide"><i class="icon-fire"></i>&nbsp;&nbsp;绑定用户</div>
 		<div class="menu-sep"></div>
-		<div onclick="GroupHandler.beforeRoleBind();" class="menuGrouphide"><i class="icon-leaf"></i>&nbsp;&nbsp;授权角色</div>
+		<div onclick="GroupHandler.beforeRoleBind();" class="menuGrouphide pGroupHide"><i class="icon-leaf"></i>&nbsp;&nbsp;授权角色</div>
 		<div class="menu-sep"></div>
 	</div>
    
@@ -165,6 +153,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    
    <!-- 用户列表 -->
     <div data-options="region:'center',border:false">
+    <div id="group_tab">
+   	 <div  title="用户列表">
    	 	<table id="userGroup_table" cellspacing="0" cellpadding="0" toolbar="#tbar_ug" style="margin-top:3px;">
 	        <thead>
 	            <tr>
@@ -176,28 +166,41 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	        </thead>
    		</table>
    	
-   	<div id="tbar_ug">
-   		<div class="form-inline" >
-		  <form id="usergroup_form" style="margin-top:20px;">
-		  		<!-- 组ID -->
-				<input type="hidden" name="groupId" id="groupId"/>
-		   		<input type="text" class="form-control" name="findInGroup" id="findInGroup" placeholder="账号   / 用户名称">
-		    	<a class="btn btn-success" href="javascript:void(0)"   onclick="GroupHandler.searchUserGroup();">
-					<i class="icon-search icon-white"></i>查询
-				</a>
-			 
-				<span class="pull-right">
-			    	<a class="btn btn-success" id="removeFromGroup" href="javascript:void(0)"   onclick="GroupHandler.removeFromGroup();">
-						<i class="icon-remove icon-white"></i>解除组用户
+	   	<div id="tbar_ug">
+	   		<div class="form-inline" >
+			  <form id="usergroup_form" style="margin-top:20px;">
+			  		<!-- 组ID -->
+					<input type="hidden" name="userGroupId" id="user_groupId"/>
+			   		<input type="text" class="form-control" name="findInGroup" id="findInGroup" placeholder="账号   / 用户名称">
+			    	<a class="btn btn-success" href="javascript:void(0)"   onclick="GroupHandler.searchUserGroup();">
+						<i class="icon-search icon-white"></i>查询
 					</a>
-				</span>
-			</form>
+				 
+					<span class="pull-right">
+				    	<a class="btn btn-success" id="removeFromGroup" href="javascript:void(0)"   onclick="GroupHandler.removeFromGroup();">
+							<i class="icon-fire icon-white"></i>解除组用户
+						</a>
+					</span>
+				</form>
+			</div>
 		</div>
-	</div>
+	 </div>
+	
+	 <div  title="角色列表">
+	 	 <table id="groupRole_table" cellspacing="0" cellpadding="0">
+	        <thead>
+	            <tr>
+	                <th data-options="field:'roleName',width:50,align:'center'">名称</th>
+	                <th data-options="field:'engName',width:50,align:'center'">英文名</th>
+	                <th data-options="field:'remark',width:50,align:'center'">备注</th>
+	                <th data-options="field:'id',width:50,formatter:groutRoleFmt,align:'center'">操作</th>
+	            </tr>
+	        </thead>
+   		</table>
+	 </div>
 	 
 </div>
 
 <script src='${ctx}/js/system/group/group.js' type='text/javascript'></script> 
-<%-- <script src='${ctx}/js/system/user/user.js' type='text/javascript'></script>  --%>
 </body>
 </html>

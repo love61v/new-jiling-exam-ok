@@ -6,7 +6,7 @@ $(function(){
 		url:			ctx +'/module/list.json', 
 	    height: 		'400px', 
 	    nowrap: 		false, 
-	    striped: 		true, 
+	    striped: 		false, 
 	    border: 		true, 
 	    collapsible:	false,//是否可折叠的 
 	    idField:		'resourceId', 

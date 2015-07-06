@@ -33,7 +33,7 @@
 			height : '400px',
 			fitColumns : true,
 			nowrap : false,
-			striped : true,
+			striped : false,
 			border : true,
 			collapsible : false,//是否可折叠的 
 			idField : 'userId',

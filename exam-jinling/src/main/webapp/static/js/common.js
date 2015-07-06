@@ -273,3 +273,12 @@ function expand(treegrid, idField) {
 	}
 };
 
+/**
+ * 隐藏验证提示
+ * @param obj 
+ */
+function doHideTip(obj){
+	var id = $(obj).attr("id");
+	$("#" + id + "Tip").hide();
+};
+

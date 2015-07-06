@@ -20,7 +20,7 @@ import javax.imageio.ImageIO;
 public class CaptchaUtil {
 
 	// 随机产生的字符串
-	private static final String RANDOM_STRS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static final String RANDOM_STRS = "123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 
 	private static final String FONT_NAME = "Fixedsys";
 	private static final int FONT_SIZE = 18;

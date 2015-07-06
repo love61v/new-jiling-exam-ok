@@ -1,5 +1,8 @@
 package com.happy.exam.dao;  
+import java.util.List;
+
 import com.happy.exam.dao.BaseDao;
+import com.happy.exam.model.SystemRole;
 import com.happy.exam.model.SystemRoleGroup;
 
 /**
@@ -10,5 +13,9 @@ import com.happy.exam.model.SystemRoleGroup;
  * @date	: 2015年5月17日 下午9:01:26 
  */
 public interface SystemRoleGroupDao extends BaseDao<SystemRoleGroup,java.lang.Long>{
+
+	List<SystemRole> findRoleByGroupId(Long groupId);
+
+	long deleteGroupRole(SystemRoleGroup systemRoleGroup);
 
 }

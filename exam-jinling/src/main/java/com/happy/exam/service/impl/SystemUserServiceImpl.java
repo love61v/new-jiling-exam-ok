@@ -6,7 +6,9 @@ import java.util.Map;
 import com.happy.exam.service.SystemUserService;
 import com.happy.exam.service.impl.MybatisBaseServiceImpl;
 import com.happy.exam.common.bean.UserGroupModel;
+import com.happy.exam.common.bean.UserRolePermissionModel;
 import com.happy.exam.dao.SystemUserDao;
+import com.happy.exam.model.SystemRole;
 import com.happy.exam.model.SystemUser;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,16 @@ public class SystemUserServiceImpl extends MybatisBaseServiceImpl<SystemUser, ja
 		params.put("groupId", groupId);
 		
 		return systemUserDao.findUserByGroupId(params);
+	}
+
+	@Override
+	public List<SystemRole> findRoleListByUserId(Long userId) {
+		return systemUserDao.findRoleListByUserId(userId);
+	}
+
+	@Override
+	public List<UserRolePermissionModel> findPermissionsByUserId(Long userId) {
+		return systemUserDao.findPermissionsByUserId(userId);
 	} 
 
 }

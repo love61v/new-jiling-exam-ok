@@ -468,26 +468,59 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 
 	<!-- 根据组ID查询组下的所有用户 -->
 	<select id="findUserByGroupId" resultType="com.happy.exam.common.bean.UserGroupModel">
-		SELECT 
-			sug.id as userGroupId,dept.deptId, dept.deptName, su.userId, su.userName,su.loginName,su.phoneNumber 
+		SELECT
+		sug.id as userGroupId,dept.deptId, dept.deptName, su.userId,
+		su.userName,su.loginName,su.phoneNumber
 		FROM
-		system_user su, system_group sg, system_user_group sug, department dept
+		system_user su,
+		system_group sg, system_user_group sug, department
+		dept
 
-		WHERE su.DeptId = dept.DeptId and su.UserId = sug.UserId and
-		sg.GroupId = sug.GroupId 
-		
+		WHERE su.DeptId
+		= dept.DeptId and su.UserId = sug.UserId and
+		sg.GroupId = sug.GroupId
+
 		<if test="groupId != null">
 			AND sug.groupId = #{groupId}
 		</if>
 		<if test="user.loginName != null">
-			AND LoginName LIKE CONCAT('%',CONCAT(#{user.loginName},'%'))
+			AND LoginName LIKE
+			CONCAT('%',CONCAT(#{user.loginName},'%'))
 		</if>
 		<if test="user.userName != null">
 			OR UserName LIKE CONCAT('%',CONCAT(#{user.userName},'%'))
 		</if>
-		
+
 		GROUP BY su.UserId
 		ORDER BY sug.id desc
+	</select>
+
+	<!-- 根据UserId查找其拥有的角色 -->
+	<select id="findRoleListByUserId" resultType="com.happy.exam.model.SystemRole">
+		SELECT 
+			sr.engName FROM system_user su, system_group sg, 
+			system_user_group sug, system_role sr, system_role_group srg
+		WHERE
+			su.UserId = sug.UserId
+			AND sug.GroupId = sg.GroupId
+			AND sg.GroupId = srg.GroupId
+			AND srg.RoleId = sr.RoleId
+			AND su.UserId = #{userId}
+		GROUP BY sr.RoleId
+	</select>
+
+	<!-- 根据userId查其所有的资源与操作权 -->
+	<select id="findPermissionsByUserId" resultType="com.happy.exam.common.bean.UserRolePermissionModel">
+		SELECT su.userid,su.userName, sug.groupId,srs.resourceID,
+			srs.resourceName ,srs.engname as moduleEngName, srs.path,srr.operateId
+			FROM system_user_group sug 
+			INNER JOIN system_user su on su.UserId =sug.UserId
+			INNER JOIN system_group sg on sug.GroupId = sg.GroupId
+			INNER JOIN system_role_group srg on srg.GroupId = sg.GroupId
+			INNER JOIN system_role sr on sr.RoleId = srg.RoleId
+			INNER JOIN system_role_resource srr on srr.roleId = sr.RoleId
+			INNER JOIN system_resource srs ON srs.ResourceId = srr.ResourceId
+		WHERE  srs.status = 1 AND sug.UserId = #{userId}
 	</select>
 
 </mapper>

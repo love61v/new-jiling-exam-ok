@@ -4,15 +4,13 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <form class="form-horizontal" module="form" id="moduleForm">
-	<span style="display:none;">
-	      <input type="text"   name="resourceId" id="resourceId" value="${module.resourceId }"  placeholder="当前ID">
-	      <input type="text"   name="parentId" id="parentId" value="${pid }"  placeholder="父模ID">
+     <input type="hidden"  name="resourceId" id="resourceId" value="${module.resourceId }"  placeholder="当前ID">
+     <input type="hidden"  name="parentId" id="module_parentId" value="${pid }"  placeholder="父模ID">
 	   
-	</span>
 	<div class="form-group" style="margin-top: 10px;"> 
 	   <label for="parentName" class="col-sm-2 control-label">上级模块</label>
 	   <div class="col-sm-3 controls">
-	   <input type="text" class="input-large span3 easyui-combotree" name="parentName" id="parentName"
+	   <input type="text" class="input-large span3 easyui-combotree" name="parentName" id="module_parentName"
 		         value="${pname }" readonly="readonly"  placeholder="上级模块名">
 		<!-- 修改时可变任意节点 -->
 		<c:if test="${flag == 2 }">
@@ -21,21 +19,23 @@
 	   </div>
 	</div>
 	
-	<div class="form-group"  style="margin-top: 10px;">
-	   <div class="col-sm-2 controls fade" style="color:red;" id="moduleNameTip">
+	<div class="form-group"  style="margin-top: 30px;">
+	   <div class="col-sm-2 controls" style="color:red;display: none;" id="resourceNameTip">
 	   	<i class="icon-exclamation-sign"></i>请输入模块名</div>
-	   <label for="moduleName" class="control-label">模块名</label>
+	   <label for="resourceName" class="control-label">模块名</label>
 	   <div class="col-sm-3 controls">
 	      <input type="text" class="input-large span3" name="resourceName" id="resourceName" value="${module.resourceName }"
-		            placeholder="模块名" onfocus="ModuleHandler.hideTip(this);">
+		            placeholder="模块名" onfocus="doHideTip(this);">
 	   </div>
 	</div>
 	
 	<div class="form-group" style="margin-top: 30px;">
+	 <div class="col-sm-2 controls" style="color:red;display: none;" id="engNameTip">
+	   	<i class="icon-exclamation-sign"></i>请输入模块名</div>
 	   <label for="engName" class="col-sm-2 control-label">模块英文名</label>
 	   <div class="col-sm-3 controls">
 	      <input type="text" class="input-large span3" name="engName" id="engName" value="${module.engName }"
-		            placeholder="模块英文名">
+		            placeholder="模块英文名" onfocus="doHideTip(this);">
 	   </div>
 	</div>
 	
@@ -63,7 +63,7 @@
 	   </div>
 	</div>
 	
-	<div class="form-group" style="margin-top: 30px;">
+	<div class="form-group" style="margin-top: 20px;">
 	   <label for="status" class="col-sm-2 control-label">状态</label>
 	   <div class="col-sm-6 controls">
 	        <span>

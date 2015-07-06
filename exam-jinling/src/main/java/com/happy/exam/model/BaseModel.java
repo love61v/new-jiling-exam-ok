@@ -25,6 +25,8 @@ public class BaseModel implements Serializable {
 	private String createTimeBegin;
 
 	private String createTimeEnd;
+	
+	private Long createUser;
 
 	public String getSortColumns() {
 		return sortColumns;
@@ -64,6 +66,14 @@ public class BaseModel implements Serializable {
 
 	public void setCreateTimeEnd(String createTimeEnd) {
 		this.createTimeEnd = createTimeEnd;
+	}
+
+	public Long getCreateUser() {
+		return createUser;
+	}
+
+	public void setCreateUser(Long createUserId) {
+		createUser = createUserId;
 	}
 
 }

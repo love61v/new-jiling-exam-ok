@@ -7,8 +7,8 @@
 <table id="bindRole_table" cellspacing="0" cellpadding="0">
 	<thead>
 		<tr>
-			<th data-options="field:'roleId',width:20,align:'center'">编号</th>
 			<th data-options="field:'roleName',width:50,align:'center'">名称</th>
+			<th data-options="field:'remark',width:80,align:'center'">备注</th>
 		</tr>
 	</thead>
 </table>
@@ -21,7 +21,7 @@
 		    height: '300px', 
 		    fitColumns: true,
 		    nowrap: false, 
-		    striped: true, 
+		    striped: false, 
 		    border: true, 
 		    collapsible:false, 
 		    singleSelect:false, 

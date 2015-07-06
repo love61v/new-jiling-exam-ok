@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.happy.exam.common.dto.TreegridDto;
 import com.happy.exam.controller.BaseAction;
 import com.happy.exam.model.SystemResource;
+import com.happy.exam.model.SystemUser;
 import com.happy.exam.service.SystemResourceService;
 
 /**
@@ -49,7 +50,7 @@ public class ModuleAction extends BaseAction {
 	 */
 	@RequestMapping(value = "/list.html", method = RequestMethod.GET)
 	public String showModules(Model model) {
-		return "/system/module/list";
+		return "system/module/list";
 	}
 	
 	/**
@@ -88,6 +89,35 @@ public class ModuleAction extends BaseAction {
 	}
 	
 	/**
+	 * 返回用户权限treeGrid模块数据
+	 *
+	 * @author 	: <a href="mailto:hubo@95190.com">hubo</a>  
+	 * @date 2015年5月16日 下午11:56:08
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/showUserModules.json", method = RequestMethod.POST)
+	@ResponseBody
+	public TreegridDto findUserModuleTree() {
+		SystemUser user = super.getCurrentSystemUser(); //当前用户 
+		TreegridDto treegridDto = new TreegridDto();
+
+		List<SystemResource> list = null;
+		//系统管理员与超级管理员有所有模块权
+		if(super.hasRole("system_admin") || super.hasRole("super_admin")){
+			SystemResource module = new SystemResource();
+			module.setStatus(1);
+			list = systemResourceService.findTreegrid(module);
+		}else{//其它角色按分配的权限展示
+			list = systemResourceService.findUserModuleTree(user.getUserId());
+		}
+		treegridDto.setRows(list);
+		treegridDto.setTotal(list.size());
+
+		return treegridDto;
+	}
+	
+	/**
 	 * 跳转到编辑用户页面
 	 *
 	 * @author 	: <a href="mailto:h358911056@qq.com">hubo</a>  2015年6月7日 下午5:11:03
@@ -113,7 +143,7 @@ public class ModuleAction extends BaseAction {
 		model.addAttribute("flag", flag);
 		model.addAttribute("pid", pid);
 		
-		return "/system/module/edit";
+		return "system/module/edit";
 	}
 	
 	/**
@@ -129,6 +159,7 @@ public class ModuleAction extends BaseAction {
 	@ResponseBody
 	public Map<String, Object> editModule(Model model, SystemResource module) {
 		Map<String, Object> map = getStatusMap();
+		super.setCreateUser(module);//创建用户
 		
 		int count = 0;
 		if(null != module && null !=module.getResourceId()){//修改用户

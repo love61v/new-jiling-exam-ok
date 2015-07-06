@@ -6,13 +6,11 @@ $(function(){
 		    height: 		'auto', 
 		    fitColumns: 	true,
 		    nowrap: 		false, 
-		    striped: 		true, 
+		    striped: 		false, 
 		    border: 		false, 
 		    collapsible:	false,//是否可折叠的 
 		    fit: 			true,//自动大小 
-		    lines:			true,
 		    idField:		'deptId', 
-		    pagination:		true,//分页控件 
 		    treeField:		'deptName',
 		    onContextMenu: 	function(e, row) {
 								e.preventDefault();
@@ -23,17 +21,6 @@ $(function(){
 							});
 			}
 	}); 
-	
-	//设置分页控件 
-	var p = $('#department_table').datagrid('getPager'); 
-	$(p).pagination({ 
-		pageSize: 10,//每页显示的记录条数，默认为15 
-	    pageList: [10,15,30,50,100],//可以设置每页记录条数的列表 
-	    beforePageText: '第',//页数文本框前显示的汉字 
-	    afterPageText: '页    共 {pages} 页', 
-	    displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录', 
-	});  
-
 });
 
 $(function(){
@@ -81,7 +68,7 @@ var DepartmentHandler = {
     },
 	
 	editDepartment: function(){//提交编辑用户
-		if(!this.checkDepartment("departmentName")){
+		if(!this.checkDepartment("deptName")){
 			return false;
 		}
 		 
@@ -101,11 +88,6 @@ var DepartmentHandler = {
 		
     },
     
-    hideTip: function(obj){//隐藏验证提示
-    	var id = $(obj).attr("id");
-    	$("#" + id + "Tip").removeClass("in");
-    },
-    
     deleteDepartment: function(){//确认删除
     	var rowsChecked = $('#department_table').treegrid('getSelected');//选中的行
     	var id = null;
@@ -121,7 +103,7 @@ var DepartmentHandler = {
     	var url =  ctx + "/department/deleteDepartment.json";
     	$.post(url,{
     		deptId: 			id, 
-    		parentId: 			parentId,
+    		//parentId: 			parentId,
     		_time: 				new Date().getTime()
     	},function(data){
     		if(data && data.status != 0){
@@ -144,10 +126,11 @@ var DepartmentHandler = {
     },
     
     checkDepartment: function (id){//验证
-    	var val= $.trim($("#" + id).val());
+    	debugger;
+    	var val= $.trim($("#" + id, ".modal-body").val());
         if(!val){
-        	 $("#" + id + "Tip").addClass("in");
-        	 //return false;
+        	 $("#" + id + "Tip").show();
+        	 return false;
         }
         return true;
     }

@@ -49,7 +49,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<div class="menu-sep"></div>
 		<div onclick="examtypeHandler.beforeEditexamtype(2);"><i class="icon-edit"></i>修改</div>
 		<div class="menu-sep"></div>
-		<div onclick="examtypeHandler.beforeDeleteExamtype();"><i class="icon-remove"></i>删除</div>
+		<div onclick="examtypeHandler.beforeDeleteExamtype();"><i class="icon-trash"></i>删除</div>
 		<div class="menu-sep"></div>
 		<div onclick="collapse('examtype_table')"> <i class="icon-folder-close"></i>收缩</div>
 		<div class="menu-sep"></div>

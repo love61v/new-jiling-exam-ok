@@ -21,13 +21,13 @@
    </div>
 </div>
 
-<div class="form-group"  style="margin-top: 10px;">
-   <div class="col-sm-2 controls fade" style="color:red;" id="groupNameTip">
+<div class="form-group"  style="margin-top: 30px;">
+   <div class="col-sm-2 controls" style="color:red;display:none;" id="groupNameTip">
    	<i class="icon-exclamation-sign"></i>请输入组名</div>
    <label for="groupName" class="control-label">组名</label>
    <div class="col-sm-3 controls">
       <input type="text" class="input-large span3" name="groupName" id="groupName" value="${group.groupName }"
-	            placeholder="组名" onfocus="GroupHandler.hideTip(this);">
+	            placeholder="组名" onfocus="doHideTip(this);">
    </div>
 </div>
 

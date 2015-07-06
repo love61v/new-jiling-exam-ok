@@ -115,6 +115,7 @@ public class OperateAction extends BaseAction{
 	@ResponseBody
 	public Map<String, Object> editOperate(Model model, SystemOperate operate) {
 		Map<String, Object> map = getStatusMap();
+		super.setCreateUser(operate);//创建用户
 		
 		int count = 0;
 		if(null != operate && null != operate.getOperateId()){//修改

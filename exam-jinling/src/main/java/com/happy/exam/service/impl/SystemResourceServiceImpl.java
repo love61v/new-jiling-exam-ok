@@ -30,6 +30,11 @@ public class SystemResourceServiceImpl extends MybatisBaseServiceImpl<SystemReso
 	@Override
 	public int deleteUnion(SystemResource systemResource) {
 		return systemResourceDao.deleteUnion(systemResource);
+	}
+
+	@Override
+	public List<SystemResource> findUserModuleTree(Long userId) {
+		return systemResourceDao.findUserModuleTree(userId);
 	} 
 
 }

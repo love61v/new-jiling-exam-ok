@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.happy.exam.dao.SystemUserGroupDao;
+import com.happy.exam.model.SystemRoleGroup;
 import com.happy.exam.model.SystemUserGroup;
 import com.happy.exam.service.SystemUserGroupService;
 
@@ -29,6 +30,6 @@ public class SystemUserGroupServiceImpl extends MybatisBaseServiceImpl<SystemUse
 		params.put("userIdList", userIdList);
 		
 		return systemUserGroupDao.deleteUnion(params);
-	} 
+	}
 
 }

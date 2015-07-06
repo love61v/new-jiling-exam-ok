@@ -22,6 +22,8 @@ public class SystemResourceDaoImpl extends MybatisBaseDaoImpl<SystemResource, ja
 	
 	private final String DELETE_UNION = CLZZ_NAME + ".deleteUnion";
 	
+	private final String FIND_USER_MODULE_TREE = CLZZ_NAME + ".findUserModuleTree";
+	
 	@Override
 	public List<SystemResource> findTreegrid(SystemResource systemResource) {
 		
@@ -31,6 +33,11 @@ public class SystemResourceDaoImpl extends MybatisBaseDaoImpl<SystemResource, ja
 	@Override
 	public int deleteUnion(SystemResource systemResource) {
 		return  this.getSqlSessionTemplate().delete(DELETE_UNION, systemResource);
+	}
+
+	@Override
+	public List<SystemResource> findUserModuleTree(Long userId) {
+		return  this.getSqlSessionTemplate().selectList(FIND_USER_MODULE_TREE, userId);
 	}
 				
 

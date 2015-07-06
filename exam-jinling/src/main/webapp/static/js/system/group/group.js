@@ -8,15 +8,19 @@ $(function(){
 	    fit: 			true, 
 	    fitColumns: 	true,
 	    nowrap: 		false, 
-	    striped: 		true, 
+	    striped: 		false, 
 	    border: 		false, 
 	    collapsible:	false, 
-	    lines:			true,
 	    idField:		'groupId', 
 	    treeField:		'groupName',
 	    onClickRow:      function(row){//单击树的行，加载右边表格加载数据
-	    	$("#groupId").val(row.groupId);
-	    	GroupHandler.reloadUserGroup();
+	    	var groupId = row.groupId;
+	    	var pnode = $('#group_table').treegrid('getChildren',groupId);
+	    	if(pnode.length > 0){//父节点禁用修改，绑定用户、角色
+	    		 $('#group_table').treegrid('unselect',groupId);
+	    		return false;
+	    	}
+	    	GroupHandler.reloadUserGroup(groupId); //加载右边选中的tab下的表格数据
 	    },
 	    onContextMenu:  onContextMenuFun
 	}); 
@@ -24,7 +28,6 @@ $(function(){
 	//右边用户列表
 	$('#userGroup_table').datagrid({  
 		url: 			ctx +'user/findUserByGroupId.json', 
-		title:  		'用户信息',
 		idField:		'userId', 
 	    height: 		'auto', 
 	    fitColumns: 	true,
@@ -41,11 +44,42 @@ $(function(){
 	        	    ]]
 	}); 
 	
+	$('#groupRole_table').datagrid({  
+		idField:'roleId', 
+		url: ctx +'group/findRoleByGroupId.json', 
+	    height: 'auto', 
+	    fitColumns: true,
+	    fit: true,//自动大小 
+	    nowrap: false, 
+	    striped: true, 
+	    border: false, 
+	    collapsible:false,//是否可折叠的 
+	    singleSelect:true,//是否单选 
+	    rownumbers:true//行号 
+	}); 
+	
+	$("#group_tab").tabs({//右边tab页
+		fit:true,
+		border:false,
+		pill:false,
+		onSelect: function(title,index){
+			var rowsChecked = $('#group_table').treegrid('getSelected');//选中的行
+			if(rowsChecked){
+				GroupHandler.reloadUserGroup(rowsChecked.groupId);
+			}
+		}
+	});
+	
 });
+
+function groutRoleFmt(val,row,index){
+	return "<a href='javascript:void(0);' onclick=GroupHandler.removeGroupRole('"+row.roleId+"');>删除</a>";
+}
 
 function onContextMenuFun(e, row) {//右键菜单
 		e.preventDefault();
-		$(this).treegrid('select', row.groupId);
+		var groupId = row.groupId;
+		$(this).treegrid('select', groupId);
 		$('#group_menu').menu('show', {
 			left : e.pageX,
 			top : e.pageY
@@ -63,6 +97,26 @@ function onContextMenuFun(e, row) {//右键菜单
 		}else{
 			isHide('enableItem');
 		}
+		var node = $('#group_table').treegrid('getParent',groupId);
+		var isHide = function(method,className){//组的根节点只有添加操作
+			for(var i=0,len = $(className).size();i < len;i++){
+    			var item = $('#group_menu').menu('getItem',$(className)[i]);
+    			$('#group_menu').menu(method, item.target);
+    		}
+		};
+    	if(!node){//根节点
+    		isHide('disableItem','.menuGrouphide');
+		}else{
+			isHide('enableItem','.menuGrouphide');
+		}
+    	
+    	var pnode = $('#group_table').treegrid('getChildren',groupId);
+    	if(pnode.length > 0){//父节点禁用修改，绑定用户、角色
+    		isHide('disableItem','.pGroupHide');
+    	}else{
+    		isHide('enableItem','.pGroupHide');
+    	}
+    	
 };
 
 $(function(){//清除模态窗体的数据,每次打重新加载
@@ -85,10 +139,20 @@ $(function(){//清除模态窗体的数据,每次打重新加载
  */
 var GroupHandler = {
 		
-	reloadUserGroup: function(){//组用户列表reload
-		$("#userGroup_table").datagrid("uncheckAll");
-		var params = $("#usergroup_form").serializeJson();
-    	$("#userGroup_table").datagrid("load",params);
+	reloadUserGroup: function(groupId){//组用户列表reload
+		$("#user_groupId").val(groupId);
+		
+		var tab = $('#group_tab').tabs('getSelected');
+		var index = $('#group_tab').tabs('getTabIndex',tab);
+		if(index == 0){//加载加载当前组下用户
+			$("#userGroup_table").datagrid("uncheckAll");
+			var params = $("#usergroup_form").serializeJson();
+			$("#userGroup_table").datagrid("load",params);
+		}else{//加载当前组下的角色
+			var params = {groupId: groupId};
+			$("#groupRole_table").datagrid("load",params);
+		}
+		
 	},
 	
 	userSearch: function(){ 
@@ -103,6 +167,18 @@ var GroupHandler = {
 		params._time = new Date().getTime();
 		 
 		$('#userGroup_table').datagrid('load',params); 
+	},
+	
+	removeGroupRole: function(roleId){//删除组的角色
+		var rowsChecked = $('#group_table').treegrid('getSelected');//选中的行
+		var url = ctx +"group/deleteGroupRole.json";
+		
+		$.post(url,{
+			groupId: rowsChecked.groupId,
+			roleId: roleId,
+		},function(data){
+			$("#groupRole_table").datagrid("load",{groupId: rowsChecked.groupId});
+		});
 	},
 	
 	/**
@@ -176,7 +252,7 @@ var GroupHandler = {
         		_time: new Date().getTime()
         	},function(data){
         		if(data && data.status != 0){
-        			me.reloadUserGroup();
+        			me.reloadUserGroup(groupId); //表格重新加载
         			$('#bindUser_table').datagrid('clearSelections');//清除缓存之前选中的行
         			$("#bindUserModal").modal("hide");
         		}
@@ -186,7 +262,6 @@ var GroupHandler = {
     },
     
     bindRole: function(){//绑定角色
-    	//绑定用户 
     	var rowsChecked = $("#bindRole_table").datagrid("getChecked");
     	var len = rowsChecked.length;
     	if(len > 0){
@@ -207,7 +282,7 @@ var GroupHandler = {
         		_time: new Date().getTime()
         	},function(data){
         		if(data && data.status != 0){
-        			//me.reloadUserGroup();;  //表格重新加载
+        			me.reloadUserGroup(groupId);  //表格重新加载
         			$('#bindRole_table').datagrid('clearSelections');//清除缓存之前选中的行
         			$("#bindRoleModal").modal("hide");
         		}
@@ -238,8 +313,7 @@ var GroupHandler = {
     },
     
     hideTip: function(obj){//隐藏验证提示
-    	var id = $(obj).attr("id");
-    	$("#" + id + "Tip").removeClass("in");
+    	doHideTip(obj);
     },
     
     deleteGroup: function(){//确认删除
@@ -325,10 +399,10 @@ var GroupHandler = {
     },
     
     checkGroup: function (id){//验证 
-    	var val= $.trim($("#" + id).val());
+    	var val= $.trim($("#" + id, ".modal-body").val());
         if(!val){
-        	 $("#" + id + "Tip").addClass("in");
-        	 //return false;
+        	 $("#" + id + "Tip").show();
+        	 return false;
         }
         return true;
     },
@@ -355,5 +429,4 @@ var GroupHandler = {
     	$('#group_treegrid').treegrid('reload');
     	$('#group_treegrid').treegrid('unselectAll');
     }
-    
 };
