@@ -1,5 +1,6 @@
 package com.happy.exam.dao;  
-import com.happy.exam.dao.BaseDao;
+import java.util.List;
+
 import com.happy.exam.model.ExamType;
 
 /**
@@ -10,5 +11,9 @@ import com.happy.exam.model.ExamType;
  * @date	: 2015年5月17日 下午9:01:26 
  */
 public interface ExamTypeDao extends BaseDao<ExamType,java.lang.Long>{
+
+	List<ExamType> findTreegrid(ExamType examType);
+
+	int deleteUnion(ExamType examType);
 
 }

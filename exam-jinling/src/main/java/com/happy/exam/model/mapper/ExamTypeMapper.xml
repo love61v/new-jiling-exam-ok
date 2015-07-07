@@ -5,13 +5,13 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.happy.exam.model.ExamType">
 
 	<resultMap id="RM_ExamType" type="com.happy.exam.model.ExamType">
-        <result property="id" column="Id"/>
+        <result property="id" column="id"/>
         <result property="typeName" column="TypeName"/>
         <result property="engName" column="EngName"/>
         <result property="parentId" column="ParentId"/>
         <result property="status" column="Status"/>
-        <result property="sort" column="Sort"/>
         <result property="remark" column="Remark"/>
+        <result property="sort" column="Sort"/>
         <result property="createUser" column="CreateUser"/>
         <result property="createTime" column="CreateTime"/>
         <result property="updateTime" column="UpdateTime"/>
@@ -20,21 +20,21 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<!-- 用于select查询公用抽取的列 -->
 	<sql id="columns">
 	    <![CDATA[
-		Id,TypeName,EngName,ParentId,Status,Sort,Remark,CreateUser,CreateTime,UpdateTime
+		id,TypeName,EngName,ParentId,Status,Remark,Sort,CreateUser,CreateTime,UpdateTime
 	    ]]>
 	</sql>
 
 	<!--保存 -->
-	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insert">
 	    <![CDATA[
-	        INSERT INTO exam_type ( 
-	        	Id ,
+	        INSERT INTO exam_type (
+	        	id ,
 	        	TypeName ,
 	        	EngName ,
 	        	ParentId ,
 	        	Status ,
-	        	Sort ,
-	        	Remark ,
+	        	Remark,
+	        	Sort,
 	        	CreateUser ,
 	        	CreateTime ,
 	        	UpdateTime 
@@ -44,8 +44,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	        	#{engName} ,
 	        	#{parentId} ,
 	        	#{status} ,
-	        	#{sort} ,
-	        	#{remark} ,
+	        	#{remark},
+	        	#{sort},
 	        	#{createUser} ,
 	        	#{createTime} ,
 	        	#{updateTime} 
@@ -57,13 +57,13 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<insert id="insertBatch">
 	    <![CDATA[
 	        INSERT INTO exam_type (
-	        		Id ,
+	        		id ,
 	        		TypeName ,
 	        		EngName ,
 	        		ParentId ,
 	        		Status ,
-	        		Sort ,
-	        		Remark ,
+	        		Remark,
+	        		Sort,
 	        		CreateUser ,
 	        		CreateTime ,
 	        		UpdateTime 
@@ -76,8 +76,8 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 					#{item.engName} ,
 					#{item.parentId} ,
 					#{item.status} ,
-					#{item.sort} ,
 					#{item.remark} ,
+					#{item.sort} ,
 					#{item.createUser} ,
 					#{item.createTime} ,
 					#{item.updateTime} 
@@ -95,19 +95,19 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			<if test="engName != null and engName != ''">
 				EngName = #{engName} ,
 			</if>
-			<if test="parentId != null">
+			<if test="parentId != null and parentId != ''">
 				ParentId = #{parentId} ,
 			</if>
 			<if test="status != null">
 				Status = #{status} ,
 			</if>
+			<if test="remark != null">
+				Remark = #{remark} ,
+			</if>
 			<if test="sort != null">
 				Sort = #{sort} ,
 			</if>
-			<if test="remark != null and remark != ''">
-				Remark = #{remark} ,
-			</if>
-			<if test="createUser != null">
+			<if test="createUser != null and createUser != ''">
 				CreateUser = #{createUser} ,
 			</if>
 			<if test="createTime != null">
@@ -124,21 +124,21 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		UPDATE exam_type
 		<include refid="update_sql" />
 		WHERE
-			Id = #{id} 	</update>
+			id = #{id} 	</update>
 
 	<!-- 根据ID删除 -->
 	<delete id="delete">
     	<![CDATA[
         	DELETE FROM exam_type 
         	WHERE
-        		Id = #{id} 
+        		id = #{id} 
     	]]>
 	</delete>
 	
 	<!-- 批量删除 -->
 	<delete id="delete_batch">
         DELETE FROM exam_type 
-        WHERE Id IN 
+        WHERE id IN 
         <foreach item="ids" collection="list" open="(" separator="," close=")">
 			#{ids}
 		</foreach>
@@ -150,14 +150,14 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		<include refid="columns" />
 		FROM exam_type
 		WHERE
-		Id = #{id}
+		id = #{id} 
 	</select>
 
 	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
 	<sql id="findPage_where">
 		<where>
 				<if test="model.id != null">
-					AND Id = #{model.id}
+					AND id = #{model.id}
 				</if>
 				<if test="model.typeName != null and model.typeName !=''">
 					AND TypeName = #{model.typeName}
@@ -165,19 +165,13 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 				<if test="model.engName != null and model.engName !=''">
 					AND EngName = #{model.engName}
 				</if>
-				<if test="model.parentId != null">
+				<if test="model.parentId != null and model.parentId !=''">
 					AND ParentId = #{model.parentId}
 				</if>
 				<if test="model.status != null">
 					AND Status = #{model.status}
 				</if>
-				<if test="model.sort != null">
-					AND Sort = #{model.sort}
-				</if>
-				<if test="model.remark != null and model.remark !=''">
-					AND Remark = #{model.remark}
-				</if>
-				<if test="model.createUser != null">
+				<if test="model.createUser != null and model.createUser !=''">
 					AND CreateUser = #{model.createUser}
 				</if>
 				<if test="model.createTimeBegin != null">
@@ -216,5 +210,27 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			LIMIT  #{offset}, #{pageSize}
 		</if>
 	</select>
-
+	
+<!-- 查询模块树treegrid -->
+	<select id="findTreegrid" resultMap="RM_ExamType">
+		select
+		 id,typeName,parentId as _parentId,engName,
+		 status,remark,sort,createUser,createTime,updateTime
+		 from exam_type
+		 where status = 1
+		 order by sort
+	</select>
+	
+	<!-- 删除节点与子节点 -->
+	<delete id="deleteUnion">
+       	DELETE FROM exam_type 
+       	<where>
+       		<if test="id != null and id !=''">
+					AND id = #{id}
+				</if>
+       		<if test="parentId != null and parentId !=''">
+					OR ParentId = #{parentId}
+			</if>
+       	</where> 
+	</delete>
 </mapper>

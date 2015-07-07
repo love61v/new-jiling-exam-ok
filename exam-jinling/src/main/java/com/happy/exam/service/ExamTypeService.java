@@ -1,4 +1,6 @@
 package com.happy.exam.service;   
+import java.util.List;
+
 import com.happy.exam.model.ExamType;
 
 /**
@@ -9,5 +11,9 @@ import com.happy.exam.model.ExamType;
  * @date	: 2015年5月17日 下午9:01:26 
  */
 public interface ExamTypeService extends BaseService<ExamType,java.lang.Long>{
+
+	List<ExamType> findTreegrid(ExamType examType);
+
+	int deleteUnion(ExamType module);
 
 }

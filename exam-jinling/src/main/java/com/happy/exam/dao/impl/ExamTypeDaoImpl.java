@@ -1,7 +1,10 @@
 package com.happy.exam.dao.impl;  
-import com.happy.exam.dao.ExamTypeDao; 
-import com.happy.exam.model.ExamType;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
+
+import com.happy.exam.dao.ExamTypeDao;
+import com.happy.exam.model.ExamType;
 
 /**
  *  ExamTypeDao
@@ -12,5 +15,20 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ExamTypeDaoImpl extends MybatisBaseDaoImpl<ExamType, java.lang.Long> implements ExamTypeDao { 
+	private final String CLZZ_NAME = ExamType.class.getName();
+	
+	private final String FIND_TREE_GRID = CLZZ_NAME + ".findTreegrid";
+	
+	private final String DELETE_UNION = CLZZ_NAME + ".deleteUnion";
+	
+	@Override
+	public List<ExamType> findTreegrid(ExamType examType) {
+		
+		return this.getSqlSessionTemplate().selectList(FIND_TREE_GRID, examType);
+	}
 
+	@Override
+	public int deleteUnion(ExamType examType) {
+		return  this.getSqlSessionTemplate().delete(DELETE_UNION, examType);
+	} 
 }
