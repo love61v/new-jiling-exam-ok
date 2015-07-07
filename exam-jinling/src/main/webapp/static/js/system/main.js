@@ -19,6 +19,7 @@ $(function() {
 	    border: 	false, 
 	    collapsible: true, 
 	    singleSelect: true,
+	    onLoadSuccess: loadSuccessFun, 
 	    onClickRow:  function(row){
 	    	var node = $('#userModule_tree').treegrid('getChildren', row.resourceId);
 	    	if(node.length > 0){
@@ -38,6 +39,14 @@ $(function() {
 			
 	    }
 }); 
+	
+	function loadSuccessFun(row, data){//最后2个节点收缩
+		var len = data.rows.length;
+		if(len > 3){
+			$(this).treegrid('collapse', data.rows[len - 1].resourceId);
+			$(this).treegrid('collapse', data.rows[len -2].resourceId);
+		}
+	};
 	
 });
 
