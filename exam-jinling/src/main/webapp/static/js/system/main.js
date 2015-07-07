@@ -40,6 +40,7 @@ $(function() {
 	    }
 }); 
 	
+	
 	function loadSuccessFun(row, data){//最后3个节点收缩
 		var len = data.rows.length;
 		if(len > 20){
