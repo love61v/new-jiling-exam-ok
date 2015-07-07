@@ -40,11 +40,16 @@ $(function() {
 	    }
 }); 
 	
-	function loadSuccessFun(row, data){//最后2个节点收缩
+	function loadSuccessFun(row, data){//最后3个节点收缩
 		var len = data.rows.length;
-		if(len > 3){
-			$(this).treegrid('collapse', data.rows[len - 1].resourceId);
-			$(this).treegrid('collapse', data.rows[len -2].resourceId);
+		if(len > 20){
+			var count = 0;
+			for(var i = len - 1; i > 0;i--){
+				if(data.rows[i]._parentId == 1 && count < 3){
+					$(this).treegrid('collapse', data.rows[i].resourceId);
+					count++;
+				}
+			}
 		}
 	};
 	
