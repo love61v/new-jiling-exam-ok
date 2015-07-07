@@ -65,7 +65,6 @@ public class ExamTypeAction extends BaseAction {
 	public String choiceExamTypeTree(Model model) {
 		return "examtype/choiceExamTypeTree";
 	}
-	
 
 	/**
 	 * 返回treeGrid试题类型数据
