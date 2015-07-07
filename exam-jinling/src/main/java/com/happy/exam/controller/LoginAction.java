@@ -110,7 +110,7 @@ public class LoginAction extends BaseAction{
 		Subject currentSystemUser = SecurityUtils.getSubject();
 		currentSystemUser.logout(); //退出
 		
-		return "redirect: /login.html";
+		return "login";
 	}
 	
 }
