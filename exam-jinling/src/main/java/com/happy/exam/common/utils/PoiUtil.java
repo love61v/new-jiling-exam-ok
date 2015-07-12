@@ -24,6 +24,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+import com.alibaba.fastjson.JSON;
 import com.happy.exam.common.bean.ExamQuestionModel;
 import com.happy.exam.common.enums.ExamTypeEnum;
 
@@ -109,8 +110,11 @@ public class PoiUtil {
 			HSSFCell cell = row.getCell(0); // 第1个单元格为问题
 			value = cell.getStringCellValue();
 			
-			HSSFCell cellAnswer = row.getCell(1); // 第2个单元格为问题
-			String sencond = cellAnswer.getStringCellValue();  //第二列是单选与多选的答案
+			String sencond  = "";
+			if(null != row.getCell(1)){
+				HSSFCell cellAnswer = row.getCell(1); // 第2个单元格为问题
+				sencond = cellAnswer.getStringCellValue();  //第二列是单选与多选的答案
+			}
 			tempModel = parseData(value,sencond, tempModel, examTypeEnum);
 
 			// 简答题或者操作题目第2个单元格为答案
@@ -122,13 +126,14 @@ public class PoiUtil {
 				tempModel.setAnswer(cell2.getStringCellValue());
 			}
 
+			tempModel.setPrototypeQuestion(value); //源题内容
 			dataSet.add(tempModel);
 		}
 		
 		return dataSet;
 	}
 
-	private static ExamQuestionModel setBean(ExamQuestionModel model) {
+	public static ExamQuestionModel setBean(ExamQuestionModel model) {
 		ExamQuestionModel tempModel;
 		if(null == model){
 			tempModel = new ExamQuestionModel();
@@ -161,32 +166,40 @@ public class PoiUtil {
 	 *            传入ExamTypeEnum.SINGLE等等
 	 * @return
 	 */
-	private static ExamQuestionModel parseData(String value,String sencond,ExamQuestionModel model, ExamTypeEnum examTypeEnum) {
+	public static ExamQuestionModel parseData(String value,String sencond,ExamQuestionModel model, ExamTypeEnum examTypeEnum) {
 		String flag = examTypeEnum.getKey(); // 题型
 
 		switch (examTypeEnum) {
 		case SINGLE: // 单选题
-			//model.setAnswer(getSingleMultiAnswer(value)); // 设置答案
+//			model.setAnswer(getSingleMultiAnswer(value)); // 设置答案
+//			model.setQuestion(getSingleMultiQuestion(value, flag)); // 设置问题
 			model.setAnswer(sencond); // 设置答案
-			//model.setQuestion(getSingleMultiQuestion(value, flag)); // 设置问题
 			model.setQuestion(value); // 设置问题
+			model.setScore("1");
+			model.setStatus(1);
 			break;
 		case MULTI: // 多选题
 			model.setAnswer(getSingleMultiAnswer(value));
 			model.setQuestion(getSingleMultiQuestion(value, flag));
+			model.setScore("2");
+			model.setStatus(1);
 			break;
 		case FILL: // 填空题
 			String answer = getFillAnswer(value);
 			model.setAnswer(answer);
+			model.setScore(answer.split(";").length * 0.5 + "");
 			model.setQuestion(getFillQuestion(value, answer));
+			model.setStatus(1);
 			break;
 		case SHORTS: // 简答题
 			model.setScore(getShortsScore(value));
 			model.setQuestion(value); // 问题
+			model.setStatus(1);
 			break;
 		case OPERATE: // 操作题
 			model.setScore(getShortsScore(value));
 			model.setQuestion(value);
+			model.setStatus(1);
 			break;
 		default:
 			break;
@@ -203,7 +216,7 @@ public class PoiUtil {
 	 * @param value
 	 * @return
 	 */
-	private static String getShortsScore(String value) {
+	public static String getShortsScore(String value) {
 		value = adjust(value);
 		Pattern p = Pattern.compile(StrUtil.REG_ALL);
 		Matcher matcher = p.matcher(value);
@@ -229,7 +242,7 @@ public class PoiUtil {
 	 *            占位符
 	 * @return
 	 */
-	private static String getSingleMultiQuestion(String content, String point) {
+	public static String getSingleMultiQuestion(String content, String point) {
 		content = adjust(content);
 		content = content.replaceAll(StrUtil.REG_AZ, "(  " + point + "  )");
 
@@ -244,7 +257,7 @@ public class PoiUtil {
 	 * @param content
 	 * @return
 	 */
-	private static String adjust(String content) {
+	public static String adjust(String content) {
 		return StrUtil.toSemiangle(content).replaceAll(StrUtil.REG_S, "");
 	}
 
@@ -254,7 +267,7 @@ public class PoiUtil {
 	 * @param value
 	 * @return
 	 */
-	private static String getSingleMultiAnswer(String value) {
+	public static String getSingleMultiAnswer(String value) {
 		value = adjust(value);
 		Pattern p = Pattern.compile(StrUtil.REG_AZ);
 		Matcher matcher = p.matcher(value);
@@ -274,7 +287,7 @@ public class PoiUtil {
 	 * @param value
 	 * @return
 	 */
-	private static String getFillAnswer(String value) {
+	public static String getFillAnswer(String value) {
 		StringBuffer sbf = new StringBuffer("");
 		value = adjust(value);
 
@@ -303,7 +316,7 @@ public class PoiUtil {
 	 * @param value
 	 * @return
 	 */
-	private static String getFillQuestion(String txt, String answer) {
+	public static String getFillQuestion(String txt, String answer) {
 		txt = adjust(txt);
 
 		String[] arr = answer.split(";");
@@ -429,15 +442,16 @@ public class PoiUtil {
 		out.close();
 	}
 
-	public static void main(String[] args) {
-		/*String path = "d:/template.xls";
-		writeDataFromTemplate(path);*/
+	public static void main(String[] args) throws FileNotFoundException {
+		InputStream fileIn = new FileInputStream("d:/fill.xls");
+		ExamQuestionModel model = new ExamQuestionModel();
+		model.setCreateTime(new Date());
+		List<ExamQuestionModel> parseList = parseList(fileIn,model , ExamTypeEnum.FILL);
+		System.out.println(JSON.toJSONString(parseList));
+		/*String content = "就精细天气预报而言,短期预报要(明确灾害性天气落区),短时和临近预报";
+		String result = getFillAnswer(content);
 		
-		//parseData("aaaa", null, ExamTypeEnum.SINGLE);
-		ExamQuestionModel e = new ExamQuestionModel();
-		e.setCreateTime(new Date());
-		//List<ExamQuestionModel> parseList = parseList("d:/singlechoice.xls",e , ExamTypeEnum.SINGLE);
-		//System.out.println(JSON.toJSONString(parseList));
+		System.out.println(result);*/
 	}
 
 }

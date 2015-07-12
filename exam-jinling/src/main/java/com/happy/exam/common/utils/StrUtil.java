@@ -14,7 +14,7 @@ public class StrUtil {
  
 	public final static String REG_ALL = "\\((.*?)\\)"; //匹配1个括号与其中的内容(ABc在所有)
 	public final static String REG_NUMBER = "([1-9]+|[0-9]*|0)(\\.{1}[0-9]{1})?"; //匹配正数,1位小数
-	public final static String REG_MORE ="\\([^\\(\\)]*(\\(.*?\\)[^\\(\\)]*)*\\)\\w?[, ]*"; //多层括号匹配(ABc(在)所有)
+	public final static String REG_MORE ="\\([^\\(\\)]*(\\(.*?\\)[^\\(\\)]*)*\\)\\w?"; //多层括号匹配(ABc(在)所有)
 	public final static String REG_S = "/\\s+|\\s|/g/";    //清除空格
 	
 	/**
@@ -84,7 +84,13 @@ public class StrUtil {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(toSemiangle("西太平洋动路径主, ,，！！！￥￥%%要可以分为（   DSF   ）台风的移动路径主要可以分为（   ABD   ）"));
+		
+		String content = "可以(台风的移动(路径))";
+	System.out.println(get(content));
 	}
 
 }
+
+
+
+
