@@ -99,6 +99,7 @@ public class BaseAction {
 	public boolean hasRole(String roleIdentifier) {
 		return SecurityUtils.getSubject().hasRole(roleIdentifier);
 	}
+	
 
 	/**
 	 * 解析excel
