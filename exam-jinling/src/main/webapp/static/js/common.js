@@ -282,3 +282,20 @@ function doHideTip(obj){
 	$("#" + id + "Tip").hide();
 };
 
+/**
+ * 关闭modal窗口
+ * @param id
+ */
+function closeModal(id){
+	$('#' + id).modal('hide');
+};
+
+/**
+ * 隐藏modal窗口且清除之前的数据
+ * @param id
+ */
+function clearModal(id){
+	$("#" + id).on("hidden", function() {
+	    $(this).removeData("modal");
+	});
+};
