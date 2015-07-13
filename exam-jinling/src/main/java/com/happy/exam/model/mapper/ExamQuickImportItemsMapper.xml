@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.happy.exam.model.ExamQuickImportItems">
+
+	<resultMap id="RM_ExamQuickImportItems" type="com.happy.exam.model.ExamQuickImportItems">
+        <result property="id" column="Id"/>
+        <result property="question" column="Question"/>
+        <result property="answer" column="Answer"/>
+        <result property="score" column="Score"/>
+        <result property="prototypeQuestion" column="PrototypeQuestion"/>
+        <result property="typeName" column="TypeName"/>
+        <result property="typeFlag" column="TypeFlag"/>
+        <result property="quickId" column="QuickId"/>
+        <result property="status" column="Status"/>
+        <result property="remark" column="Remark"/>
+        <result property="sort" column="Sort"/>
+        <result property="createUser" column="CreateUser"/>
+        <result property="createTime" column="CreateTime"/>
+        <result property="updateTime" column="UpdateTime"/>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+		Id,Question,Answer,Score,PrototypeQuestion,TypeName,TypeFlag,QuickId,Status,Remark,Sort,CreateUser,CreateTime,UpdateTime
+	    ]]>
+	</sql>
+
+	<!--保存 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	    <![CDATA[
+	        INSERT INTO exam_quick_import_items ( 
+	        	Id ,
+	        	Question ,
+	        	Answer ,
+	        	Score ,
+	        	PrototypeQuestion ,
+	        	TypeName ,
+	        	TypeFlag ,
+	        	QuickId ,
+	        	Status ,
+	        	Remark ,
+	        	Sort ,
+	        	CreateUser ,
+	        	CreateTime ,
+	        	UpdateTime 
+	        ) VALUES (
+	        	#{id} ,
+	        	#{question} ,
+	        	#{answer} ,
+	        	#{score} ,
+	        	#{prototypeQuestion} ,
+	        	#{typeName} ,
+	        	#{typeFlag} ,
+	        	#{quickId} ,
+	        	#{status} ,
+	        	#{remark} ,
+	        	#{sort} ,
+	        	#{createUser} ,
+	        	#{createTime} ,
+	        	#{updateTime} 
+	        )
+	    ]]>
+	</insert>
+	
+	<!-- 批量保存 -->
+	<insert id="insertBatch">
+	    <![CDATA[
+	        INSERT INTO exam_quick_import_items (
+	        		Id ,
+	        		Question ,
+	        		Answer ,
+	        		Score ,
+	        		PrototypeQuestion ,
+	        		TypeName ,
+	        		TypeFlag ,
+	        		QuickId ,
+	        		Status ,
+	        		Remark ,
+	        		Sort ,
+	        		CreateUser ,
+	        		CreateTime ,
+	        		UpdateTime 
+	        ) VALUES 
+	         ]]>
+	        <foreach item="item" collection="list"   separator=",">
+	        	(
+					#{item.id} ,
+					#{item.question} ,
+					#{item.answer} ,
+					#{item.score} ,
+					#{item.prototypeQuestion} ,
+					#{item.typeName} ,
+					#{item.typeFlag} ,
+					#{item.quickId} ,
+					#{item.status} ,
+					#{item.remark} ,
+					#{item.sort} ,
+					#{item.createUser} ,
+					#{item.createTime} ,
+					#{item.updateTime} 
+	        	)
+			</foreach>
+	   
+	</insert>
+
+	<!-- update 条件组合 -->
+	<sql id="update_sql">
+		<set>
+			<if test="question != null and question != ''">
+				Question = #{question} ,
+			</if>
+			<if test="answer != null and answer != ''">
+				Answer = #{answer} ,
+			</if>
+			<if test="score != null and score != ''">
+				Score = #{score} ,
+			</if>
+			<if test="prototypeQuestion != null and prototypeQuestion != ''">
+				PrototypeQuestion = #{prototypeQuestion} ,
+			</if>
+			<if test="typeName != null and typeName != ''">
+				TypeName = #{typeName} ,
+			</if>
+			<if test="typeFlag != null">
+				TypeFlag = #{typeFlag} ,
+			</if>
+			<if test="quickId != null">
+				QuickId = #{quickId} ,
+			</if>
+			<if test="status != null">
+				Status = #{status} ,
+			</if>
+			<if test="remark != null and remark != ''">
+				Remark = #{remark} ,
+			</if>
+			<if test="sort != null">
+				Sort = #{sort} ,
+			</if>
+			<if test="createUser != null">
+				CreateUser = #{createUser} ,
+			</if>
+			<if test="createTime != null">
+				CreateTime = #{createTime} ,
+			</if>
+			<if test="updateTime != null">
+				UpdateTime = #{updateTime} 
+			</if>
+		</set>
+	</sql>
+	
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE exam_quick_import_items
+		<include refid="update_sql" />
+		WHERE
+			Id = #{id} 	</update>
+
+	<!-- 根据ID删除 -->
+	<delete id="delete">
+    	<![CDATA[
+        	DELETE FROM exam_quick_import_items 
+        	WHERE
+        		Id = #{id} 
+    	]]>
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="delete_batch">
+        DELETE FROM exam_quick_import_items 
+        WHERE Id IN 
+        <foreach item="ids" collection="list" open="(" separator="," close=")">
+			#{ids}
+		</foreach>
+    </delete>
+
+	<!-- selsect -->
+	<select id="getById" resultMap="RM_ExamQuickImportItems">
+		SELECT
+		<include refid="columns" />
+		FROM exam_quick_import_items
+		WHERE
+		Id = #{id} 
+	</select>
+
+	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
+	<sql id="findPage_where">
+		<where>
+				<if test="model.id != null">
+					AND Id = #{model.id}
+				</if>
+				<if test="model.question != null and model.question !=''">
+					AND Question = #{model.question}
+				</if>
+				<if test="model.answer != null and model.answer !=''">
+					AND Answer = #{model.answer}
+				</if>
+				<if test="model.score != null and model.score !=''">
+					AND Score = #{model.score}
+				</if>
+				<if test="model.prototypeQuestion != null and model.prototypeQuestion !=''">
+					AND PrototypeQuestion = #{model.prototypeQuestion}
+				</if>
+				<if test="model.typeName != null and model.typeName !=''">
+					AND TypeName = #{model.typeName}
+				</if>
+				<if test="model.typeFlag != null">
+					AND TypeFlag = #{model.typeFlag}
+				</if>
+				<if test="model.quickId != null">
+					AND QuickId = #{model.quickId}
+				</if>
+				<if test="model.status != null">
+					AND Status = #{model.status}
+				</if>
+				<if test="model.remark != null and model.remark !=''">
+					AND Remark = #{model.remark}
+				</if>
+				<if test="model.sort != null">
+					AND Sort = #{model.sort}
+				</if>
+				<if test="model.createUser != null">
+					AND CreateUser = #{model.createUser}
+				</if>
+				<if test="model.createTimeBegin != null">
+					AND CreateTime &gt;= #{model.createTimeBegin}
+				</if>
+				<if test="model.createTimeEnd != null">
+					AND CreateTime &lt;= #{model.createTimeEnd}
+				</if>
+				<if test="model.updateTimeBegin != null">
+					AND UpdateTime &gt;= #{model.updateTimeBegin}
+				</if>
+				<if test="model.updateTimeEnd != null">
+					AND UpdateTime &lt;= #{model.updateTimeEnd}
+				</if>
+		</where>
+	</sql>
+
+	<!-- 获取总数 -->
+	<select id="findPage_count" resultType="long">
+		SELECT COUNT(1)
+		FROM exam_quick_import_items
+		<include refid="findPage_where" />
+	</select>  
+
+	<select id="findPage" resultMap="RM_ExamQuickImportItems">
+		 SELECT
+		<include refid="columns" />
+		FROM exam_quick_import_items
+		<include refid="findPage_where" />
+
+		<if test="model.sortColumns != null and model.sortColumns !=''">
+			ORDER BY ${model.sortColumns}
+		</if>
+		
+		<if test="offset != null and pageSize != null">
+			LIMIT  #{offset}, #{pageSize}
+		</if>
+	</select>
+
+</mapper>
