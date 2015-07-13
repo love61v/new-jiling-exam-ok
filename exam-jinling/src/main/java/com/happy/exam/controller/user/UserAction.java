@@ -5,9 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,7 @@ import com.happy.exam.common.bean.DataGridModel;
 import com.happy.exam.common.bean.UserGroupModel;
 import com.happy.exam.common.dto.DatagridDto;
 import com.happy.exam.common.pager.Pager;
+import com.happy.exam.common.utils.ConstantsUtil;
 import com.happy.exam.common.utils.Md5;
 import com.happy.exam.controller.BaseAction;
 import com.happy.exam.model.Department;
@@ -40,7 +43,8 @@ import com.happy.exam.service.SystemUserService;
 @Controller
 @RequestMapping("/user")
 public class UserAction extends BaseAction {
-	 
+	private final static Logger logs = LoggerFactory.getLogger(UserAction.class);
+	
 	@Autowired 
 	private SystemUserService systemUserService;
 	
@@ -165,7 +169,9 @@ public class UserAction extends BaseAction {
 			model.addAttribute("user", user);
 		}
 		
-		return "/system/user/edit";
+		model.addAttribute("educationMap", ConstantsUtil.educationMap);//学历
+		
+		return "system/user/edit";
 	}
 	
 	/**
@@ -179,7 +185,7 @@ public class UserAction extends BaseAction {
 	 */
 	@RequestMapping(value = "/editUser.json", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> editUser(Model model, SystemUser user) {
+	public Map<String, Object> editUser(HttpServletRequest request,Model model, SystemUser user) {
 		Map<String, Object> map = getStatusMap();
 		
 		List<Department> deptList = departmentService.findList(new Department());
@@ -188,10 +194,16 @@ public class UserAction extends BaseAction {
 		super.setCreateUser(user);//设置创建用户
 		int count = 0;
 		if(null != user && null != user.getUserId()){//修改用户
+			logs.info("修改用户");
 			user.setUpdateTime(new Date());
 			count = systemUserService.update(user);
 			map.put("flag", user.getUserId());
+			
+			super.log(request, "修改用户:" + toJson(user));
 		}else{//添加
+			logs.info("添加用户");
+			//dataHandler(user);
+			
 			user.setStatus(1);
 			user.setPassword(Md5.md5("123456"));//初始密码
 			user.setCreateTime(new Date());
@@ -204,12 +216,39 @@ public class UserAction extends BaseAction {
 			systemUserRoleService.save(userRole);
 			
 			map.put("flag", null);
+			super.log(request, "添加用户:" + toJson(user));
 		}
 		map.put("status", count);
 		
 		return map;
 	}
 	
+	/**
+	 * 日期处理
+	 * @param user
+	 * @return
+	 */
+	private SystemUser dataHandler(SystemUser user) {
+		if(StringUtils.isBlank(user.getBirthday())){
+			user.setBirthday(null);
+		}
+		if(StringUtils.isBlank(user.getJobDate())){
+			user.setJobDate(null);
+		}
+		if(StringUtils.isBlank(user.getForcastBeginDate())){
+			user.setForcastBeginDate(null);
+		}
+		if(StringUtils.isBlank(user.getGraduateFirst())){
+			user.setGraduateFirst(null);
+		}
+		if(StringUtils.isBlank(user.getGraduateSecond())){
+			user.setGraduateSecond(null);
+		}
+		
+		return user;
+	}
+
+
 	/**
 	 * 删除用户
 	 *
@@ -219,7 +258,7 @@ public class UserAction extends BaseAction {
 	 */
 	@RequestMapping(value="/deleteUser.json",method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> deleteUser(String ids) {
+	public Map<String, Object> deleteUser(HttpServletRequest request,String ids) {
 		Map<String, Object> map = getStatusMap();
 
 		if (StringUtils.isNotBlank(ids)) {
@@ -228,6 +267,7 @@ public class UserAction extends BaseAction {
 					SystemUser.class);
 
 			map.put("status", count);
+			super.log(request, "删除用户编号:" + toJson(ids));
 		}
 
 		return map;
@@ -242,7 +282,7 @@ public class UserAction extends BaseAction {
 	 */
 	@RequestMapping(value="/updatePwd.json",method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updatePwd(String newpwd, String oldpwd) {
+	public Map<String, Object> updatePwd(HttpServletRequest request,String newpwd, String oldpwd) {
 		Map<String, Object> map = getStatusMap();
 		map.put("status", 1);
 
