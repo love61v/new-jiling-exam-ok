@@ -15,51 +15,51 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <base href="<%=basePath%>">
 
-<title>单项选择题管理</title>
+<title>填空题管理</title>
 
 </head>
 <body>
 
-<!-- 编辑单项选择题目 -->
- <div class="modal fade" id="editSingleChoice">
+<!-- 编辑填空题目 -->
+ <div class="modal fade" id="editFillBlanks">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" id="cancleSingleChoiceEdit"  data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title"><span style="color:blue;">编辑单项选择题目</span></h4>
+        <button type="button" class="close" id="cancleFillBlanksEdit"  data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title"><span style="color:blue;">编辑填空题目</span></h4>
       </div>
       <!-- remote加载的页面渲染到此容器中 -->
        <div class="modal-body"></div>
       
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
-        <button type="button" class="btn btn-success" onclick="SingleChoiceHandler.editSingleChoice();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
+        <button type="button" class="btn btn-success" onclick="FillBlanksHandler.editFillBlanks();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
 <!-- 导入excel -->
- <div class="modal fade" id="importExcelModal_singlechoice">
+ <div class="modal fade" id="importExcelModal_fillblanks">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" id="cancleauthzSingleChoice"  data-dismiss="modal" aria-hidden="true">×</button>
+        <button type="button" class="close" id="cancleauthzFillBlanks"  data-dismiss="modal" aria-hidden="true">×</button>
         <h4 class="modal-title"><span style="color:blue;">导入excel</span></h4>
       </div>
       <!-- remote加载的页面渲染到此容器中 -->
        <div class="modal-body"></div>
       
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" onclick="SingleChoiceHandler.uploadExcel();"><i class="icon-ok icon-white"></i>&nbsp;上&nbsp;&nbsp;传</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="SingleChoiceHandler.closeImportExcel();"><i class="icon-remove icon-white"></i>关闭</button>
+        <button type="button" class="btn btn-success" onclick="FillBlanksHandler.uploadExcel();"><i class="icon-ok icon-white"></i>&nbsp;上&nbsp;&nbsp;传</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="FillBlanksHandler.closeImportExcel();"><i class="icon-remove icon-white"></i>关闭</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
  <!-- 提示是否删除 -->
- <div class="modal fade" id="isDeleteSingleChoiceTip">
+ <div class="modal fade" id="isDeleteFillBlanksTip">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -70,10 +70,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <p><h3 style="color:red">您确定删除吗?</h3></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" id="cancleSingleChoiceDel" data-dismiss="modal">
+        <button type="button" class="btn btn-danger" id="cancleFillBlanksDel" data-dismiss="modal">
         	<i class="icon-remove icon-white"></i>取消
         </button>
-        <button type="button" class="btn btn-success" onclick="SingleChoiceHandler.deleteSingleChoice()">
+        <button type="button" class="btn btn-success" onclick="FillBlanksHandler.deleteFillBlanks()">
         	<i class="icon-ok icon-white"></i>&nbsp;确&nbsp;&nbsp;定
         </button>
       </div>
@@ -85,7 +85,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!-- 左树，右边表格 -->
 <div class="easyui-layout" data-options="fit:true">
     <div data-options="region:'west',split:true,border:false" style="width:200px">
-    	<table id="singlechoice_examtype_table" cellspacing="0" cellpadding="0">
+    	<table id="fillblanks_examtype_table" cellspacing="0" cellpadding="0">
         <thead>
 			<tr>
 				<th data-options="field:'typeName',width:80">试题分类</th>
@@ -96,9 +96,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    
    <!-- 用户列表 -->
     <div data-options="region:'center',border:false">
-    <div id="singlechoice_tab">
+    <div id="fillblanks_tab">
    	 <div  title="试题列表">
-   	 	<table id="singlechoice_table" cellspacing="0" cellpadding="0" toolbar="#singlechoice_tbar_ug" style="margin-top:3px;">
+   	 	<table id="fillblanks_table" cellspacing="0" cellpadding="0" toolbar="#tbar_ug" style="margin-top:3px;">
 	        <thead>
 	            <tr>
 	                <th data-options="field:'prototypeQuestion',width:150,align:'center'">题目</th>
@@ -109,30 +109,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	        </thead>
    		</table>
    	
-	   	<div id="singlechoice_tbar_ug">
+	   	<div id="fillblanks_tbar_ug">
 	   		<div class="form-inline" >
-			  <form id="singlechoice_form" style="margin-top:20px;">
+			  <form id="fillblanks_form" style="margin-top:20px;">
 			  		<!-- 组ID -->
-					<input type="hidden" name="typeId" id="examType_id"/>
-			   		<input type="text" class="form-control" name="prototypeQuestion" id="question_singlechoice" placeholder="试题关键字">
-			    	<a class="btn btn-success" href="javascript:void(0)"   onclick="SingleChoiceHandler.search();">
+					<input type="hidden" name="typeId" id="fillblanks_examType_id"/>
+			   		<input type="text" class="form-control" name="prototypeQuestion" id="question_fillblanks" placeholder="试题关键字">
+			    	<a class="btn btn-success" href="javascript:void(0)"   onclick="FillBlanksHandler.search();">
 						<i class="icon-search icon-white"></i>查询
 					</a>
 				 <div class="pull-right"> 
 				  <div class="btn-group" data-toggle="buttons-checkbox">
-			    	<a class="btn btn-success" id="importExcel_singlechoice" href="javascript:void(0)"   onclick="SingleChoiceHandler.importExcel();">
+			    	<a class="btn btn-success" id="importExcel_fillblanks" href="javascript:void(0)"   onclick="FillBlanksHandler.importExcel();">
 						<i class="icon-tint icon-white"></i>导入excel
 					</a>
-			    	<a class="btn btn-success" id="exportExcel_singlechoice" href="javascript:void(0)"   onclick="SingleChoiceHandler.exportExcel();">
+			    	<a class="btn btn-success" id="exportExcel_fillblanks" href="javascript:void(0)"   onclick="FillBlanksHandler.exportExcel();">
 						<i class="icon-fire icon-white"></i>导出模板
 					</a>
-			    	<a class="btn btn-success" id="save_singlechoice" href="javascript:void(0)"   onclick="SingleChoiceHandler.beforeEditSingleChoice(1);">
+			    	<a class="btn btn-success" id="save_fillblanks" href="javascript:void(0)"   onclick="FillBlanksHandler.beforeEditFillBlanks(1);">
 						<i class="icon-plus icon-white"></i>添加
 					</a>
-			    	<a class="btn btn-success" id="update_singlechoice" href="javascript:void(0)" onclick="SingleChoiceHandler.beforeEditSingleChoice(2);">
+			    	<a class="btn btn-success" id="update_fillblanks" href="javascript:void(0)" onclick="FillBlanksHandler.beforeEditFillBlanks(2);">
 						<i class="icon-edit icon-white"></i>修改
 					</a>
-					<a class="btn btn-success" id="beforeDelete_singlechoice" href="javascript:void(0)"  onclick="SingleChoiceHandler.beforeDeleteSingleChoice();">
+					<a class="btn btn-success" id="beforeDelete_fillblanks" href="javascript:void(0)"  onclick="FillBlanksHandler.beforeDeleteFillBlanks();">
 						<i class="icon-trash icon-white"></i>删除 
 					</a>
 					</div>
@@ -144,6 +144,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 </div>
 
  
-<script src='${ctx}/js/questiontypes/singlechoice/singlechoice.js' type='text/javascript'></script> 
+<script src='${ctx}/js/questiontypes/examfillblanks/examfillblanks.js' type='text/javascript'></script> 
 </body>
 </html>

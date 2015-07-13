@@ -15,51 +15,51 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <base href="<%=basePath%>">
 
-<title>单项选择题管理</title>
+<title>简答题管理</title>
 
 </head>
 <body>
 
-<!-- 编辑单项选择题目 -->
- <div class="modal fade" id="editSingleChoice">
+<!-- 编辑简答题目 -->
+ <div class="modal fade" id="editShortQuestion">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" id="cancleSingleChoiceEdit"  data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title"><span style="color:blue;">编辑单项选择题目</span></h4>
+        <button type="button" class="close" id="cancleShortQuestionEdit"  data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title"><span style="color:blue;">编辑简答题目</span></h4>
       </div>
       <!-- remote加载的页面渲染到此容器中 -->
        <div class="modal-body"></div>
       
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="icon-remove icon-white"></i>取消</button>
-        <button type="button" class="btn btn-success" onclick="SingleChoiceHandler.editSingleChoice();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
+        <button type="button" class="btn btn-success" onclick="ShortQuestionHandler.editShortQuestion();"><i class="icon-ok icon-white"></i>&nbsp;提&nbsp;&nbsp;交</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
 <!-- 导入excel -->
- <div class="modal fade" id="importExcelModal_singlechoice">
+ <div class="modal fade" id="importExcelModal_shortquestion">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" id="cancleauthzSingleChoice"  data-dismiss="modal" aria-hidden="true">×</button>
+        <button type="button" class="close" id="cancleauthzShortQuestion"  data-dismiss="modal" aria-hidden="true">×</button>
         <h4 class="modal-title"><span style="color:blue;">导入excel</span></h4>
       </div>
       <!-- remote加载的页面渲染到此容器中 -->
        <div class="modal-body"></div>
       
       <div class="modal-footer">
-        <button type="button" class="btn btn-success" onclick="SingleChoiceHandler.uploadExcel();"><i class="icon-ok icon-white"></i>&nbsp;上&nbsp;&nbsp;传</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="SingleChoiceHandler.closeImportExcel();"><i class="icon-remove icon-white"></i>关闭</button>
+        <button type="button" class="btn btn-success" onclick="ShortQuestionHandler.uploadExcel();"><i class="icon-ok icon-white"></i>&nbsp;上&nbsp;&nbsp;传</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="ShortQuestionHandler.closeImportExcel();"><i class="icon-remove icon-white"></i>关闭</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
  <!-- 提示是否删除 -->
- <div class="modal fade" id="isDeleteSingleChoiceTip">
+ <div class="modal fade" id="isDeleteShortQuestionTip">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -70,10 +70,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <p><h3 style="color:red">您确定删除吗?</h3></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" id="cancleSingleChoiceDel" data-dismiss="modal">
+        <button type="button" class="btn btn-danger" id="cancleShortQuestionDel" data-dismiss="modal">
         	<i class="icon-remove icon-white"></i>取消
         </button>
-        <button type="button" class="btn btn-success" onclick="SingleChoiceHandler.deleteSingleChoice()">
+        <button type="button" class="btn btn-success" onclick="ShortQuestionHandler.deleteShortQuestion()">
         	<i class="icon-ok icon-white"></i>&nbsp;确&nbsp;&nbsp;定
         </button>
       </div>
@@ -85,7 +85,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!-- 左树，右边表格 -->
 <div class="easyui-layout" data-options="fit:true">
     <div data-options="region:'west',split:true,border:false" style="width:200px">
-    	<table id="singlechoice_examtype_table" cellspacing="0" cellpadding="0">
+    	<table id="shortquestion_examtype_table" cellspacing="0" cellpadding="0">
         <thead>
 			<tr>
 				<th data-options="field:'typeName',width:80">试题分类</th>
@@ -96,12 +96,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    
    <!-- 用户列表 -->
     <div data-options="region:'center',border:false">
-    <div id="singlechoice_tab">
+    <div id="shortquestion_tab">
    	 <div  title="试题列表">
-   	 	<table id="singlechoice_table" cellspacing="0" cellpadding="0" toolbar="#singlechoice_tbar_ug" style="margin-top:3px;">
+   	 	<table id="shortquestion_table" cellspacing="0" cellpadding="0" toolbar="#shortquestion_tbar_ug" style="margin-top:3px;">
 	        <thead>
 	            <tr>
-	                <th data-options="field:'prototypeQuestion',width:150,align:'center'">题目</th>
+	                <th data-options="field:'question',width:150,align:'center'">题目</th>
 	                <th data-options="field:'score',width:50,align:'center'">分值</th>
 	                <th data-options="field:'status',width:30, formatter: formatStatus,align:'center'">状态</th>
                 <th data-options="field:'createTime',width:80, formatter:formatTime,align:'center'">创建时间</th>
@@ -109,30 +109,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	        </thead>
    		</table>
    	
-	   	<div id="singlechoice_tbar_ug">
+	   	<div id="shortquestion_tbar_ug">
 	   		<div class="form-inline" >
-			  <form id="singlechoice_form" style="margin-top:20px;">
+			  <form id="shortquestion_form" style="margin-top:20px;">
 			  		<!-- 组ID -->
-					<input type="hidden" name="typeId" id="examType_id"/>
-			   		<input type="text" class="form-control" name="prototypeQuestion" id="question_singlechoice" placeholder="试题关键字">
-			    	<a class="btn btn-success" href="javascript:void(0)"   onclick="SingleChoiceHandler.search();">
+					<input type="hidden" name="typeId" id="shortquestion_examType_id"/>
+			   		<input type="text" class="form-control" name="prototypeQuestion" id="question_shortquestion" placeholder="试题关键字">
+			    	<a class="btn btn-success" href="javascript:void(0)"   onclick="ShortQuestionHandler.search();">
 						<i class="icon-search icon-white"></i>查询
 					</a>
 				 <div class="pull-right"> 
 				  <div class="btn-group" data-toggle="buttons-checkbox">
-			    	<a class="btn btn-success" id="importExcel_singlechoice" href="javascript:void(0)"   onclick="SingleChoiceHandler.importExcel();">
+			    	<a class="btn btn-success" id="importExcel_shortquestion" href="javascript:void(0)"   onclick="ShortQuestionHandler.importExcel();">
 						<i class="icon-tint icon-white"></i>导入excel
 					</a>
-			    	<a class="btn btn-success" id="exportExcel_singlechoice" href="javascript:void(0)"   onclick="SingleChoiceHandler.exportExcel();">
+			    	<a class="btn btn-success" id="exportExcel_shortquestion" href="javascript:void(0)"   onclick="ShortQuestionHandler.exportExcel();">
 						<i class="icon-fire icon-white"></i>导出模板
 					</a>
-			    	<a class="btn btn-success" id="save_singlechoice" href="javascript:void(0)"   onclick="SingleChoiceHandler.beforeEditSingleChoice(1);">
+			    	<a class="btn btn-success" id="save_shortquestion" href="javascript:void(0)"   onclick="ShortQuestionHandler.beforeEditShortQuestion(1);">
 						<i class="icon-plus icon-white"></i>添加
 					</a>
-			    	<a class="btn btn-success" id="update_singlechoice" href="javascript:void(0)" onclick="SingleChoiceHandler.beforeEditSingleChoice(2);">
+			    	<a class="btn btn-success" id="update_shortquestion" href="javascript:void(0)" onclick="ShortQuestionHandler.beforeEditShortQuestion(2);">
 						<i class="icon-edit icon-white"></i>修改
 					</a>
-					<a class="btn btn-success" id="beforeDelete_singlechoice" href="javascript:void(0)"  onclick="SingleChoiceHandler.beforeDeleteSingleChoice();">
+					<a class="btn btn-success" id="beforeDelete_shortquestion" href="javascript:void(0)"  onclick="ShortQuestionHandler.beforeDeleteShortQuestion();">
 						<i class="icon-trash icon-white"></i>删除 
 					</a>
 					</div>
@@ -144,6 +144,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 </div>
 
  
-<script src='${ctx}/js/questiontypes/singlechoice/singlechoice.js' type='text/javascript'></script> 
+<script src='${ctx}/js/questiontypes/shortquestion/shortquestion.js' type='text/javascript'></script> 
 </body>
 </html>
