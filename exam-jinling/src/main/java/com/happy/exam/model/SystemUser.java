@@ -55,7 +55,7 @@ public class SystemUser extends BaseModel {
 	 * @备注:出生年月
 	 * @字段:Birthday DATE(10)
 	 */
-	private java.util.Date birthday;
+	private String birthday;
 
 	/**
 	 * @备注:电话号码
@@ -109,7 +109,7 @@ public class SystemUser extends BaseModel {
 	 * @备注:毕业时间(第一学历)
 	 * @字段:GraduateFirst DATETIME(19)
 	 */
-	private java.util.Date graduateFirst;
+	private String graduateFirst;
 
 	/**
 	 * @备注:第二学历
@@ -133,7 +133,7 @@ public class SystemUser extends BaseModel {
 	 * @备注:毕业时间(第二学历)
 	 * @字段:GraduateSecond DATETIME(19)
 	 */
-	private java.util.Date graduateSecond;
+	private String graduateSecond;
 
 	/**
 	 * @备注:职称
@@ -145,7 +145,7 @@ public class SystemUser extends BaseModel {
 	 * @备注:任职时间
 	 * @字段:JobDate DATETIME(19)
 	 */
-	private java.util.Date jobDate;
+	private String jobDate;
 
 	/**
 	 * @备注:曾经历岗位及年限
@@ -157,7 +157,7 @@ public class SystemUser extends BaseModel {
 	 * @备注:开始从事预报年月
 	 * @字段:ForcastBeginDate DATE(10)
 	 */
-	private java.util.Date forcastBeginDate;
+	private String forcastBeginDate;
 
 	/**
 	 * @备注:培训经历
@@ -310,14 +310,14 @@ public class SystemUser extends BaseModel {
 	 * @param birthday
 	 *            出生年月
 	 */
-	public void setBirthday(java.util.Date birthday) {
+	public void setBirthday(String birthday) {
 		this.birthday = birthday;
 	}
 
 	/**
 	 * @return 出生年月
 	 */
-	public java.util.Date getBirthday() {
+	public String getBirthday() {
 		return this.birthday;
 	}
 
@@ -445,14 +445,14 @@ public class SystemUser extends BaseModel {
 	 * @param graduateFirst
 	 *            毕业时间(第一学历)
 	 */
-	public void setGraduateFirst(java.util.Date graduateFirst) {
+	public void setGraduateFirst(String graduateFirst) {
 		this.graduateFirst = graduateFirst;
 	}
 
 	/**
 	 * @return 毕业时间(第一学历)
 	 */
-	public java.util.Date getGraduateFirst() {
+	public String getGraduateFirst() {
 		return this.graduateFirst;
 	}
 
@@ -505,14 +505,14 @@ public class SystemUser extends BaseModel {
 	 * @param graduateSecond
 	 *            毕业时间(第二学历)
 	 */
-	public void setGraduateSecond(java.util.Date graduateSecond) {
+	public void setGraduateSecond(String graduateSecond) {
 		this.graduateSecond = graduateSecond;
 	}
 
 	/**
 	 * @return 毕业时间(第二学历)
 	 */
-	public java.util.Date getGraduateSecond() {
+	public String getGraduateSecond() {
 		return this.graduateSecond;
 	}
 
@@ -535,14 +535,14 @@ public class SystemUser extends BaseModel {
 	 * @param jobDate
 	 *            任职时间
 	 */
-	public void setJobDate(java.util.Date jobDate) {
+	public void setJobDate(String jobDate) {
 		this.jobDate = jobDate;
 	}
 
 	/**
 	 * @return 任职时间
 	 */
-	public java.util.Date getJobDate() {
+	public String getJobDate() {
 		return this.jobDate;
 	}
 
@@ -565,14 +565,14 @@ public class SystemUser extends BaseModel {
 	 * @param forcastBeginDate
 	 *            开始从事预报年月
 	 */
-	public void setForcastBeginDate(java.util.Date forcastBeginDate) {
+	public void setForcastBeginDate(String forcastBeginDate) {
 		this.forcastBeginDate = forcastBeginDate;
 	}
 
 	/**
 	 * @return 开始从事预报年月
 	 */
-	public java.util.Date getForcastBeginDate() {
+	public String getForcastBeginDate() {
 		return this.forcastBeginDate;
 	}
 
