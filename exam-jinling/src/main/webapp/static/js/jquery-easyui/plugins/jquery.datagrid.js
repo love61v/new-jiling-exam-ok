@@ -198,7 +198,7 @@ _40.height(_43);
 dc.view.height(dc.view2.height());
 }
 dc.body2.triggerHandler("scroll");
-function _3e(_44,_45){
+function _3e(_44,_45){/*修改了
 for(var i=0;i<_45.length;i++){
 var tr1=$(_44[i]);
 var tr2=$(_45[i]);
@@ -208,7 +208,7 @@ var _46=Math.max(tr1.height(),tr2.height());
 tr1.css("height",_46);
 tr2.css("height",_46);
 }
-};
+*/};
 function _42(cc){
 var _47=0;
 var _48=0;
@@ -2103,7 +2103,8 @@ _1f8.push(this.renderRow.call(this,_1f4,_1f7,_1f6,i,rows[i]));
 _1f8.push("</tr>");
 }
 _1f8.push("</tbody></table>");
-$(_1f5).html(_1f8.join(""));
+//$(_1f5).html(_1f8.join(""));
+$(_1f5)[0].innerHTML=_1f8.join("");//后面修改了
 },renderTable:function(_1f9,_1fa,rows,_1fb){
 var _1fc=$.data(_1f9,"datagrid");
 var opts=_1fc.options;
