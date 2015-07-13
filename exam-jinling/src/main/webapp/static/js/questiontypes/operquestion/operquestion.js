@@ -1,10 +1,10 @@
 var ctx = $('base').attr('href');
 $(function(){
 	
-	clearModal("editSingleChoice");
+	clearModal("editOperQuestion");
 	
 	//左边分组树
-	$('#singlechoice_examtype_table').treegrid({  
+	$('#operquestion_examtype_table').treegrid({  
 		url: 			ctx +'/examtype/list.json', 
 	    height: 		'auto', 
 	    fit: 			true, 
@@ -17,19 +17,19 @@ $(function(){
 	    treeField:		'typeName',
 	    onClickRow:      function(row){//单击树的行，加载右边表格加载数据
 	    	var typeId = row.id;
-	    	var pnode = $('#singlechoice_examtype_table').treegrid('getChildren',typeId);
+	    	var pnode = $('#operquestion_examtype_table').treegrid('getChildren',typeId);
 	    	if(pnode.length > 0){//父节点禁用修改，绑定用户、角色
-	    		 $('#singlechoice_examtype_table').treegrid('unselect',typeId);
+	    		 $('#operquestion_examtype_table').treegrid('unselect',typeId);
 	    		return false;
 	    	}
-	    	SingleChoiceHandler.reloadSingleChoice(typeId); //加载右边选中的tab下的表格数据
+	    	OperQuestionHandler.reloadOperQuestion(typeId); //加载右边选中的tab下的表格数据
 	    },
 	    onContextMenu:  onContextMenuFun
 	}); 
 	
 	//右边用户列表
-	$('#singlechoice_table').datagrid({  
-		url: 			ctx +'singlechoice/list.json', 
+	$('#operquestion_table').datagrid({  
+		url: 			ctx +'operquestion/list.json', 
 		idField:		'id', 
 	    height: 		'auto', 
 	    fitColumns: 	true,
@@ -47,14 +47,14 @@ $(function(){
 	        	    ]]
 	}); 
 	
-	$("#singlechoice_tab").tabs({//右边tab页
+	$("#operquestion_tab").tabs({//右边tab页
 		fit:true,
 		border:false,
 		pill:false,
 		onSelect: function(title,index){
-			var rowsChecked = $('#singlechoice_examtype_table').treegrid('getSelected');//选中的行
+			var rowsChecked = $('#operquestion_examtype_table').treegrid('getSelected');//选中的行
 			if(rowsChecked){
-				SingleChoiceHandler.reloadSingleChoice(rowsChecked.id);
+				OperQuestionHandler.reloadOperQuestion(rowsChecked.id);
 			}
 		}
 	});
@@ -63,7 +63,7 @@ $(function(){
  
 
 function groutRoleFmt(val,row,index){
-	return "<a href='javascript:void(0);' onclick=SingleChoiceHandler.removeGroupRole('"+row.roleId+"');>删除</a>";
+	return "<a href='javascript:void(0);' onclick=OperQuestionHandler.removeGroupRole('"+row.roleId+"');>删除</a>";
 }
 
 function onContextMenuFun(e, row) {//右键菜单
@@ -75,7 +75,7 @@ function onContextMenuFun(e, row) {//右键菜单
 			top : e.pageY
 		});
 		 
-		var node = $('#singlechoice_examtype_table').treegrid('getParent', row.groupId);
+		var node = $('#operquestion_examtype_table').treegrid('getParent', row.groupId);
 		var isHide = function(method){//组的根节点只有添加操作
 			for(var i=0,len = $(".menuGrouphide").size();i < len;i++){
     			var item = $('#group_menu').menu('getItem',$(".menuGrouphide")[i]);
@@ -87,7 +87,7 @@ function onContextMenuFun(e, row) {//右键菜单
 		}else{
 			isHide('enableItem');
 		}
-		var node = $('#singlechoice_examtype_table').treegrid('getParent',groupId);
+		var node = $('#operquestion_examtype_table').treegrid('getParent',groupId);
 		var isHide = function(method,className){//组的根节点只有添加操作
 			for(var i=0,len = $(className).size();i < len;i++){
     			var item = $('#group_menu').menu('getItem',$(className)[i]);
@@ -100,7 +100,7 @@ function onContextMenuFun(e, row) {//右键菜单
 			isHide('enableItem','.menuGrouphide');
 		}
     	
-    	var pnode = $('#singlechoice_examtype_table').treegrid('getChildren',groupId);
+    	var pnode = $('#operquestion_examtype_table').treegrid('getChildren',groupId);
     	if(pnode.length > 0){//父节点禁用修改，绑定用户、角色
     		isHide('disableItem','.pGroupHide');
     	}else{
@@ -110,7 +110,7 @@ function onContextMenuFun(e, row) {//右键菜单
 };
 
 $(function(){//清除模态窗体的数据,每次打重新加载
-	$("#editSingleChoice").on("hidden", function() {
+	$("#editOperQuestion").on("hidden", function() {
 	    $(this).removeData("modal");
 	});
 	 
@@ -127,61 +127,59 @@ $(function(){//清除模态窗体的数据,每次打重新加载
 /**
  * 组事件操作
  */
-var SingleChoiceHandler = {
+var OperQuestionHandler = {
 		
-	reloadSingleChoice: function(typeId){//组用户列表reload
-		$("#examType_id").val(typeId);
+	reloadOperQuestion: function(typeId){//组用户列表reload
+		$("#operquestion_examType_id").val(typeId);
 		//加载加载当前组下用户
-		var params = $("#singlechoice_form").serializeJson();
-		$("#singlechoice_table").datagrid("load",params);
+		var params = $("#operquestion_form").serializeJson();
+		$("#operquestion_table").datagrid("load",params);
 	},
 	
 	search: function (){//查询用户
-		 var params = $("#singlechoice_form").serializeJson();
+		 var params = $("#operquestion_form").serializeJson();
 		 params._time = new Date().getTime();
 		 
-		 $('#singlechoice_table').datagrid('load',params); 
+		 $('#operquestion_table').datagrid('load',params); 
 	},
 	
 	exportExcel: function(){//导出excel模板
-		window.location.href = ctx + "/template/singlechoice.xls";
+		window.location.href = ctx + "/template/operquestion.xls";
 	},
 	
 	importExcel: function(){//导入excel
-		var typeId=$.trim($("#examType_id").val());
+		var typeId=$.trim($("#operquestion_examType_id").val());
 		if(typeId == ''|| typeId == undefined){
-			tipMsg("importExcel_singlechoice","请在左侧树结构中选择分类!");
+			tipMsg("importExcel_operquestion","请在左侧树结构中选择分类!");
 			return false;
 		}else{
-				$("#importExcelModal_singlechoice").modal({//弹出窗体
-			       	 remote: ctx + 'singlechoice/breforeImportExcel.html'
+				$("#importExcelModal_operquestion").modal({//弹出窗体
+			       	 remote: ctx + 'operquestion/breforeImportExcel.html'
 			       }); 
 		}
        
 	},
 	
 	uploadExcel: function(){//上传
-		//debugger;
-		var typeId=$.trim($("#examType_id").val());
-		var file=$.trim($("#singlechoice_file").val());
+		var typeId=$.trim($("#operquestion_examType_id").val());
+		var file=$.trim($("#operquestion_file").val());
 		//alert(file);
 		if(file == ''|| file == undefined){
-			$("#singlechoice_fileTip").text("请选择上传的Excel文件！").show();
+			$("#operquestion_fileTip").text("请选择上传的Excel文件！").show();
 		}else{
-			var url = ctx +  "singlechoice/importExcel.json?typeId="+typeId;
-			$("#singlechoiceForm").attr("action",url).submit();
+			var url = ctx +  "operquestion/importExcel.json?typeId="+typeId;
+			$("#operquestionForm").attr("action",url).submit();
 		}
 		
 	},
 	 
-	beforeEditSingleChoice: function (flag){//加载编辑页面
-   	var url =  ctx + "/singlechoice/beforeEditSingleChoice.html";
+	beforeEditOperQuestion: function (flag){//加载编辑页面
+   	var url =  ctx + "/operquestion/beforeEditOperQuestion.html";
 		if(flag == 2){//修改
-			var rowsChecked = $('#singlechoice_table').datagrid('getChecked');
+			var rowsChecked = $('#operquestion_table').datagrid('getChecked');
 			var len = rowsChecked.length;
-			debugger;
 			if(len > 1 || len==0){
-				tipMsg("update_singlechoice","请选择单行记录编辑");
+				tipMsg("update_operquestion","请选择单行记录编辑");
 				return false;
 			}
 		    if(null != rowsChecked && len == 1){
@@ -191,42 +189,42 @@ var SingleChoiceHandler = {
 		    	return false;
 		    }
 		}else{
-			var typeId=$.trim($("#examType_id").val());
+			var typeId=$.trim($("#operquestion_examType_id").val());
 			if(typeId==''){
-				tipMsg("save_singlechoice","请在左侧树结构中选择分类");
+				tipMsg("save_operquestion","请在左侧树结构中选择分类");
 				return false;
 			}
 			url +="?typeId=" + typeId;
 		}
 		
-		showModal("editSingleChoice",url);//弹出窗体
+		showModal("editOperQuestion",url);//弹出窗体
    },
 	
-	editSingleChoice: function(){//提交编辑填空题
-		if(!this.check("singlechoice_question")){
+	editOperQuestion: function(){//提交编辑填空题
+		if(!this.check("operquestion_question")){
 			return false;
 		}
-		if(!this.checkoptions("singlechoice_options")){
+		if(!this.checkoptions("operquestion_answer")){
 			return false;
 		}
 		var me = this;
-		var url =  ctx + "/singlechoice/editSingleChoice.json";
+		var url =  ctx + "/operquestion/editOperQuestion.json";
        $.ajax({
        	type: "POST",
        	url:  url,
        	dataType: "json",
-       	data:  $("#singlechoiceForm").serialize(),
+       	data:  $("#operquestionForm").serialize(),
        	success: function(data){
        		if(data && data.status != 0){ 
           			
           			me.search();  //表格重新加载
-          			$('#singlechoice_table').datagrid('clearSelections');//清除缓存之前选中的行
+          			$('#operquestion_table').datagrid('clearSelections');//清除缓存之前选中的行
           			
           			var content = (data.flag ? "修改成功" : "添加成功");
-          			var id = (data.flag ? "update_singlechoice": "save_singlechoice");
+          			var id = (data.flag ? "update_operquestion": "save_operquestion");
           			tipMsg(id,content);
           			
-          			closeModal('editSingleChoice');//关闭modal窗口
+          			closeModal('editOperQuestion');//关闭modal窗口
        		}
        	}
        });
@@ -239,54 +237,53 @@ var SingleChoiceHandler = {
    },
    
    isDeleteTip: function(){//是否删除提示框
-   	 $("#isDeleteSingleChoiceTip").modal({
+   	 $("#isDeleteOperQuestionTip").modal({
    		 backdrop: 'static',
    		 keyboard: false
    	 }); 
    },
    
-   deleteSingleChoice: function(){//确认删除
+   deleteOperQuestion: function(){//确认删除
    	var me = this;
    	var ids = "";
-   	var rowsChecked = $('#singlechoice_table').datagrid('getChecked');
+   	var rowsChecked = $('#operquestion_table').datagrid('getChecked');
    	for(var i=0,len = rowsChecked.length; i < len; i++ ){
    		ids += (i > 0 ? "," : "");
    		ids += rowsChecked[i].id;
    	}
    	
-   	var url =  ctx + "/singlechoice/deleteSingleChoice.json";
+   	var url =  ctx + "/operquestion/deleteOperQuestion.json";
    	$.post(url,{
    		ids: ids,
    		_time: new Date().getTime()
    	},function(data){
    		if(data && data.status != 0){
-   			$("#cancleSingleChoiceDel").click(); //隐藏提示窗体
+   			$("#cancleOperQuestionDel").click(); //隐藏提示窗体
    			me.search();  //表格重新加载
-   			$('#singlechoice_table').datagrid('clearSelections');//清除缓存之前选中的行
+   			$('#operquestion_table').datagrid('clearSelections');//清除缓存之前选中的行
    			
-   			tipMsg("beforeDelete_singlechoice","删除成功");
+   			tipMsg("beforeDelete_operquestion","删除成功");
    		}
    	});
    },
    
-   beforeDeleteSingleChoice: function(){//删除之前提示
-	   debugger;
+   beforeDeleteOperQuestion: function(){//删除之前提示
 	    var me = this;
-   	var rowsChecked = $('#singlechoice_table').datagrid('getChecked');
+   	var rowsChecked = $('#operquestion_table').datagrid('getChecked');
 	    if(null != rowsChecked && rowsChecked.length > 0){
 	    	me.isDeleteTip(); //确认是否删除
 	    	return false;
 	    }else{
-	    	tipMsg("beforeDelete_singlechoice","请选择要删除的试题！");
+	    	tipMsg("beforeDelete_operquestion","请选择要删除的试题！");
 	    }
    },
    
    cancleEdit: function(){//删除之前提示
-	   $("#cancleSingleChoiceEdit").click(); //隐藏提示窗体
+	   $("#cancleOperQuestionEdit").click(); //隐藏提示窗体
    },
-   closeImportExcel: function(){//删除之前提示importExcelModal_singlechoice
+   closeImportExcel: function(){//删除之前提示importExcelModal_operquestion
 	   this.search();  //表格重新加载
-	   closeModal('importExcelModal_singlechoice');//关闭modal窗口
+	   closeModal('importExcelModal_operquestion');//关闭modal窗口
    },
    
    check: function(id){
