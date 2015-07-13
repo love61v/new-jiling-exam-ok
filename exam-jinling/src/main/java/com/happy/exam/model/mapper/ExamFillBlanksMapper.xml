@@ -9,6 +9,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         <result property="question" column="Question"/>
         <result property="answer" column="Answer"/>
         <result property="score" column="Score"/>
+        <result property="prototypeQuestion" column="PrototypeQuestion"/>
         <result property="typeId" column="TypeId"/>
         <result property="status" column="Status"/>
         <result property="remark" column="Remark"/>
@@ -20,18 +21,19 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<!-- 用于select查询公用抽取的列 -->
 	<sql id="columns">
 	    <![CDATA[
-		Id,Question,Answer,Score,TypeId,Status,Remark,CreateUser,CreateTime,UpdateTime
+		Id,Question,Answer,Score,PrototypeQuestion,TypeId,Status,Remark,CreateUser,CreateTime,UpdateTime
 	    ]]>
 	</sql>
 
 	<!--保存 -->
-	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insert" keyProperty="id" useGeneratedKeys="true">
 	    <![CDATA[
-	        INSERT INTO exam_fill_blanks ( 
+	        INSERT INTO exam_fill_blanks (
 	        	Id ,
 	        	Question ,
 	        	Answer ,
 	        	Score ,
+	        	PrototypeQuestion ,
 	        	TypeId ,
 	        	Status ,
 	        	Remark ,
@@ -43,6 +45,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	        	#{question} ,
 	        	#{answer} ,
 	        	#{score} ,
+	        	#{prototypeQuestion} ,
 	        	#{typeId} ,
 	        	#{status} ,
 	        	#{remark} ,
@@ -61,6 +64,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	        		Question ,
 	        		Answer ,
 	        		Score ,
+	        		PrototypeQuestion ,
 	        		TypeId ,
 	        		Status ,
 	        		Remark ,
@@ -75,6 +79,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 					#{item.question} ,
 					#{item.answer} ,
 					#{item.score} ,
+					#{item.prototypeQuestion} ,
 					#{item.typeId} ,
 					#{item.status} ,
 					#{item.remark} ,
@@ -95,8 +100,11 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			<if test="answer != null and answer != ''">
 				Answer = #{answer} ,
 			</if>
-			<if test="score != null">
+			<if test="score != null and score != ''">
 				Score = #{score} ,
+			</if>
+			<if test="prototypeQuestion != null and prototypeQuestion != ''">
+				PrototypeQuestion = #{prototypeQuestion} ,
 			</if>
 			<if test="typeId != null">
 				TypeId = #{typeId} ,
@@ -150,7 +158,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		<include refid="columns" />
 		FROM exam_fill_blanks
 		WHERE
-		Id = #{id}
+		Id = #{id} 
 	</select>
 
 	<!-- 模糊查询这样： 字段名 LIKE CONCAT('%',CONCAT(#{model.userName},'%')) -->
@@ -165,8 +173,11 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 				<if test="model.answer != null and model.answer !=''">
 					AND Answer = #{model.answer}
 				</if>
-				<if test="model.score != null">
+				<if test="model.score != null and model.score !=''">
 					AND Score = #{model.score}
+				</if>
+				<if test="model.prototypeQuestion != null and model.prototypeQuestion !=''">
+					AND PrototypeQuestion = #{model.prototypeQuestion}
 				</if>
 				<if test="model.typeId != null">
 					AND TypeId = #{model.typeId}

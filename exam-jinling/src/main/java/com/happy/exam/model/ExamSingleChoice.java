@@ -15,7 +15,7 @@ public class ExamSingleChoice extends BaseModel{
 
 	/**
      * @备注:问题     
-     * @字段:Question TEXT(65535)  
+     * @字段:Question VARCHAR(4000)  
      */	
 	private java.lang.String question;
 
@@ -30,6 +30,12 @@ public class ExamSingleChoice extends BaseModel{
      * @字段:Score DECIMAL(10)  
      */	
 	private String score;
+
+	/**
+     * @备注:原始题目的内容     
+     * @字段:PrototypeQuestion VARCHAR(4000)  
+     */	
+	private java.lang.String prototypeQuestion;
 
 	/**
      * @备注:考试分类表ID     
@@ -134,6 +140,20 @@ public class ExamSingleChoice extends BaseModel{
 	 */
 	public String getScore() {
 		return this.score;
+	}
+	
+	/**
+	 * @param prototypeQuestion 原始题目的内容
+	 */
+	public void setPrototypeQuestion(java.lang.String prototypeQuestion) {
+		this.prototypeQuestion = prototypeQuestion;
+	}
+	
+	/**
+	 * @return 原始题目的内容
+	 */
+	public java.lang.String getPrototypeQuestion() {
+		return this.prototypeQuestion;
 	}
 	
 	/**

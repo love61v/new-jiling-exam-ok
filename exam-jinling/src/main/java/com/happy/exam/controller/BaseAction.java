@@ -7,15 +7,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.shiro.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSON;
 import com.happy.exam.common.bean.ExamQuestionModel;
 import com.happy.exam.common.enums.ExamTypeEnum;
 import com.happy.exam.common.enums.ResponseCodeEnum;
+import com.happy.exam.common.utils.NetUtil;
 import com.happy.exam.common.utils.PoiUtil;
 import com.happy.exam.model.BaseModel;
+import com.happy.exam.model.SystemLog;
 import com.happy.exam.model.SystemUser;
+import com.happy.exam.service.SystemLogService;
 
 /**
  * 控制器基类.
@@ -27,6 +34,9 @@ import com.happy.exam.model.SystemUser;
 public class BaseAction {
 
 	private final static ThreadLocal<SystemUser> userThreadLocal = new ThreadLocal<SystemUser>();
+	
+	@Autowired
+	private SystemLogService systemLogService;
 
 	/**
 	 * 从本地线程中取当前用户
@@ -42,7 +52,7 @@ public class BaseAction {
 
 		return user;
 	}
-
+	
 	/**
 	 * 获取当前用户的ID
 	 * 
@@ -99,7 +109,6 @@ public class BaseAction {
 	public boolean hasRole(String roleIdentifier) {
 		return SecurityUtils.getSubject().hasRole(roleIdentifier);
 	}
-	
 
 	/**
 	 * 解析excel
@@ -129,6 +138,31 @@ public class BaseAction {
 			}
 		}
 		return list;
+	}
+	
+	/**
+	 * 日志记录到数据库中
+	 */
+	public void log(HttpServletRequest request,String content){
+		SystemUser user = getCurrentSystemUser();
+		SystemLog log = new SystemLog();
+		
+		log.setContent(content);
+		log.setCreateTime(new Date());
+		log.setIp(NetUtil.getIpAddr(request));
+		log.setCurrentUser(user.getUserName());
+		log.setCreateUser(user.getUserId());
+		
+		systemLogService.save(log); //保存
+	}
+	
+	/**
+	 * 转换json字符
+	 * @param obj 任意对象
+	 * @return
+	 */
+	public String toJson(Object obj){
+		return JSON.toJSONStringWithDateFormat(obj, "yyyy-MM-dd HH:mm:ss");
 	}
 
 }
