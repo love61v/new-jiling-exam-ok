@@ -13,6 +13,8 @@ public class ExamQuestionModel implements Serializable {
 	private java.lang.Long id;
 
 	private java.lang.String question;
+	
+	private java.lang.String prototypeQuestion;
 
 	private java.lang.String answer;
  
@@ -120,4 +122,13 @@ public class ExamQuestionModel implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	public java.lang.String getPrototypeQuestion() {
+		return prototypeQuestion;
+	}
+
+	public void setPrototypeQuestion(java.lang.String prototypeQuestion) {
+		this.prototypeQuestion = prototypeQuestion;
+	}
+	
 }
