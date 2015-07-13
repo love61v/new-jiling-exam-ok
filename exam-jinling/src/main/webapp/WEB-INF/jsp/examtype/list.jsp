@@ -14,20 +14,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <base href="<%=basePath%>">
-
 <title>模块管理</title>
-<link rel="stylesheet" type="text/css" href="${ctx }/css/icon.css">
-<link rel="stylesheet" type="text/css" href="${ctx }/js/jquery-easyui/themes/bootstrap/easyui.css">
-
-<!--[if lt IE 9]>
-    <script src='${ctx}js/html5shiv.js' type='text/javascript'></script>
-<![endif]-->
-<link href='${ctx}/css/bootstrap/bootstrap.css' media='all' rel='stylesheet' type='text/css' />
-<link href='${ctx}/css/bootstrap/bootstrap-responsive.css' media='all' rel='stylesheet' type='text/css' />
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.min.js"></script>
-<script type="text/javascript" src="${ctx }/js/jquery-easyui/jquery.easyui.min.js"></script>
-<script src="${ctx}/js/bootstrap/bootstrap.min.js"></script>
-<script src='${ctx}/js/common.js' type='text/javascript'></script>
 
 </head>
 <body>
@@ -35,7 +22,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         <thead>
 			<tr>
 				<th data-options="field:'typeName',width:80">名称</th>
-				<th data-options="field:'createUser',width:60,align:'center'">创建人</th>
 				<th data-options="field:'status',width:30, formatter: formatStatus,align:'center'">状态</th>
                 <th data-options="field:'createTime',width:80, formatter:formatTime,align:'center'">创建时间</th>
 				<th data-options="field:'sort',width:30,align:'center'">顺序</th> 
